@@ -38,7 +38,6 @@ function App() {
   }
 
   function outOfBoundsCheck(snakeHead) {
-    console.log(snakeHead[3][0])
     if (snakeHead[3][0] > 99 || snakeHead[3][0] < 0
       || snakeHead[3][1] < 0 || snakeHead[3][1] > 99) {
       window.location.reload();
@@ -50,25 +49,26 @@ function App() {
   function tick() {
     let updatedCells = updateBody(snakeCells)
     outOfBoundsCheck(updatedCells)
+    let snakeHead = updatedCells.slice(-1)[0]
 
     switch (direction) {
       case "right":
-        updatedCells[3][0] += 2;
+        snakeHead[0] += 2;
         moveSnake(updatedCells)
         break
 
       case "left":
-        updatedCells[3][0] -= 2;
+        snakeHead[0] -= 2;
         moveSnake(updatedCells)
         break
 
       case "down":
-        updatedCells[3][1] += 2;
+        snakeHead[1] += 2;
         moveSnake(updatedCells)
         break
 
       case "up":
-        updatedCells[3][1] -= 2;
+        snakeHead[1] -= 2;
         moveSnake(updatedCells)
         break
     }
