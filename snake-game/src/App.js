@@ -4,29 +4,27 @@ import Snake from './Snake';
 function App() {
 
   function keypress({ key }) {
-   console.log(key);
+    moveSnake(snakeCells => {
+      console.log(key);
+      console.log(snakeCells)
+      return snakeCells.map(cells => [cells[0] + 2, cells[1]])
+    })
   }
 
   useEffect(() => {
     window.addEventListener('keydown', keypress);
-    return () => {
-      window.addEventListener('keydown', keypress);
-    };
   }, []);
 
-
-  const [snakeDots, setSnake] = useState([
+  const [snakeCells, moveSnake] = useState([
     [0, 0],
     [2, 0],
     [4, 0],
     [6, 0]
   ]);
 
-
-
   return (
-    <div className="game-area" > >
-      <Snake snake={snakeDots} />
+    <div className="game-area" >
+      <Snake snake={snakeCells} />
     </div>
   );
 }
