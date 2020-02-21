@@ -25,15 +25,13 @@ function App() {
 
   function updateBody(snakeCells) {
     let updatedCells = [...snakeCells]
-    updatedCells[0][0] = snakeCells[1][0]
-    updatedCells[0][1] = snakeCells[1][1]
 
-    updatedCells[1][0] = snakeCells[2][0]
-    updatedCells[1][1] = snakeCells[2][1]
-
-    updatedCells[2][0] = snakeCells[3][0]
-    updatedCells[2][1] = snakeCells[3][1]
-
+    for (let cell = 0; cell < updatedCells.length - 1; cell++) {
+      for (let i = 0; i < 2; i++) {
+        console.log(cell, i)
+        updatedCells[cell][i] = snakeCells[cell + 1][i]
+      }
+    }
     return updatedCells;
   }
 
