@@ -22,21 +22,27 @@ function App() {
     }
   }
 
+  function updateBody(snakeCells) {
+    let updatedCells = [...snakeCells]
+    updatedCells[0][0] = snakeCells[1][0]
+    updatedCells[0][1] = snakeCells[1][1]
+
+    updatedCells[1][0] = snakeCells[2][0]
+    updatedCells[1][1] = snakeCells[2][1]
+
+    updatedCells[2][0] = snakeCells[3][0]
+    updatedCells[2][1] = snakeCells[3][1]
+console.log(updatedCells)
+    return updatedCells;
+  }
+
+  
+
   function tick() {
     switch (direction) {
       case "right":
-        console.log("moving right")
-
         moveSnake(snakeCells => {
-          let updatedCells = [...snakeCells]
-          updatedCells[0][0] = snakeCells[1][0]
-          updatedCells[0][1] = snakeCells[1][1]
-
-          updatedCells[1][0] = snakeCells[2][0]
-          updatedCells[1][1] = snakeCells[2][1]
-
-          updatedCells[2][0] = snakeCells[3][0]
-          updatedCells[2][1] = snakeCells[3][1]
+         let updatedCells = updateBody([...snakeCells])
           updatedCells[3][0] += 2;
           return updatedCells;
         })
@@ -44,52 +50,23 @@ function App() {
 
       case "left":
         moveSnake(snakeCells => {
-          let updatedCells = [...snakeCells]
-          updatedCells[0][0] = snakeCells[1][0]
-          updatedCells[0][1] = snakeCells[1][1]
-
-          updatedCells[1][0] = snakeCells[2][0]
-          updatedCells[1][1] = snakeCells[2][1]
-
-          updatedCells[2][0] = snakeCells[3][0]
-          updatedCells[2][1] = snakeCells[3][1]
-
+          let updatedCells = updateBody([...snakeCells])
           updatedCells[3][0] -= 2;
           return updatedCells;
         })
         break
 
       case "down":
-        console.log("moving down")
         moveSnake(snakeCells => {
-          let updatedCells = [...snakeCells]
-          updatedCells[0][0] = snakeCells[1][0]
-          updatedCells[0][1] = snakeCells[1][1]
-
-          updatedCells[1][0] = snakeCells[2][0]
-          updatedCells[1][1] = snakeCells[2][1]
-
-          updatedCells[2][0] = snakeCells[3][0]
-          updatedCells[2][1] = snakeCells[3][1]
-
+          let updatedCells = updateBody([...snakeCells])
           updatedCells[3][1] += 2;
           return updatedCells;
         })
         break
 
       case "up":
-        console.log("moving up")
         moveSnake(snakeCells => {
-          let updatedCells = [...snakeCells]
-          updatedCells[0][0] = snakeCells[1][0]
-          updatedCells[0][1] = snakeCells[1][1]
-
-          updatedCells[1][0] = snakeCells[2][0]
-          updatedCells[1][1] = snakeCells[2][1]
-
-          updatedCells[2][0] = snakeCells[3][0]
-          updatedCells[2][1] = snakeCells[3][1]
-
+          let updatedCells = updateBody([...snakeCells])
           updatedCells[3][1] -= 2;
           return updatedCells;
         })
@@ -100,7 +77,7 @@ function App() {
   useEffect(() => console.log(snakeCells))
 
   useEffect(() => {
-    const interval = setInterval(() => { tick() }, 50);
+    const interval = setInterval(() => { tick() }, 100);
     return () => clearInterval(interval);
   }, []);
 
