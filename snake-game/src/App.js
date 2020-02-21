@@ -82,11 +82,17 @@ function App() {
     [6, 0],
   ]);
 
+  function randomLocation() {
+    return [Math.floor(Math.random() * 99) , 
+            Math.floor(Math.random() * 99)]
+  }
+
+  const [food, moveFood] = useState(randomLocation());
 
   return (
     <div className="game-area" >
       <Snake snake={snakeCells} />
-      <Food />
+      <Food food={food}/>
 
     </div>
   );
