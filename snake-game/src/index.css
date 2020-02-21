@@ -1,8 +1,13 @@
+body, html { 
+    overflow-x: hidden; 
+    overflow-y: hidden;
+}
+
 .game-area {
   position: relative;
   margin: 50px auto;
-  width: 900px;
-  height: 900px;
+  width: 1150px;
+  height: 1150px;
   border: 2px solid #000;
 }
 
