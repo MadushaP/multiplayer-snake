@@ -22,6 +22,7 @@ function App() {
     }
   }
 
+
   function updateBody(snakeCells) {
     let updatedCells = [...snakeCells]
     updatedCells[0][0] = snakeCells[1][0]
@@ -32,52 +33,50 @@ function App() {
 
     updatedCells[2][0] = snakeCells[3][0]
     updatedCells[2][1] = snakeCells[3][1]
-console.log(updatedCells)
+
     return updatedCells;
   }
 
-  
+  function outOfBoundsCheck(snakeHead) {
+    console.log(snakeHead[3][0])
+    if (snakeHead[3][0] > 99 || snakeHead[3][0] < 0
+      || snakeHead[3][1] < 0 || snakeHead[3][1] > 99) {
+      window.location.reload();
+    } else
+      return false;
+  }
+
 
   function tick() {
+    let updatedCells = updateBody(snakeCells)
+    outOfBoundsCheck(updatedCells)
+
     switch (direction) {
       case "right":
-        moveSnake(snakeCells => {
-         let updatedCells = updateBody([...snakeCells])
-          updatedCells[3][0] += 2;
-          return updatedCells;
-        })
+        updatedCells[3][0] += 2;
+        moveSnake(updatedCells)
         break
 
       case "left":
-        moveSnake(snakeCells => {
-          let updatedCells = updateBody([...snakeCells])
-          updatedCells[3][0] -= 2;
-          return updatedCells;
-        })
+        updatedCells[3][0] -= 2;
+        moveSnake(updatedCells)
         break
 
       case "down":
-        moveSnake(snakeCells => {
-          let updatedCells = updateBody([...snakeCells])
-          updatedCells[3][1] += 2;
-          return updatedCells;
-        })
+        updatedCells[3][1] += 2;
+        moveSnake(updatedCells)
         break
 
       case "up":
-        moveSnake(snakeCells => {
-          let updatedCells = updateBody([...snakeCells])
-          updatedCells[3][1] -= 2;
-          return updatedCells;
-        })
+        updatedCells[3][1] -= 2;
+        moveSnake(updatedCells)
         break
     }
 
   }
-  useEffect(() => console.log(snakeCells))
 
   useEffect(() => {
-    const interval = setInterval(() => { tick() }, 100);
+    const interval = setInterval(() => { tick() }, 500);
     return () => clearInterval(interval);
   }, []);
 
