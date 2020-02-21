@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Snake from './Snake';
+import Food from './Food';
 
 function App() {
 
@@ -22,13 +23,11 @@ function App() {
     }
   }
 
-
   function updateBody(snakeCells) {
     let updatedCells = [...snakeCells]
 
     for (let cell = 0; cell < updatedCells.length - 1; cell++) {
       for (let i = 0; i < 2; i++) {
-        console.log(cell, i)
         updatedCells[cell][i] = snakeCells[cell + 1][i]
       }
     }
@@ -52,25 +51,19 @@ function App() {
     switch (direction) {
       case "right":
         snakeHead[0] += 2;
-        moveSnake(updatedCells)
         break
-
       case "left":
         snakeHead[0] -= 2;
-        moveSnake(updatedCells)
         break
-
       case "down":
         snakeHead[1] += 2;
-        moveSnake(updatedCells)
         break
-
       case "up":
         snakeHead[1] -= 2;
-        moveSnake(updatedCells)
         break
     }
 
+    moveSnake(updatedCells)
   }
 
   useEffect(() => {
@@ -86,13 +79,15 @@ function App() {
     [0, 0],
     [2, 0],
     [4, 0],
-    [6, 0]
+    [6, 0],
   ]);
 
 
   return (
     <div className="game-area" >
       <Snake snake={snakeCells} />
+      <Food />
+
     </div>
   );
 }

@@ -16,7 +16,15 @@ body, html {
   width: 2%;
   height: 2%;
   background-color: #f54997;
-  border: 1px solid #fce9ee
-  ;
+  border: 1px solid #fce9ee;
  }
  
+
+ .food {
+  position: absolute;
+  width: 2%;
+  height: 2%;
+  background-color: green;
+  border: 1px solid #25a430;
+  /* background-image: url('https://homepages.cae.wisc.edu/~ece533/images/airplane.png'); */
+ }
