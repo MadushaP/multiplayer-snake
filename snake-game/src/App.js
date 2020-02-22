@@ -35,10 +35,25 @@ function App() {
     }
     return updatedCells;
   }
+  function isArrayInArray(arr, item){
+    var item_as_string = JSON.stringify(item);
+  
+    var contains = arr.some(function(ele){
+      return JSON.stringify(ele) === item_as_string;
+    });
+    return contains;
+  }
+
+  function headBodyCollisionCheck(snakeHead) {
+    let snakeBody = snakeCells.slice(0, -1)
+    if(isArrayInArray(snakeBody,snakeHead)) {
+      window.location.reload();
+    }
+  }
 
   function outOfBoundsCheck(snakeHead) {
-    if (snakeHead[3][0] > 99 || snakeHead[3][0] < 0
-      || snakeHead[3][1] < 0 || snakeHead[3][1] > 99) {
+    if (snakeHead[0] > 99 || snakeHead[0] < 0
+      || snakeHead[1] < 0 || snakeHead[1] > 99) {
       window.location.reload();
     } else
       return false;
@@ -55,7 +70,7 @@ function App() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
     let snakeTail = updatedCells[0]
-    
+
     switch (direction) {
       case "right":
         snakeHead[0] += 2;
@@ -71,18 +86,18 @@ function App() {
         break
     }
 
-    outOfBoundsCheck(updatedCells)
+    outOfBoundsCheck(snakeHead)
+    headBodyCollisionCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
       setFood(randomLocation())
       setSpeed(speed - 10)
-      
-      updatedCells.unshift([snakeTail[0],snakeTail[1]])
-   
+
+      updatedCells.unshift([snakeTail[0], snakeTail[1]])
       setSnake(updatedCells)
     } else {
       setSnake(updatedCells)
-    } 
+    }
   }
 
   function randomLocation() {
