@@ -18,7 +18,7 @@ body, html {
   width: 2%;
   height: 2%;
   background-color: #f54997;
-  border: 1px solid #fce9ee;
+  border: 2px solid black;
  }
  
 
@@ -31,7 +31,12 @@ body, html {
   /* background-image: url('https://homepages.cae.wisc.edu/~ece533/images/airplane.png'); */
  }
 
- @keyframes fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.animation-enter {
+  opacity: 1;
+  transition: opacity 300 ease-in;
+}
+
+.animation-leave {
+  opacity: 0.01;
+  transition: opacity 250ms ease-in;
 }

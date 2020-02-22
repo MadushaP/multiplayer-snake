@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; 
 
 function App() {
 
