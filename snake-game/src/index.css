@@ -37,8 +37,20 @@ body, html {
   left: 50%;
  }
 
- .ai {
+h1 {
+  display: flex;
+  width: 1000px;
+}
+
+.ai-status {
+  display:flex;
+  width: 500px;
+  margin-left:5%;
+}
+
+ .ai-button {
    margin-left: 10%;
+   
    height: 30px;
  }
 

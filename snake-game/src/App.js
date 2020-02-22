@@ -9,7 +9,7 @@ function App() {
   const [speed, setSpeed] = useState(100);
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction);
-  const [ai, setAi] = useState(false);
+  const [aiStatus, setAi] = useState(false);
 
   const [snakeCells, setSnake] = useState([
     [0, 0],
@@ -23,13 +23,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => { 
-      if(!ai) {
+    const interval = setInterval(() => {
+      if (!aiStatus) {
         tick()
       } else {
         aiTick()
       }
-     }, speed);
+    }, speed);
     return () => clearInterval(interval);
   }, [speed, direction, food, snakeCells]);
 
@@ -113,26 +113,26 @@ function App() {
 
   function aiTick() {
     let updatedCells = updateBody(snakeCells)
-    let snakeHead = snakeCells.slice(-1)[0]   
-    let distanceX = food[0] - snakeHead[0] 
-    let distanceY = food[1] - snakeHead[1] 
+    let snakeHead = snakeCells.slice(-1)[0]
+    let distanceX = food[0] - snakeHead[0]
+    let distanceY = food[1] - snakeHead[1]
     let snakeTail = updatedCells[0]
 
     console.log(distanceX, distanceY)
-    if(distanceX > 0 || distanceY > 0){ 
-      if(distanceX != 0) {
-        snakeHead[0]+=2
+    if (distanceX > 0 || distanceY > 0) {
+      if (distanceX != 0) {
+        snakeHead[0] += 2
       }
-      if(distanceY != 0) {
-        snakeHead[1]+=2
+      if (distanceY != 0) {
+        snakeHead[1] += 2
       }
     }
-    else if(distanceX < 0 || distanceY < 0 )  {
-      if(distanceX != 0) {
-        snakeHead[0]-=2
+    else if (distanceX < 0 || distanceY < 0) {
+      if (distanceX != 0) {
+        snakeHead[0] -= 2
       }
-      if(distanceY != 0) {
-        snakeHead[1]-=2
+      if (distanceY != 0) {
+        snakeHead[1] -= 2
       }
     }
 
@@ -183,9 +183,16 @@ function App() {
     }
   }
 
+  function setAiStatus() {
+    if (aiStatus)
+      setAi(false)
+    else
+      setAi(true)
+  }
+  
   return (
     <div className="game-area" >
-      <ScoreBoard score={score} setAi={setAi}/>
+      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} />
       <Snake snake={snakeCells} />
       <Food food={food} />
     </div>
