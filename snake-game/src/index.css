@@ -27,7 +27,7 @@ body, html {
   width: 2%;
   height: 2%;
   background-color: green;
-  border: 1px solid #25a430;
+  border: 2px solid #25a430;
   /* background-image: url('https://homepages.cae.wisc.edu/~ece533/images/airplane.png'); */
  }
 
@@ -35,6 +35,11 @@ body, html {
   position: fixed; 
   top: 0%;
   left: 50%;
+ }
+
+ .ai {
+   margin-left: 10%;
+   height: 30px;
  }
 
 .animation-enter {

@@ -9,6 +9,7 @@ function App() {
   const [speed, setSpeed] = useState(100);
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction);
+  const [ai, setAi] = useState(false);
 
   const [snakeCells, setSnake] = useState([
     [0, 0],
@@ -17,13 +18,18 @@ function App() {
     [6, 0],
   ]);
 
-
   useEffect(() => {
     window.addEventListener('keydown', keypress)
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => { tick() }, speed);
+    const interval = setInterval(() => { 
+      if(!ai) {
+        tick()
+      } else {
+        aiTick()
+      }
+     }, speed);
     return () => clearInterval(interval);
   }, [speed, direction, food, snakeCells]);
 
@@ -105,6 +111,43 @@ function App() {
     else return false
   }
 
+  function aiTick() {
+    let updatedCells = updateBody(snakeCells)
+    let snakeHead = snakeCells.slice(-1)[0]   
+    let distanceX = food[0] - snakeHead[0] 
+    let distanceY = food[1] - snakeHead[1] 
+    let snakeTail = updatedCells[0]
+
+    console.log(distanceX, distanceY)
+    if(distanceX > 0 || distanceY > 0){ 
+      if(distanceX != 0) {
+        snakeHead[0]+=2
+      }
+      if(distanceY != 0) {
+        snakeHead[1]+=2
+      }
+    }
+    else if(distanceX < 0 || distanceY < 0 )  {
+      if(distanceX != 0) {
+        snakeHead[0]-=2
+      }
+      if(distanceY != 0) {
+        snakeHead[1]-=2
+      }
+    }
+
+    if (hasEatenFood(snakeHead)) {
+      setFood(randomLocation())
+      setSpeed(speed - 10)
+      setScore(score => score + 1)
+
+      updatedCells.unshift([snakeTail[0], snakeTail[1]])
+      setSnake(updatedCells)
+    } else {
+      setSnake(updatedCells)
+    }
+  }
+
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
@@ -142,7 +185,7 @@ function App() {
 
   return (
     <div className="game-area" >
-      <ScoreBoard score={score}/>
+      <ScoreBoard score={score} setAi={setAi}/>
       <Snake snake={snakeCells} />
       <Food food={food} />
     </div>
