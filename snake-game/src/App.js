@@ -42,12 +42,6 @@ function App() {
       return false;
   }
 
-  function foodCheck(snakeHead) {
-    if(snakeHead[0] == food[0] && snakeHead[1] == food[1] ){
-      moveFood(randomLocation())
-    }
-  }
-
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
@@ -66,9 +60,7 @@ function App() {
         snakeHead[1] -= 2;
         break
     }
-
     outOfBoundsCheck(updatedCells)
-    foodCheck(snakeHead)
     moveSnake(updatedCells)
   }
 
@@ -81,19 +73,28 @@ function App() {
     window.addEventListener('keydown', keypress)
   }, []);
 
+
   const [snakeCells, moveSnake] = useState([
     [0, 0],
     [2, 0],
     [4, 0],
     [6, 0],
   ]);
+  
+  const [food, moveFood] = useState(randomLocation());
 
   function randomLocation() {
-    return [Math.floor( Math.random() * 100 / 2 ) * 2,
-     Math.floor( Math.random() * 100 / 2 ) * 2]
+    let x = Math.floor( Math.random() * 100 / 2 ) * 2
+    let y =  Math.floor( Math.random() * 100 / 2 ) * 2
+    return [x,y]
   }
 
-  const [food, moveFood] = useState(randomLocation());
+  
+  useEffect(() => {
+    if(JSON.stringify(snakeCells.slice(-1)[0]) === JSON.stringify(food)) {
+      moveFood(randomLocation())
+    }
+  }, [food, snakeCells]);
 
   return (
     <div className="game-area" >
