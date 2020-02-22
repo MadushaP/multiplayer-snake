@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; 
+import ScoreBoard from './ScoreBoard';
 
 function App() {
-
+  const [score, setScore] = useState(0);
   const [food, setFood] = useState(randomLocation());
   const [speed, setSpeed] = useState(100);
   const [direction, setDirection] = useState("right")
@@ -131,6 +131,7 @@ function App() {
     if (hasEatenFood(snakeHead)) {
       setFood(randomLocation())
       setSpeed(speed - 10)
+      setScore(score => score + 1)
 
       updatedCells.unshift([snakeTail[0], snakeTail[1]])
       setSnake(updatedCells)
@@ -141,6 +142,7 @@ function App() {
 
   return (
     <div className="game-area" >
+      <ScoreBoard score={score}/>
       <Snake snake={snakeCells} />
       <Food food={food} />
     </div>
