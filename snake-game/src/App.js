@@ -4,21 +4,23 @@ import Food from './Food';
 
 function App() {
 
-  let direction = "right"
+  useEffect(() => {
+    window.addEventListener('keydown', keypress)
+  }, []);
 
   function keypress({ key }) {
     switch (key) {
       case "ArrowRight":
-        direction = "right";
+        setDirection("right")
         break
       case "ArrowLeft":
-        direction = "left";
+        setDirection("left")
         break
       case "ArrowDown":
-        direction = "down";
+        setDirection("down")
         break
       case "ArrowUp":
-        direction = "up";
+        setDirection("up")
         break
     }
   }
@@ -42,10 +44,16 @@ function App() {
       return false;
   }
 
+  function checkFood(snakeHead) {
+    if(JSON.stringify(snakeCells.slice(-1)[0]) === JSON.stringify(food)) {
+      setFood(randomLocation())
+      setSpeed(speed - 10)
+    }
+  }
+
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
-
     switch (direction) {
       case "right":
         snakeHead[0] += 2;
@@ -60,47 +68,38 @@ function App() {
         snakeHead[1] -= 2;
         break
     }
+
+    checkFood(snakeHead)
     outOfBoundsCheck(updatedCells)
-    moveSnake(updatedCells)
+    setSnake(updatedCells)
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => { tick() }, 100);
-    return () => clearInterval(interval);
-  }, []);
+  function randomLocation() {
+    let x = Math.floor( Math.random() * 100 / 2 ) * 2;
+    let y =  Math.floor( Math.random() * 100 / 2 ) * 2;
+    return [x,y]
+  }
 
-  useEffect(() => {
-    window.addEventListener('keydown', keypress)
-  }, []);
-
-
-  const [snakeCells, moveSnake] = useState([
+  const [snakeCells, setSnake] = useState([
     [0, 0],
     [2, 0],
     [4, 0],
     [6, 0],
   ]);
   
-  const [food, moveFood] = useState(randomLocation());
+  const [food, setFood] = useState(randomLocation());
+  const [speed, setSpeed] = useState(100);
+  const [direction, setDirection] = useState("right")
 
-  function randomLocation() {
-    let x = Math.floor( Math.random() * 100 / 2 ) * 2
-    let y =  Math.floor( Math.random() * 100 / 2 ) * 2
-    return [x,y]
-  }
-
-  
   useEffect(() => {
-    if(JSON.stringify(snakeCells.slice(-1)[0]) === JSON.stringify(food)) {
-      moveFood(randomLocation())
-    }
-  }, [food, snakeCells]);
+    const interval = setInterval(() => { tick() }, speed);
+    return () => clearInterval(interval);
+  }, [speed, direction, food]);
 
   return (
     <div className="game-area" >
       <Snake snake={snakeCells} />
       <Food food={food} />
-
     </div>
   );
 }
