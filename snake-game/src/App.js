@@ -44,16 +44,18 @@ function App() {
       return false;
   }
 
-  function checkFood(snakeHead) {
-    if(JSON.stringify(snakeCells.slice(-1)[0]) === JSON.stringify(food)) {
-      setFood(randomLocation())
-      setSpeed(speed - 10)
+  function hasEatenFood(snakeHead) {
+    if (JSON.stringify(snakeHead) === JSON.stringify(food)) {
+      return true
     }
+    else return false
   }
 
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
+    let snakeTail = updatedCells[0]
+    
     switch (direction) {
       case "right":
         snakeHead[0] += 2;
@@ -69,15 +71,24 @@ function App() {
         break
     }
 
-    checkFood(snakeHead)
     outOfBoundsCheck(updatedCells)
-    setSnake(updatedCells)
+
+    if (hasEatenFood(snakeHead)) {
+      setFood(randomLocation())
+      setSpeed(speed - 10)
+      
+      updatedCells.unshift([snakeTail[0],snakeTail[1]])
+   
+      setSnake(updatedCells)
+    } else {
+      setSnake(updatedCells)
+    } 
   }
 
   function randomLocation() {
-    let x = Math.floor( Math.random() * 100 / 2 ) * 2;
-    let y =  Math.floor( Math.random() * 100 / 2 ) * 2;
-    return [x,y]
+    let x = Math.floor(Math.random() * 100 / 2) * 2;
+    let y = Math.floor(Math.random() * 100 / 2) * 2;
+    return [x, y]
   }
 
   const [snakeCells, setSnake] = useState([
@@ -86,7 +97,7 @@ function App() {
     [4, 0],
     [6, 0],
   ]);
-  
+
   const [food, setFood] = useState(randomLocation());
   const [speed, setSpeed] = useState(100);
   const [direction, setDirection] = useState("right")
@@ -94,7 +105,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => { tick() }, speed);
     return () => clearInterval(interval);
-  }, [speed, direction, food]);
+  }, [speed, direction, food, snakeCells]);
 
   return (
     <div className="game-area" >
