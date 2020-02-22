@@ -111,15 +111,32 @@ function App() {
     else return false
   }
 
+  function aiGridAligmnet() {
+    let snakeHead = snakeCells.slice(-1)[0]
+
+    if (snakeHead[0] > 99) {
+      snakeHead[0] -= 2
+    } else if (snakeHead[0] < 0) {
+      snakeHead[0] += 2
+    }
+    else if (snakeHead[1] > 99) {
+      snakeHead[1] -= 2
+    }
+    else if (snakeHead[1] < 0) {
+      snakeHead[1] += 2
+    }
+  }
+
   function aiTick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]
     let distanceX = food[0] - snakeHead[0]
     let distanceY = food[1] - snakeHead[1]
     let snakeTail = updatedCells[0]
-
     console.log(distanceX, distanceY)
+
     if (distanceX > 0 || distanceY > 0) {
+      // console.log("going fowards")
       if (distanceX != 0) {
         snakeHead[0] += 2
       }
@@ -128,6 +145,7 @@ function App() {
       }
     }
     else if (distanceX < 0 || distanceY < 0) {
+      // console.log("going back")
       if (distanceX != 0) {
         snakeHead[0] -= 2
       }
@@ -135,6 +153,10 @@ function App() {
         snakeHead[1] -= 2
       }
     }
+
+    aiGridAligmnet(snakeHead)
+    outOfBoundsCheck(snakeHead)
+    //headBodyCollisionCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
       setFood(randomLocation())
@@ -189,7 +211,7 @@ function App() {
     else
       setAi(true)
   }
-  
+
   return (
     <div className="game-area" >
       <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} />
