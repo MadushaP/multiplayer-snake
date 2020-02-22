@@ -1,26 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
 
 function App() {
 
+  const [food, setFood] = useState(randomLocation());
+  const [speed, setSpeed] = useState(100);
+  const [direction, setDirection] = useState("right")
+  const prevDirection = usePrevious(direction);
+
+  const [snakeCells, setSnake] = useState([
+    [0, 0],
+    [2, 0],
+    [4, 0],
+    [6, 0],
+  ]);
+
+
   useEffect(() => {
     window.addEventListener('keydown', keypress)
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => { tick() }, speed);
+    return () => clearInterval(interval);
+  }, [speed, direction, food, snakeCells]);
+
+
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    }, [value]); // Only re-run if value changes
+
+    return ref;
+  }
+  function randomLocation() {
+    let x = Math.floor(Math.random() * 100 / 2) * 2;
+    let y = Math.floor(Math.random() * 100 / 2) * 2;
+    return [x, y]
+  }
+
   function keypress({ key }) {
     switch (key) {
       case "ArrowRight":
-        setDirection("right")
+        if (prevDirection.current != "left")
+          setDirection("right")
         break
       case "ArrowLeft":
-        setDirection("left")
+        if (prevDirection.current != "right")
+          setDirection("left")
         break
       case "ArrowDown":
-        setDirection("down")
+        if (prevDirection.current != "up")
+          setDirection("down")
         break
       case "ArrowUp":
-        setDirection("up")
+        if (prevDirection.current != "down")
+          setDirection("up")
         break
     }
   }
@@ -35,10 +72,11 @@ function App() {
     }
     return updatedCells;
   }
-  function isArrayInArray(arr, item){
+
+  function isArrayInArray(arr, item) {
     var item_as_string = JSON.stringify(item);
-  
-    var contains = arr.some(function(ele){
+
+    var contains = arr.some(function (ele) {
       return JSON.stringify(ele) === item_as_string;
     });
     return contains;
@@ -46,7 +84,7 @@ function App() {
 
   function headBodyCollisionCheck(snakeHead) {
     let snakeBody = snakeCells.slice(0, -1)
-    if(isArrayInArray(snakeBody,snakeHead)) {
+    if (isArrayInArray(snakeBody, snakeHead)) {
       window.location.reload();
     }
   }
@@ -99,28 +137,6 @@ function App() {
       setSnake(updatedCells)
     }
   }
-
-  function randomLocation() {
-    let x = Math.floor(Math.random() * 100 / 2) * 2;
-    let y = Math.floor(Math.random() * 100 / 2) * 2;
-    return [x, y]
-  }
-
-  const [snakeCells, setSnake] = useState([
-    [0, 0],
-    [2, 0],
-    [4, 0],
-    [6, 0],
-  ]);
-
-  const [food, setFood] = useState(randomLocation());
-  const [speed, setSpeed] = useState(100);
-  const [direction, setDirection] = useState("right")
-
-  useEffect(() => {
-    const interval = setInterval(() => { tick() }, speed);
-    return () => clearInterval(interval);
-  }, [speed, direction, food, snakeCells]);
 
   return (
     <div className="game-area" >
