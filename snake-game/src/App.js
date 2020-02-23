@@ -98,7 +98,7 @@ function App() {
   }
 
   function hasEatenFood(snakeHead) {
-    helper.arrayEquals(snakeHead, food)
+    return helper.arrayEquals(snakeHead, food);
   }
 
   function aiGridAligmnet() {
