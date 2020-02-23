@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
 import ScoreBoard from './ScoreBoard';
+var helper = require('./helper.js');
+
 
 function App() {
   const [score, setScore] = useState(0);
@@ -80,18 +82,9 @@ function App() {
     return updatedCells;
   }
 
-  function isArrayInArray(arr, item) {
-    var item_as_string = JSON.stringify(item);
-
-    var contains = arr.some(function (ele) {
-      return JSON.stringify(ele) === item_as_string;
-    });
-    return contains;
-  }
-
   function headBodyCollisionCheck(snakeHead) {
     let snakeBody = snakeCells.slice(0, -1)
-    if (isArrayInArray(snakeBody, snakeHead)) {
+    if (helper.isArrayInArray(snakeBody, snakeHead)) {
       window.location.reload();
     }
   }
@@ -105,10 +98,7 @@ function App() {
   }
 
   function hasEatenFood(snakeHead) {
-    if (JSON.stringify(snakeHead) === JSON.stringify(food)) {
-      return true
-    }
-    else return false
+    helper.arrayEquals(snakeHead, food)
   }
 
   function aiGridAligmnet() {
@@ -136,7 +126,6 @@ function App() {
     console.log(distanceX, distanceY)
 
     if (distanceX > 0 || distanceY > 0) {
-      // console.log("going fowards")
       if (distanceX != 0) {
         snakeHead[0] += 2
       }
@@ -145,7 +134,6 @@ function App() {
       }
     }
     else if (distanceX < 0 || distanceY < 0) {
-      // console.log("going back")
       if (distanceX != 0) {
         snakeHead[0] -= 2
       }
