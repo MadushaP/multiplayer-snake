@@ -1,5 +1,4 @@
 function aiGridAlignment(snakeHead) {
-    // let snakeHead = snakeCells.slice(-1)[0]
     if (snakeHead[0] > 99) {
         snakeHead[0] -= 2
         snakeHead[1] += 2
@@ -17,6 +16,23 @@ function aiGridAlignment(snakeHead) {
     }
 }
 
+function moveToFood(distanceX, distanceY, snakeHead) {
+    if (distanceX > 0 || distanceY > 0) {
+        if (distanceX != 0) {
+            snakeHead[0] += 2
+        } else if (distanceY != 0) {
+            snakeHead[1] += 2
+        }
+    }
+    else if (distanceX < 0 || distanceY < 0) {
+        if (distanceX != 0) {
+            snakeHead[0] -= 2
+        } else if (distanceY != 0) {
+            snakeHead[1] -= 2
+        }
+    }
+}
+
 function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenFood, randomLocation, setSpeed, speed, setScore, setSnake) {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]
@@ -24,22 +40,7 @@ function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenF
     let distanceY = food[1] - snakeHead[1]
     let snakeTail = updatedCells[0]
 
-    if (distanceX > 0 || distanceY > 0) {
-        if (distanceX != 0) {
-            snakeHead[0] += 2
-        } else
-            if (distanceY != 0) {
-                snakeHead[1] += 2
-            }
-    }
-    else if (distanceX < 0 || distanceY < 0) {
-        if (distanceX != 0) {
-            snakeHead[0] -= 2
-        } else
-            if (distanceY != 0) {
-                snakeHead[1] -= 2
-            }
-    }
+    moveToFood(distanceX, distanceY, snakeHead)
 
     aiGridAlignment(snakeHead)
     outOfBoundsCheck(snakeHead)
