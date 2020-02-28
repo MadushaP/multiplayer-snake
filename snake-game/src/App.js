@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
 import ScoreBoard from './ScoreBoard';
+import AI from './Ai'
 var helper = require('./helper.js');
-
 
 function App() {
   const [score, setScore] = useState(0);
@@ -29,7 +29,7 @@ function App() {
       if (!aiStatus) {
         tick()
       } else {
-        aiTick()
+        AI.tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenFood, randomLocation, setSpeed, speed, setScore,setSnake)
       }
     }, speed);
     return () => clearInterval(interval);
@@ -99,67 +99,6 @@ function App() {
 
   function hasEatenFood(snakeHead) {
     return helper.arrayEquals(snakeHead, food);
-  }
-
-  function aiGridAligmnet() {
-    let snakeHead = snakeCells.slice(-1)[0]
-    if (snakeHead[0] > 99) {
-      snakeHead[0] -= 2
-      snakeHead[1] += 2
-    } else if (snakeHead[0] < 0) {
-      snakeHead[0] += 2
-      snakeHead[1] += 2
-    }
-    else if (snakeHead[1] > 99) {
-      snakeHead[0] -= 2
-      snakeHead[1] -= 2
-    }
-    else if (snakeHead[1] < 0) {
-      snakeHead[0] += 2
-      snakeHead[1] += 2
-    }
-  }
-
-  function aiTick() {
-    let updatedCells = updateBody(snakeCells)
-    let snakeHead = snakeCells.slice(-1)[0]
-    let distanceX = food[0] - snakeHead[0]
-    let distanceY = food[1] - snakeHead[1]
-    let snakeTail = updatedCells[0]
-
-    if (distanceX > 0 || distanceY > 0) {
-      if (distanceX != 0) {
-        snakeHead[0] += 2
-      } else
-      if (distanceY != 0) {
-        snakeHead[1] += 2
-      }
-    }
-    else if (distanceX < 0 || distanceY < 0) {
-      if (distanceX != 0) {
-        snakeHead[0] -= 2
-      } else
-      if (distanceY != 0) {
-        snakeHead[1] -= 2
-      }
-    }
-
-    aiGridAligmnet(snakeHead)
-    outOfBoundsCheck(snakeHead)
-
-    //Turn this on when AI doesn't go through it self
-    //headBodyCollisionCheck(snakeHead)
-
-    if (hasEatenFood(snakeHead)) {
-      setFood(randomLocation())
-      setSpeed(speed - 10)
-      setScore(score => score + 1)
-
-      updatedCells.unshift([snakeTail[0], snakeTail[1]])
-      setSnake(updatedCells)
-    } else {
-      setSnake(updatedCells)
-    }
   }
 
   function tick() {
