@@ -17,12 +17,15 @@ body, html {
   position: absolute;
   width: 2%;
   height: 2%;
+  border-style: solid;
   background: linear-gradient(354deg, rgba(224,43,125,1) 0%, rgba(245,73,151,1) 100%);
  }
  
  .snake-head {
   position: absolute;
   width: 2%;
+  border-style: solid;
+
   height: 2%;
   background: linear-gradient(354deg, rgba(219,3,101,1) 0%, rgba(245,73,151,1) 100%);
  }

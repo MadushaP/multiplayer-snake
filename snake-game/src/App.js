@@ -29,7 +29,9 @@ function App() {
       if (!aiStatus) {
         tick()
       } else {
-        AI.tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenFood, randomLocation, setSpeed, speed, setScore,setSnake)
+        AI.tick(snakeCells, food, updateBody, outOfBoundsCheck, 
+                setFood, hasEatenFood, randomLocation, setSpeed,
+                speed, setScore,setSnake,setDirection, direction)
       }
     }, speed);
     return () => clearInterval(interval);
