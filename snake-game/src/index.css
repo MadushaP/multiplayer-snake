@@ -6,11 +6,12 @@ body, html {
 .game-area {
   position: relative;
   margin: 50px auto;
-  width: 1150px;
-  height: 1150px;
+  width: 1300px;
+  height: 1300px;
   border: 2px solid #000;
+  background:#0c101c;
   animation: fadein 0.5s;
-
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .snake-dot {
@@ -25,7 +26,6 @@ body, html {
   position: absolute;
   width: 2%;
   border-style: solid;
-
   height: 2%;
   background: linear-gradient(354deg, rgba(219,3,101,1) 0%, rgba(245,73,151,1) 100%);
  }
@@ -58,7 +58,7 @@ h1 {
 
  .ai-button {
    margin-left: 10%;
-   
+   margin-bottom:10%;
    height: 30px;
  }
 

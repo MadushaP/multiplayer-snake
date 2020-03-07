@@ -1,5 +1,3 @@
-var helper = require('./helper.js');
-
 function aiGridAlignment(snakeHead) {
     if (snakeHead[0] > 99) {
         snakeHead[0] -= 2
@@ -18,34 +16,34 @@ function aiGridAlignment(snakeHead) {
     }
 }
 
-function moveToFood(distanceX, distanceY, snakeHead, setDirection) {
+function moveToFood(distanceX, distanceY, snakeHead, setDirection, updatedCells, direction) {
+    console.log(direction)
     if (distanceX > 0 || distanceY > 0) {
         if (distanceX != 0) {
-            setDirection("right")
             snakeHead[0] += 2
+            setDirection("right")
         } else if (distanceY != 0) {
-            setDirection("down")
             snakeHead[1] += 2
+            setDirection("down")
         }
     }
     else if (distanceX < 0 || distanceY < 0) {
         if (distanceX != 0) {
-            setDirection("left")
             snakeHead[0] -= 2
+            setDirection("left")
         } else if (distanceY != 0) {
-            setDirection("up")
             snakeHead[1] -= 2
+            setDirection("down")
         }
     }
 }
 
-//Needs work lol
 function headBodyAlignment(snakeHead, updatedCells, direction) {
     for (let i = 0; i < updatedCells.length - 1; i++) {
         if (snakeHead[0] == updatedCells[i][0] && snakeHead[1] == updatedCells[i][1]) {
-            console.log("collide")
+            console.log("collide", direction)
             if (direction == "left") {
-                snakeHead[0] += 2
+                snakeHead[0] -= 2
                 snakeHead[1] -= 2
             } else if (direction == "right") {
                 snakeHead[0] -= 2
@@ -69,14 +67,14 @@ function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenF
     let distanceY = food[1] - snakeHead[1]
     let snakeTail = updatedCells[0]
 
-    moveToFood(distanceX, distanceY, snakeHead, setDirection)
-
+    moveToFood(distanceX, distanceY, snakeHead, setDirection, updatedCells, direction)
     aiGridAlignment(snakeHead)
     headBodyAlignment(snakeHead, updatedCells, direction)
 
     //Turn this on when AI doesn't go through it self
-    outOfBoundsCheck(snakeHead)
     //headBodyCollisionCheck(snakeHead)
+    
+    outOfBoundsCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
         setFood(randomLocation())
