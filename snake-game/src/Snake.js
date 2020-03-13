@@ -7,8 +7,8 @@ export default (props) => {
 
         <ReactCSSTransitionGroup
             transitionName="animation"
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}>
+            transitionEnterTimeout={150}
+            transitionLeaveTimeout={150}>
             {props.snake.map((dot, i) => {
                 const style = {
                     left: `${dot[0]}%`,

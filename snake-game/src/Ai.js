@@ -46,13 +46,13 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
                 snakeHead[0] -= 2
                 snakeHead[1] -= 2
             } else if (direction == "right") {
-                snakeHead[0] -= 2
-                snakeHead[1] += 2
-            } else if (direction == "up") {
                 snakeHead[0] += 2
                 snakeHead[1] += 2
-            } else if (direction == "down") {
+            } else if (direction == "up") {
                 snakeHead[0] -= 2
+                snakeHead[1] += 2
+            } else if (direction == "down") {
+                snakeHead[0] += 2
                 snakeHead[1] -= 2
             }
             return;
@@ -61,6 +61,8 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
 }
 
 function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenFood, randomLocation, setSpeed, speed, setScore, setSnake, setDirection, direction) {
+    setSpeed(25)
+
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]
     let distanceX = food[0] - snakeHead[0]
@@ -72,13 +74,11 @@ function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenF
     headBodyAlignment(snakeHead, updatedCells, direction)
 
     //Turn this on when AI doesn't go through it self
-    //headBodyCollisionCheck(snakeHead)
-    
+    //headBodyCollisionCheck(snakeHead)    
     outOfBoundsCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
         setFood(randomLocation())
-        setSpeed(speed - 10)
         setScore(score => score + 1)
         updatedCells.unshift([snakeTail[0], snakeTail[1]])
         setSnake(updatedCells)

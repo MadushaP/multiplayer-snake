@@ -8,7 +8,7 @@ var helper = require('./helper.js');
 function App() {
   const [score, setScore] = useState(0);
   const [food, setFood] = useState(randomLocation());
-  const [speed, setSpeed] = useState(100);
+  const [speed, setSpeed] = useState(60);
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction);
   const [aiStatus, setAi] = useState(false);
@@ -29,14 +29,31 @@ function App() {
       if (!aiStatus) {
         tick()
       } else {
-        AI.tick(snakeCells, food, updateBody, outOfBoundsCheck, 
-                setFood, hasEatenFood, randomLocation, setSpeed,
-                speed, setScore,setSnake,setDirection, direction)
+        AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
+          setFood, hasEatenFood, randomLocation, setSpeed,
+          speed, setScore, setSnake, setDirection, direction)
       }
     }, speed);
     return () => clearInterval(interval);
   }, [speed, direction, food, snakeCells]);
 
+ 
+  //Request animation 60 fps
+  // const requestRef = React.useRef();
+  // const previousTimeRef = React.useRef(1);
+  // const animate = time => {
+  //   if (previousTimeRef.current != undefined) {
+  //     const deltaTime = time - previousTimeRef.current;
+  //     tick()
+  //   }
+  //   previousTimeRef.current = time  + (10 * 0.01) % 100;
+  //   requestRef.current = requestAnimationFrame(animate);
+  // }
+
+  // React.useEffect(() => {
+  //   requestRef.current = requestAnimationFrame(animate);
+  //   return () => cancelAnimationFrame(requestRef.current);
+  // }, [speed, direction, food, snakeCells]); // Make sure the effect runs only once
 
   function usePrevious(value) {
     const ref = useRef();
@@ -104,6 +121,7 @@ function App() {
   }
 
   function tick() {
+    setTimeout(function(){  }, 3000);
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
     let snakeTail = updatedCells[0]
@@ -128,7 +146,7 @@ function App() {
 
     if (hasEatenFood(snakeHead)) {
       setFood(randomLocation())
-      setSpeed(speed - 10)
+      // setSpeed(speed - 10)
       setScore(score => score + 1)
 
       updatedCells.unshift([snakeTail[0], snakeTail[1]])
@@ -146,10 +164,12 @@ function App() {
   }
 
   return (
-    <div className="game-area" >
+    <div>
       <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} />
-      <Snake snake={snakeCells} />
-      <Food food={food} />
+      <div className="game-area" >
+        <Snake snake={snakeCells} />
+        <Food food={food} />
+      </div>
     </div>
   );
 }

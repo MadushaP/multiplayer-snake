@@ -1,17 +1,19 @@
-body, html { 
-    overflow-x: hidden; 
-    overflow-y: hidden;
+body,
+html {
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .game-area {
   position: relative;
-  margin: 50px auto;
+  margin: 0 auto;
   width: 1300px;
-  height: 1300px;
+  height: 1150px;
   border: 2px solid #000;
-  background:#0c101c;
+  background: #0c101c;
   animation: fadein 0.5s;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
 }
 
 .snake-dot {
@@ -19,31 +21,37 @@ body, html {
   width: 2%;
   height: 2%;
   border-style: solid;
-  background: linear-gradient(354deg, rgba(224,43,125,1) 0%, rgba(245,73,151,1) 100%);
- }
- 
- .snake-head {
+  background: linear-gradient(
+    354deg,
+    rgba(224, 43, 125, 1) 0%,
+    rgba(245, 73, 151, 1) 100%
+  );
+}
+
+.snake-head {
   position: absolute;
   width: 2%;
   border-style: solid;
   height: 2%;
-  background: linear-gradient(354deg, rgba(219,3,101,1) 0%, rgba(245,73,151,1) 100%);
- }
+  background: linear-gradient(
+    354deg,
+    rgba(219, 3, 101, 1) 0%,
+    rgba(245, 73, 151, 1) 100%
+  );
+}
 
- .food {
+.food {
   position: absolute;
   width: 2%;
   height: 2%;
-  background: radial-gradient(circle, rgba(39,198,132,1) 0%, rgba(63,255,45,1) 100%);
+  background: radial-gradient(
+    circle,
+    rgba(39, 198, 132, 1) 0%,
+    rgba(63, 255, 45, 1) 100%
+  );
   border: 1px solid#25a430;
-  border-radius: 25px;
- }
-
- .scoreBoard {
-  position: fixed; 
-  top: 0%;
-  left: 50%;
- }
+  border-radius: 100px;
+}
 
 h1 {
   display: flex;
@@ -51,16 +59,21 @@ h1 {
 }
 
 .ai-status {
-  display:flex;
+  display: flex;
   width: 500px;
-  margin-left:5%;
+  margin-left: 5%;
 }
 
- .ai-button {
-   margin-left: 10%;
-   margin-bottom:10%;
-   height: 30px;
- }
+.ai-button {
+  margin-left: 10%;
+  margin-bottom: 10%;
+  height: 30px;
+}
+
+.ai-switch {
+margin-left: 10%;
+position: absolute;
+}
 
 .animation-enter {
   opacity: 1;
@@ -70,4 +83,28 @@ h1 {
 .animation-leave {
   opacity: 0.01;
   transition: opacity 250ms ease-in;
+}
+.parent {
+  display: flex;
+  flex-wrap: wrap;
+  width: 1315px;
+  margin: 0 auto;
+}
+
+.child {
+  flex: 1 0 20%;
+  margin: 5px;
+  height: 35px;
+  background-color: #080b13;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: white;
+  border-radius: 10px;
+
+}
+
+.gameBoardText {
+  text-align: center;
 }
