@@ -9,16 +9,16 @@ export default (props) => {
             transitionName="animation"
             transitionEnterTimeout={150}
             transitionLeaveTimeout={150}>
-            {props.snake.map((dot, i) => {
+            {props.snake.map((cell, i) => {
                 const style = {
-                    left: `${dot[0]}%`,
-                    top: `${dot[1]}%`
+                    left: `${cell.x}%`,
+                    top: `${cell.y}%`
                 }
                 if (props.snake.length - 1 == i) {
-                    return <div key={[dot[0], dot[1]]} className="snake-head" style={style}></div>
+                    return <div key={[cell.x, cell.y]} className="snake-head" style={style}></div>
                 }
                 else {
-                    return <div key={[dot[0], dot[1]]} className="snake-dot" style={style}></div>
+                    return <div key={[cell.x, cell.y]} className="snake-dot" style={style}></div>
                 }
             })}
         </ReactCSSTransitionGroup>);

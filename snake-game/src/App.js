@@ -8,16 +8,16 @@ var helper = require('./helper.js');
 function App() {
   const [score, setScore] = useState(0);
   const [food, setFood] = useState(randomLocation());
-  const [speed, setSpeed] = useState(60);
+  const [speed, setSpeed] = useState(100);
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction);
   const [aiStatus, setAi] = useState(false);
 
   const [snakeCells, setSnake] = useState([
-    [0, 0],
-    [2, 0],
-    [4, 0],
-    [6, 0],
+    {'x':0, 'y':0},
+    {'x':2, 'y':0},
+    {'x':4, 'y':0},
+    {'x':6, 'y':0},
   ]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function App() {
   function randomLocation() {
     let x = Math.floor(Math.random() * 100 / 2) * 2;
     let y = Math.floor(Math.random() * 100 / 2) * 2;
-    return [x, y]
+    return {'x':x, 'y':y}
   }
 
   function keypress({ key }) {
@@ -92,25 +92,25 @@ function App() {
 
   function updateBody(snakeCells) {
     let updatedCells = [...snakeCells]
-
     for (let cell = 0; cell < updatedCells.length - 1; cell++) {
-      for (let i = 0; i < 2; i++) {
-        updatedCells[cell][i] = snakeCells[cell + 1][i]
-      }
+        updatedCells[cell].x = snakeCells[cell + 1].x 
+        updatedCells[cell].y = snakeCells[cell + 1].y
     }
+
     return updatedCells;
   }
 
   function headBodyCollisionCheck(snakeHead) {
     let snakeBody = snakeCells.slice(0, -1)
+
     if (helper.isArrayInArray(snakeBody, snakeHead)) {
       window.location.reload();
     }
   }
 
   function outOfBoundsCheck(snakeHead) {
-    if (snakeHead[0] > 99 || snakeHead[0] < 0
-      || snakeHead[1] < 0 || snakeHead[1] > 99) {
+    if (snakeHead.x > 99 || snakeHead.x < 0
+      || snakeHead.y < 0 || snakeHead.y > 99) {
       window.location.reload();
     } else
       return false;
@@ -121,23 +121,22 @@ function App() {
   }
 
   function tick() {
-    setTimeout(function(){  }, 3000);
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
     let snakeTail = updatedCells[0]
 
     switch (direction) {
       case "right":
-        snakeHead[0] += 2;
+        snakeHead.x += 2;
         break
       case "left":
-        snakeHead[0] -= 2;
+        snakeHead.x -= 2;
         break
       case "down":
-        snakeHead[1] += 2;
+        snakeHead.y += 2;
         break
       case "up":
-        snakeHead[1] -= 2;
+        snakeHead.y -= 2;
         break
     }
 
@@ -149,7 +148,7 @@ function App() {
       // setSpeed(speed - 10)
       setScore(score => score + 1)
 
-      updatedCells.unshift([snakeTail[0], snakeTail[1]])
+      updatedCells.unshift({'x':snakeTail.x, 'y':snakeTail.y})
       setSnake(updatedCells)
     } else {
       setSnake(updatedCells)
