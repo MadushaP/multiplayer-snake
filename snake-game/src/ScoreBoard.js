@@ -12,12 +12,13 @@ export default (props) => {
                 <div className="gameBoardText">Word [placeholder] </div>
             </div>
             <div className="child">
-                <div className="ai-status">
-                    {props.aiStatus ? <div className="ai-button">  AI ON</div> : <div className="ai-button">AI OFF</div>}
-                    <div className='ai-switch'>
-                        <Toggle 
-                            defaultChecked={false}
-                            onChange={() => props.setAi(true)} />
+                <div className="settings">
+                    <div>AI 
+                      <Toggle className="spacing" defaultChecked={false} onChange={() => props.setAi(true)} />
+                    </div>
+                    <div className="larger-spacing"></div>
+                    <div>Sound
+                      <Toggle className="spacing" defaultChecked={true} onChange={() => props.setSound()} />
                     </div>
                 </div>
             </div>

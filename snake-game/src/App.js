@@ -6,22 +6,25 @@ import AI from './Ai'
 var helper = require('./helper.js');
 
 function App() {
-  const [score, setScore] = useState(0);
-  const [food, setFood] = useState(randomLocation());
-  const [speed, setSpeed] = useState(100);
+  const [score, setScore] = useState(0)
+  const [food, setFood] = useState(randomLocation())
+  const [speed, setSpeed] = useState(100)
   const [direction, setDirection] = useState("right")
-  const prevDirection = usePrevious(direction);
-  const [aiStatus, setAi] = useState(false);
+  const prevDirection = usePrevious(direction)
+  const [aiStatus, setAi] = useState(false)
+  const [volume, setVolume] = useState(1)
+
 
   const [snakeCells, setSnake] = useState([
-    {'x':0, 'y':0},
-    {'x':2, 'y':0},
-    {'x':4, 'y':0},
-    {'x':6, 'y':0},
+    { 'x': 0, 'y': 0 },
+    { 'x': 2, 'y': 0 },
+    { 'x': 4, 'y': 0 },
+    { 'x': 6, 'y': 0 },
   ]);
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
+
   }, []);
 
   useEffect(() => {
@@ -31,13 +34,13 @@ function App() {
       } else {
         AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
           setFood, hasEatenFood, randomLocation, setSpeed,
-          speed, setScore, setSnake, setDirection, direction)
+          speed, setScore, setSnake, setDirection, direction, volume)
       }
     }, speed);
     return () => clearInterval(interval);
   }, [speed, direction, food, snakeCells]);
 
- 
+
   //Request animation 60 fps
   // const requestRef = React.useRef();
   // const previousTimeRef = React.useRef(1);
@@ -66,7 +69,7 @@ function App() {
   function randomLocation() {
     let x = Math.floor(Math.random() * 100 / 2) * 2;
     let y = Math.floor(Math.random() * 100 / 2) * 2;
-    return {'x':x, 'y':y}
+    return { 'x': x, 'y': y }
   }
 
   function keypress({ key }) {
@@ -93,8 +96,8 @@ function App() {
   function updateBody(snakeCells) {
     let updatedCells = [...snakeCells]
     for (let cell = 0; cell < updatedCells.length - 1; cell++) {
-        updatedCells[cell].x = snakeCells[cell + 1].x 
-        updatedCells[cell].y = snakeCells[cell + 1].y
+      updatedCells[cell].x = snakeCells[cell + 1].x
+      updatedCells[cell].y = snakeCells[cell + 1].y
     }
 
     return updatedCells;
@@ -147,8 +150,10 @@ function App() {
       setFood(randomLocation())
       // setSpeed(speed - 10)
       setScore(score => score + 1)
-
-      updatedCells.unshift({'x':snakeTail.x, 'y':snakeTail.y})
+      var bloop = new Audio('bloop.mp3')
+      bloop.volume = volume
+      bloop.play()
+      updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
       setSnake(updatedCells)
     } else {
       setSnake(updatedCells)
@@ -162,9 +167,17 @@ function App() {
       setAi(true)
   }
 
+  function setSound() {
+    console.log(volume)
+    if (volume == 1)
+      setVolume(0)
+    else
+      setVolume(1)
+  }
+
   return (
     <div>
-      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} />
+      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} />
       <div className="game-area" >
         <Snake snake={snakeCells} />
         <Food food={food} />

@@ -60,7 +60,9 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
     }
 }
 
-function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenFood, randomLocation, setSpeed, speed, setScore, setSnake, setDirection, direction) {
+function tick(snakeCells, food, updateBody, outOfBoundsCheck, 
+              setFood, hasEatenFood, randomLocation, setSpeed, 
+              speed, setScore, setSnake, setDirection, direction, volume) {
     setSpeed(25)
 
     let updatedCells = updateBody(snakeCells)
@@ -80,6 +82,9 @@ function tick(snakeCells, food, updateBody, outOfBoundsCheck, setFood, hasEatenF
     if (hasEatenFood(snakeHead)) {
         setFood(randomLocation())
         setScore(score => score + 1)
+        var bloop = new Audio('bloop.mp3');
+        bloop.volume = volume
+        bloop.play();
         updatedCells.unshift({'x':snakeTail.x, 'y':snakeTail.y})
         setSnake(updatedCells)
     } else {
