@@ -8,7 +8,7 @@ export default (props) => {
     return (
         <div>
             <div className="food" style={style}>
-              {/* <h1 className="foodText"> OCP</h1> */}
+                <div className="foodText"> {props.acronym}</div>
             </div>
         </div>)
 }

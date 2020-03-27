@@ -3,17 +3,17 @@ import Snake from './Snake';
 import Food from './Food';
 import ScoreBoard from './ScoreBoard';
 import AI from './Ai'
-var helper = require('./helper.js');
+const helper = require('./helper.js');
+const acronyms = require('./acronyms.js');
 
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(100)
+  const [speed, setSpeed] = useState(70)
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
-
 
   const [snakeCells, setSnake] = useState([
     { 'x': 0, 'y': 0 },
@@ -22,9 +22,11 @@ function App() {
     { 'x': 6, 'y': 0 },
   ]);
 
+  const [acronymMap, setAcronymsMap] = useState(acronyms);
+  const [currentAcronym, setAcronym] = useState(acronymMap[0])
+
   useEffect(() => {
     window.addEventListener('keydown', keypress)
-
   }, []);
 
   useEffect(() => {
@@ -34,7 +36,7 @@ function App() {
       } else {
         AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
           setFood, hasEatenFood, randomLocation, setSpeed,
-          speed, setScore, setSnake, setDirection, direction, volume)
+          speed, setScore, setSnake, setDirection, direction, volume, setAcronym, acronymMap, playSound)
       }
     }, speed);
     return () => clearInterval(interval);
@@ -66,6 +68,7 @@ function App() {
 
     return ref;
   }
+
   function randomLocation() {
     let x = Math.floor(Math.random() * 100 / 2) * 2;
     let y = Math.floor(Math.random() * 100 / 2) * 2;
@@ -123,6 +126,11 @@ function App() {
     return helper.arrayEquals(snakeHead, food);
   }
 
+  function playSound(sound) {
+    var bloop = new Audio(sound)
+    bloop.volume = volume
+    bloop.play()
+  }
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
@@ -150,14 +158,12 @@ function App() {
       setFood(randomLocation())
       // setSpeed(speed - 10)
       setScore(score => score + 1)
-      var bloop = new Audio('bloop.mp3')
-      bloop.volume = volume
-      bloop.play()
+      setAcronym(helper.randomItem(acronymMap))
+      playSound('bloop.mp3')
       updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
-      setSnake(updatedCells)
-    } else {
-      setSnake(updatedCells)
     }
+    
+    setSnake(updatedCells)    
   }
 
   function setAiStatus() {
@@ -166,6 +172,7 @@ function App() {
     else
       setAi(true)
   }
+
 
   function setSound() {
     console.log(volume)
@@ -177,10 +184,10 @@ function App() {
 
   return (
     <div>
-      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} />
+      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} fullWord={currentAcronym.fullWord}   />
       <div className="game-area" >
         <Snake snake={snakeCells} />
-        <Food food={food} />
+        <Food food={food}  acronym={currentAcronym.acronym} />
       </div>
     </div>
   );

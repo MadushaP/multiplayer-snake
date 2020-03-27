@@ -1,3 +1,5 @@
+const helper = require('./helper.js');
+
 function aiGridAlignment(snakeHead) {
     if (snakeHead.x > 99) {
         snakeHead.x -= 2
@@ -62,7 +64,7 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
 
 function tick(snakeCells, food, updateBody, outOfBoundsCheck, 
               setFood, hasEatenFood, randomLocation, setSpeed, 
-              speed, setScore, setSnake, setDirection, direction, volume) {
+              speed, setScore, setSnake, setDirection, direction, volume, setAcronym, acronymMap, playSound) {
     setSpeed(25)
 
     let updatedCells = updateBody(snakeCells)
@@ -75,21 +77,19 @@ function tick(snakeCells, food, updateBody, outOfBoundsCheck,
     aiGridAlignment(snakeHead)
     headBodyAlignment(snakeHead, updatedCells, direction)
 
-    //Turn this on when AI doesn't go through it self
+    //Turn this on when AI is improved
     //headBodyCollisionCheck(snakeHead)    
-    outOfBoundsCheck(snakeHead)
+    // outOfBoundsCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
         setFood(randomLocation())
         setScore(score => score + 1)
-        var bloop = new Audio('bloop.mp3');
-        bloop.volume = volume
-        bloop.play();
+        setAcronym(helper.randomItem(acronymMap))
+        playSound('bloop.mp3')
         updatedCells.unshift({'x':snakeTail.x, 'y':snakeTail.y})
-        setSnake(updatedCells)
-    } else {
-        setSnake(updatedCells)
-    }
+    } 
+    
+    setSnake(updatedCells)
 }
 
 

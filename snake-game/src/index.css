@@ -43,7 +43,7 @@ html {
 .food {
   position: absolute;
   width: 2%;
-  height: 2%;
+  height: 2.2%;
   background: radial-gradient(
     circle,
     rgba(39, 198, 132, 1) 0%,
@@ -54,9 +54,12 @@ html {
 }
 
 .foodText {
+  position: absolute;
   color: white;
-  font-size: 25px;
-  margin-right: 30px;
+  font-size: 40px;
+  font: 15px arial, sans-serif;
+  font-weight: bold;
+  padding-top: 110%;
 }
 
 h1 {

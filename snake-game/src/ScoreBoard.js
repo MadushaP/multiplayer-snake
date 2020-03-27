@@ -9,11 +9,11 @@ export default (props) => {
                 <div className="gameBoardText">Score: {props.score}</div>
             </div>
             <div className="child">
-                <div className="gameBoardText">Word [placeholder] </div>
+                <div className="gameBoardText">{props.fullWord} </div>
             </div>
             <div className="child">
                 <div className="settings">
-                    <div>AI 
+                    <div>AI
                       <Toggle className="spacing" defaultChecked={false} onChange={() => props.setAi(true)} />
                     </div>
                     <div className="larger-spacing"></div>

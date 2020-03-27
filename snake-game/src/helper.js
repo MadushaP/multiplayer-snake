@@ -13,7 +13,12 @@ function arrayEquals(array1, array2) {
     else return false
 }
 
+function randomItem(array) {
+    return array[Math.floor(Math.random() * array.length)]
+  }
+
 module.exports = {
     isArrayInArray:isArrayInArray,
-    arrayEquals:arrayEquals
+    arrayEquals:arrayEquals,
+    randomItem:randomItem
 }
