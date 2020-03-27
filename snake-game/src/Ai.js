@@ -64,8 +64,8 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
 
 function tick(snakeCells, food, updateBody, outOfBoundsCheck, 
               setFood, hasEatenFood, randomLocation, setSpeed, 
-              speed, setScore, setSnake, setDirection, direction, volume, setAcronym, acronymMap, playSound) {
-    setSpeed(25)
+              speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound) {
+    setSpeed(20)
 
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]

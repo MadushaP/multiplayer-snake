@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
 import ScoreBoard from './ScoreBoard';
+import GameOverScreen from './GameOverScreen'
+
 import AI from './Ai'
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
@@ -14,6 +16,7 @@ function App() {
   const prevDirection = usePrevious(direction)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
+  const [isGameOver, setGameOver] = React.useState(false);
 
   const [snakeCells, setSnake] = useState([
     { 'x': 0, 'y': 0 },
@@ -31,12 +34,14 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if(isGameOver) return;
+
       if (!aiStatus) {
         tick()
       } else {
         AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
           setFood, hasEatenFood, randomLocation, setSpeed,
-          speed, setScore, setSnake, setDirection, direction, volume, setAcronym, acronymMap, playSound)
+          speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound)
       }
     }, speed);
     return () => clearInterval(interval);
@@ -106,18 +111,23 @@ function App() {
     return updatedCells;
   }
 
+  function gameOver(){
+    setGameOver(true)
+    playSound('game-over.mp3')
+  }
+
   function headBodyCollisionCheck(snakeHead) {
     let snakeBody = snakeCells.slice(0, -1)
 
     if (helper.isArrayInArray(snakeBody, snakeHead)) {
-      window.location.reload();
+      gameOver()
     }
   }
 
   function outOfBoundsCheck(snakeHead) {
     if (snakeHead.x > 99 || snakeHead.x < 0
-      || snakeHead.y < 0 || snakeHead.y > 99) {
-      window.location.reload();
+      || snakeHead.y < 0 || snakeHead.y > 99) {  
+        gameOver()
     } else
       return false;
   }
@@ -131,6 +141,7 @@ function App() {
     bloop.volume = volume
     bloop.play()
   }
+
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
@@ -184,6 +195,7 @@ function App() {
 
   return (
     <div>
+      <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver}/>
       <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} fullWord={currentAcronym.fullWord}   />
       <div className="game-area" >
         <Snake snake={snakeCells} />
