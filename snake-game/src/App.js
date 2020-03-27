@@ -7,7 +7,6 @@ import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
-
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
@@ -16,7 +15,9 @@ function App() {
   const prevDirection = usePrevious(direction)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
-  const [isGameOver, setGameOver] = React.useState(false);
+  const [isGameOver, setGameOver] = useState(false);
+  const [showConfetti, setConfetti] = useState(false);
+
 
   const [snakeCells, setSnake] = useState([
     { 'x': 0, 'y': 0 },
@@ -34,14 +35,14 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if(isGameOver) return;
+      if (isGameOver) return;
 
       if (!aiStatus) {
         tick()
       } else {
         AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
           setFood, hasEatenFood, randomLocation, setSpeed,
-          speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound)
+          speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound, setConfetti)
       }
     }, speed);
     return () => clearInterval(interval);
@@ -111,7 +112,7 @@ function App() {
     return updatedCells;
   }
 
-  function gameOver(){
+  function gameOver() {
     setGameOver(true)
     playSound('game-over.mp3')
   }
@@ -126,8 +127,8 @@ function App() {
 
   function outOfBoundsCheck(snakeHead) {
     if (snakeHead.x > 99 || snakeHead.x < 0
-      || snakeHead.y < 0 || snakeHead.y > 99) {  
-        gameOver()
+      || snakeHead.y < 0 || snakeHead.y > 99) {
+      gameOver()
     } else
       return false;
   }
@@ -166,6 +167,8 @@ function App() {
     headBodyCollisionCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
+      setConfetti(true)
+
       setFood(randomLocation())
       // setSpeed(speed - 10)
       setScore(score => score + 1)
@@ -173,8 +176,11 @@ function App() {
       playSound('bloop.mp3')
       updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
     }
-    
-    setSnake(updatedCells)    
+    else {
+      setConfetti(false)
+    }
+
+    setSnake(updatedCells)
   }
 
   function setAiStatus() {
@@ -195,11 +201,11 @@ function App() {
 
   return (
     <div>
-      <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver}/>
-      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} fullWord={currentAcronym.fullWord}   />
+      <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
+      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} fullWord={currentAcronym.fullWord} />
       <div className="game-area" >
         <Snake snake={snakeCells} />
-        <Food food={food}  acronym={currentAcronym.acronym} />
+        <Food food={food} acronym={currentAcronym.acronym} showConfetti={showConfetti} />
       </div>
     </div>
   );

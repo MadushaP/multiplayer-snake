@@ -62,9 +62,9 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
     }
 }
 
-function tick(snakeCells, food, updateBody, outOfBoundsCheck, 
-              setFood, hasEatenFood, randomLocation, setSpeed, 
-              speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound) {
+function tick(snakeCells, food, updateBody, outOfBoundsCheck,
+    setFood, hasEatenFood, randomLocation, setSpeed,
+    speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound, setConfetti) {
     setSpeed(20)
 
     let updatedCells = updateBody(snakeCells)
@@ -82,13 +82,17 @@ function tick(snakeCells, food, updateBody, outOfBoundsCheck,
     // outOfBoundsCheck(snakeHead)
 
     if (hasEatenFood(snakeHead)) {
+        setConfetti(true)
+
         setFood(randomLocation())
         setScore(score => score + 1)
         setAcronym(helper.randomItem(acronymMap))
         playSound('bloop.mp3')
-        updatedCells.unshift({'x':snakeTail.x, 'y':snakeTail.y})
-    } 
-    
+        updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+    } else {
+        setConfetti(false)
+    }
+
     setSnake(updatedCells)
 }
 
