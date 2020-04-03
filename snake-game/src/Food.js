@@ -5,7 +5,7 @@ const config = {
     angle: "360",
     spread: "360",
     startVelocity: "22",
-    elementCount: "70",
+    elementCount: "20",
     dragFriction: "0.05",
     duration: "1350",
     stagger: 0,

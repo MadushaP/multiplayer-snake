@@ -3,8 +3,8 @@ import Snake from './Snake';
 import Food from './Food';
 import ScoreBoard from './ScoreBoard';
 import GameOverScreen from './GameOverScreen'
-
 import AI from './Ai'
+
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
 function App() {
@@ -55,7 +55,9 @@ function App() {
   // const animate = time => {
   //   if (previousTimeRef.current != undefined) {
   //     const deltaTime = time - previousTimeRef.current;
-  //     tick()
+  //           AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
+  //         setFood, hasEatenFood, randomLocation, setSpeed,
+  //         speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound, setConfetti)
   //   }
   //   previousTimeRef.current = time  + (10 * 0.01) % 100;
   //   requestRef.current = requestAnimationFrame(animate);
