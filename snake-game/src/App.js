@@ -7,6 +7,7 @@ import AI from './Ai'
 
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
+
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
@@ -17,8 +18,6 @@ function App() {
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
   const [showConfetti, setConfetti] = useState(false);
-
-
   const [snakeCells, setSnake] = useState([
     { 'x': 0, 'y': 0 },
     { 'x': 2, 'y': 0 },
@@ -40,33 +39,12 @@ function App() {
       if (!aiStatus) {
         tick()
       } else {
-        AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
-          setFood, hasEatenFood, randomLocation, setSpeed,
-          speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound, setConfetti)
+        AI.tick(snakeCells, food, updateBody, setSpeed,
+                setSnake, setDirection, direction, foodCheck)
       }
     }, speed);
     return () => clearInterval(interval);
   }, [speed, direction, food, snakeCells]);
-
-
-  //Request animation 60 fps
-  // const requestRef = React.useRef();
-  // const previousTimeRef = React.useRef(1);
-  // const animate = time => {
-  //   if (previousTimeRef.current != undefined) {
-  //     const deltaTime = time - previousTimeRef.current;
-  //           AI.tick(snakeCells, food, updateBody, outOfBoundsCheck,
-  //         setFood, hasEatenFood, randomLocation, setSpeed,
-  //         speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound, setConfetti)
-  //   }
-  //   previousTimeRef.current = time  + (10 * 0.01) % 100;
-  //   requestRef.current = requestAnimationFrame(animate);
-  // }
-
-  // React.useEffect(() => {
-  //   requestRef.current = requestAnimationFrame(animate);
-  //   return () => cancelAnimationFrame(requestRef.current);
-  // }, [speed, direction, food, snakeCells]); // Make sure the effect runs only once
 
   function usePrevious(value) {
     const ref = useRef();
@@ -145,10 +123,27 @@ function App() {
     bloop.play()
   }
 
+ function foodCheck(snakeHead, updatedCells) {
+  let snakeTail = updatedCells[0]
+
+  if (hasEatenFood(snakeHead)) {
+      setConfetti(true)
+
+      setFood(randomLocation())
+      // setSpeed(speed - 10)
+      setScore(score => score + 1)
+      setAcronym(helper.randomItem(acronymMap))
+      playSound('bloop.mp3')
+      updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+    }
+    else {
+      setConfetti(false)
+    }
+ }
+
   function tick() {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
-    let snakeTail = updatedCells[0]
 
     switch (direction) {
       case "right":
@@ -167,44 +162,15 @@ function App() {
 
     outOfBoundsCheck(snakeHead)
     headBodyCollisionCheck(snakeHead)
-
-    if (hasEatenFood(snakeHead)) {
-      setConfetti(true)
-
-      setFood(randomLocation())
-      // setSpeed(speed - 10)
-      setScore(score => score + 1)
-      setAcronym(helper.randomItem(acronymMap))
-      playSound('bloop.mp3')
-      updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
-    }
-    else {
-      setConfetti(false)
-    }
+    foodCheck(snakeHead, updatedCells)
 
     setSnake(updatedCells)
-  }
-
-  function setAiStatus() {
-    if (aiStatus)
-      setAi(false)
-    else
-      setAi(true)
-  }
-
-
-  function setSound() {
-    console.log(volume)
-    if (volume == 1)
-      setVolume(0)
-    else
-      setVolume(1)
   }
 
   return (
     <div>
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-      <ScoreBoard score={score} setAi={setAiStatus} aiStatus={aiStatus} setSound={setSound} fullWord={currentAcronym.fullWord} />
+      <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area" >
         <Snake snake={snakeCells} />
         <Food food={food} acronym={currentAcronym.acronym} showConfetti={showConfetti} />

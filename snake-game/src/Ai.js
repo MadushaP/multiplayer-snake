@@ -1,5 +1,3 @@
-const helper = require('./helper.js');
-
 function aiGridAlignment(snakeHead) {
     if (snakeHead.x > 99) {
         snakeHead.x -= 2
@@ -18,7 +16,7 @@ function aiGridAlignment(snakeHead) {
     }
 }
 
-function moveToFood(distanceX, distanceY, snakeHead, setDirection, updatedCells, direction) {
+function moveToFood(distanceX, distanceY, snakeHead, setDirection, direction) {
     console.log(direction)
     if (distanceX > 0 || distanceY > 0) {
         if (distanceX != 0) {
@@ -62,36 +60,23 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
     }
 }
 
-function tick(snakeCells, food, updateBody, outOfBoundsCheck,
-    setFood, hasEatenFood, randomLocation, setSpeed,
-    speed, setScore, setSnake, setDirection, direction, setAcronym, acronymMap, playSound, setConfetti) {
+function tick(snakeCells, food, updateBody, setSpeed,
+              setSnake, setDirection, direction, foodCheck) {
     setSpeed(5)
 
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]
     let distanceX = food.x - snakeHead.x
     let distanceY = food.y - snakeHead.y
-    let snakeTail = updatedCells[0]
 
-    moveToFood(distanceX, distanceY, snakeHead, setDirection, updatedCells, direction)
+    moveToFood(distanceX, distanceY, snakeHead, setDirection, direction)
     aiGridAlignment(snakeHead)
     headBodyAlignment(snakeHead, updatedCells, direction)
 
     //Turn this on when AI is improved
     //headBodyCollisionCheck(snakeHead)    
     // outOfBoundsCheck(snakeHead)
-
-    if (hasEatenFood(snakeHead)) {
-        setConfetti(true)
-
-        setFood(randomLocation())
-        setScore(score => score + 1)
-        setAcronym(helper.randomItem(acronymMap))
-        playSound('bloop.mp3')
-        updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
-    } else {
-        setConfetti(false)
-    }
+    foodCheck(snakeHead, updatedCells)
 
     setSnake(updatedCells)
 }
