@@ -1,10 +1,13 @@
-function aiGridAlignment(snakeHead) {
+function aiGridAlignment(snakeHead, setDirection) {
     if (snakeHead.x > 99) {
         snakeHead.x -= 2
         snakeHead.y += 2
+        setDirection("down")
     } else if (snakeHead.x < 0) {
         snakeHead.x += 2
         snakeHead.y += 2
+        setDirection("down")
+
     }
     else if (snakeHead.y > 99) {
         snakeHead.x -= 2
@@ -33,7 +36,7 @@ function moveToFood(distanceX, distanceY, snakeHead, setDirection, direction) {
             setDirection("left")
         } else if (distanceY != 0) {
             snakeHead.y -= 2
-            setDirection("down")
+            setDirection("up")
         }
     }
 }
@@ -62,7 +65,7 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
 
 function tick(snakeCells, food, updateBody, setSpeed,
               setSnake, setDirection, direction, foodCheck) {
-    setSpeed(15)
+    setSpeed(25)
 
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]
@@ -70,12 +73,13 @@ function tick(snakeCells, food, updateBody, setSpeed,
     let distanceY = food.y - snakeHead.y
 
     moveToFood(distanceX, distanceY, snakeHead, setDirection, direction)
-    aiGridAlignment(snakeHead)
     headBodyAlignment(snakeHead, updatedCells, direction)
+    aiGridAlignment(snakeHead, setDirection)
 
     //Turn this on when AI is improved
     //headBodyCollisionCheck(snakeHead)    
-    // outOfBoundsCheck(snakeHead)
+    //outOfBoundsCheck(snakeHead)
+    
     foodCheck(snakeHead, updatedCells)
 
     setSnake(updatedCells)

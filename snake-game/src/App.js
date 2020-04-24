@@ -26,7 +26,7 @@ function App() {
   ]);
 
   const [acronymMap, setAcronymsMap] = useState(acronyms);
-  const [currentAcronym, setAcronym] = useState(acronymMap[0])
+  const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
@@ -175,8 +175,8 @@ function increaseSnakeLength(updatedCells) {
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area" >
-        <Snake snake={snakeCells} />
-        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
+        <Snake snake={snakeCells} direction={direction} />
+        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti}  />
       </div>
     </div>
   );

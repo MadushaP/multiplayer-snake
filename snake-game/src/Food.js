@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Confetti from 'react-dom-confetti';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 

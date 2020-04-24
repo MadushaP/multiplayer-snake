@@ -9,5 +9,9 @@ module.exports =  [
     { 'acronym': 'TAP', 'fullWord': 'TV Application Platform'},
     { 'acronym': 'TTR', 'fullWord': 'Tap Tap Revolution'},
     { 'acronym': 'TAF', 'fullWord': 'TV Application Framework'},
-    { 'acronym': 'CI', 'fullWord': 'Carousel Injector'}
+    { 'acronym': 'CI', 'fullWord': 'Carousel Injector'},
+    { 'acronym': 'ITV', 'fullWord': 'Interactive TV'},
+    { 'acronym': 'Wipeline', 'fullWord': '💀💀💀'},
+    { 'acronym': 'Asimux', 'fullWord': 'You don\'t want to know'}
+
   ]
