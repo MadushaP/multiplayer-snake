@@ -8,5 +8,6 @@ module.exports =  [
     { 'acronym': 'HbbTv', 'fullWord': 'Hybrid Broadcast Broadband'},
     { 'acronym': 'TAP', 'fullWord': 'TV Application Platform'},
     { 'acronym': 'TTR', 'fullWord': 'Tap Tap Revolution'},
-    { 'acronym': 'TAF', 'fullWord': 'TV Application Framework'}
+    { 'acronym': 'TAF', 'fullWord': 'TV Application Framework'},
+    { 'acronym': 'CI', 'fullWord': 'Carousel Injector'}
   ]

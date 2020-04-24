@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 export default (props) => {
@@ -6,8 +6,8 @@ export default (props) => {
 
         <ReactCSSTransitionGroup
             transitionName="animation"
-            transitionEnterTimeout={100}
-            transitionLeaveTimeout={100}>
+            transitionEnterTimeout={200}
+            transitionLeaveTimeout={200}>
             {props.snake.map((cell, i) => {
                 const style = {
                     left: `${cell.x}%`,

@@ -123,18 +123,20 @@ function App() {
     bloop.play()
   }
 
- function foodCheck(snakeHead, updatedCells) {
+function increaseSnakeLength(updatedCells) {
   let snakeTail = updatedCells[0]
+  updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+} 
 
+ function foodCheck(snakeHead, updatedCells) {  
   if (hasEatenFood(snakeHead)) {
       setConfetti(true)
-
       setFood(randomLocation())
       // setSpeed(speed - 10)
       setScore(score => score + 1)
       setAcronym(helper.randomItem(acronymMap))
       playSound('bloop.mp3')
-      updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+      increaseSnakeLength(updatedCells)
     }
     else {
       setConfetti(false)
@@ -142,6 +144,7 @@ function App() {
  }
 
   function tick() {
+
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
 
@@ -173,7 +176,7 @@ function App() {
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area" >
         <Snake snake={snakeCells} />
-        <Food food={food} acronym={currentAcronym.acronym} showConfetti={showConfetti} />
+        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
       </div>
     </div>
   );
