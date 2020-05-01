@@ -27,8 +27,8 @@ export default (props) => {
                 <div className="foodText"> {props.currentAcronym.acronym}</div>
                 <ReactCSSTransitionGroup
                     transitionName="foodAnswer"
-                    transitionEnterTimeout={300}
-                    transitionLeaveTimeout={300}>
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={500}>
                     <h1  key={props.currentAcronym.fullWord} >
                         <span aria-hidden="true" id="answer">{props.currentAcronym.fullWord} </span>
                     </h1>

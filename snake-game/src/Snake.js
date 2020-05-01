@@ -14,6 +14,7 @@ function rotateHead(cell, direction, style) {
             break;
         case "down":
             style.left = `${cell.x - 0.3}%`;
+            style.top = `${cell.y - 1}%`;
             break;
         case "up":
             style.left = `${cell.x - 0.3}%`;
@@ -28,8 +29,8 @@ export default (props) => {
 
         <ReactCSSTransitionGroup
             transitionName="animation"
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}>
+            transitionEnterTimeout={150}
+            transitionLeaveTimeout={150}>
             {props.snake.map((cell, i) => {
                 const style = {
                     left: `${cell.x}%`,
@@ -38,14 +39,9 @@ export default (props) => {
     
                 if (props.snake.length - 1 == i) {
                     rotateHead(cell, props.direction, style)
-
-                    return <img key={[cell.x, cell.y]} className="snake-head" src='snake-head.png' style={style} ></img>
+                    return <img key="head" className="snake-head" src='snake-head.png' style={style} ></img>
                 }
                 else {
-                    const style = {
-                        left: `${cell.x}%`,
-                        top: `${cell.y}%`
-                    }
                     return <div key={[cell.x, cell.y]} className="snake-dot" style={style}></div>
                 }
             })}

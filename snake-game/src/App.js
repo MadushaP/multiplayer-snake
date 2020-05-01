@@ -11,7 +11,7 @@ const acronyms = require('./acronyms.js');
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(70)
+  const [speed, setSpeed] = useState(50)
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction)
   const [aiStatus, setAi] = useState(false)
@@ -174,7 +174,7 @@ function increaseSnakeLength(updatedCells) {
     <div>
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
-      <div className="game-area" >
+      <div className="game-area">
         <Snake snake={snakeCells} direction={direction} />
         <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti}  />
       </div>
