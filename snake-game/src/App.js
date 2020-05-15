@@ -31,7 +31,7 @@ function App() {
   const [closeToFood, setCloseToFood] = useState(false);
 
   //try this on in use effect
-  gamepad.load(setDirection)
+  gamepad.load(setDirection, prevDirection.current)
 
 
   useEffect(() => {
@@ -154,7 +154,7 @@ function App() {
       // setSpeed(speed - 10)
       setScore(score => score + 1)
       setAcronym(helper.randomItem(acronymMap))
-      playSound('bloop.mp3')
+      playSound('bling.mp3')
       increaseSnakeLength(updatedCells)
     }
     else {
@@ -194,7 +194,7 @@ function App() {
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
-        <Snake snake={snakeCells} direction={direction} closeToFood={closeToFood} />
+        <Snake snake={snakeCells} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver} />
         <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
       </div>
     </div>

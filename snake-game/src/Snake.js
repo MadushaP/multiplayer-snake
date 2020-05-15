@@ -36,7 +36,7 @@ export default (props) => {
                 }
     
                 if (props.snake.length - 1 == i) {
-                    rotateHead(cell, props.direction, style)
+                    if(!props.isGameOver) rotateHead(cell, props.direction, style)
                     let snakeHeadImage = 'snake-head.png'
                     if(props.closeToFood) {
                       snakeHeadImage = 'snake-head-eat.png'

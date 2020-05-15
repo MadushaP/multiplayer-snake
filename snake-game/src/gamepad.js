@@ -1,4 +1,4 @@
-function load(setDirection) {
+function load(setDirection, prevDir) {
     var interval;
     if (!('ongamepadconnected' in window)) {
         interval = setInterval(pollGamepads, 250)
@@ -8,16 +8,22 @@ function load(setDirection) {
         var gp = gamepads[0];
         //Add logic not to go back on its self and analogue
         if (gp) {
-            if (gp.buttons[13].pressed) {
+            if(!prevDir)
+             return
+            if (gp.buttons[13].pressed || gp.axes[1] > 0.5) {
+                if (prevDir.current != "up")
                 setDirection("down")
-            }
-            if (gp.buttons[15].pressed) {
-                setDirection("right")
-            }
-            if (gp.buttons[12].pressed) {
+            } else 
+            if (gp.buttons[15].pressed || gp.axes[0] > 0.5) {
+                if (prevDir.current != "left")
+                  setDirection("right")
+            } else 
+            if (gp.buttons[12].pressed || gp.axes[1] < -0.5) {
+                if (prevDir.current != "down")
                 setDirection("up")
-            }
-            if (gp.buttons[14].pressed) {
+            } else 
+            if (gp.buttons[14].pressed || gp.axes[0] < -0.5) {
+                if (prevDir.current != "right")
                 setDirection("left")
             }
 
