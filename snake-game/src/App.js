@@ -7,6 +7,7 @@ import AI from './Ai'
 
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
+const gamepad = require('./gamepad.js');
 
 function App() {
   const [score, setScore] = useState(0)
@@ -27,6 +28,11 @@ function App() {
 
   const [acronymMap, setAcronymsMap] = useState(acronyms);
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
+  const [closeToFood, setCloseToFood] = useState(false);
+
+  //try this on in use effect
+  gamepad.load(setDirection)
+
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
@@ -40,7 +46,7 @@ function App() {
         tick()
       } else {
         AI.tick(snakeCells, food, updateBody, setSpeed,
-                setSnake, setDirection, direction, foodCheck)
+          setSnake, setDirection, direction, foodCheck)
       }
     }, speed);
     return () => clearInterval(interval);
@@ -123,13 +129,26 @@ function App() {
     bloop.play()
   }
 
-function increaseSnakeLength(updatedCells) {
-  let snakeTail = updatedCells[0]
-  updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
-} 
+  function increaseSnakeLength(updatedCells) {
+    let snakeTail = updatedCells[0]
+    updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+  }
 
- function foodCheck(snakeHead, updatedCells) {  
-  if (hasEatenFood(snakeHead)) {
+  function handleCloseToFood(snakeHead) {
+    let distanceX = Math.abs(food.x - snakeHead.x)
+    let distanceY = Math.abs(food.y - snakeHead.y)
+
+    if (distanceX < 10 && distanceY < 10) {
+      setCloseToFood(true)
+    }
+    else {
+      setCloseToFood(false)
+    }
+  }
+
+  function foodCheck(snakeHead, updatedCells) {
+    handleCloseToFood(snakeHead, updatedCells)
+    if (hasEatenFood(snakeHead)) {
       setConfetti(true)
       setFood(randomLocation())
       // setSpeed(speed - 10)
@@ -141,7 +160,7 @@ function increaseSnakeLength(updatedCells) {
     else {
       setConfetti(false)
     }
- }
+  }
 
   function tick() {
 
@@ -175,8 +194,8 @@ function increaseSnakeLength(updatedCells) {
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
-        <Snake snake={snakeCells} direction={direction} />
-        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti}  />
+        <Snake snake={snakeCells} direction={direction} closeToFood={closeToFood} />
+        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
       </div>
     </div>
   );

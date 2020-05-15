@@ -17,7 +17,6 @@ function aiGridAlignment(snakeHead, setDirection) {
 }
 
 function moveToFood(food, snakeHead, setDirection, direction) {
-    console.log(direction)
     let distanceX = food.x - snakeHead.x
     let distanceY = food.y - snakeHead.y
 
@@ -47,7 +46,6 @@ function moveToFood(food, snakeHead, setDirection, direction) {
 function headBodyAlignment(snakeHead, updatedCells, direction) {
     for (let i = 0; i < updatedCells.length - 1; i++) {
         if (snakeHead.x == updatedCells[i].x && snakeHead.y == updatedCells[i].y) {
-            console.log("collide", direction)
             if (direction == "left") {
                 snakeHead.x -= 2
                 snakeHead.y -= 2
