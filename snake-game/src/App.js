@@ -30,9 +30,7 @@ function App() {
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
   const [closeToFood, setCloseToFood] = useState(false);
 
-  //try this on in use effect
   gamepad.load(setDirection, prevDirection.current)
-
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
@@ -138,7 +136,10 @@ function App() {
     let distanceX = Math.abs(food.x - snakeHead.x)
     let distanceY = Math.abs(food.y - snakeHead.y)
 
-    if (distanceX < 10 && distanceY < 10) {
+    if (distanceX < 12 && distanceY < 12) {
+      if(!closeToFood) {
+        playSound('mouth.mp3')
+      }
       setCloseToFood(true)
     }
     else {
@@ -194,7 +195,7 @@ function App() {
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
-        <Snake snake={snakeCells} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver} />
+        <Snake snake={snakeCells} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver}/>
         <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
       </div>
     </div>
