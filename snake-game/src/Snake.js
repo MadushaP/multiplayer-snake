@@ -28,7 +28,7 @@ let previousFoodPosition;
 export default (props) => {
     return (
         <ReactCSSTransitionGroup
-            transitionName="animation"
+            transitionName={props.scale ?  "scale" : "animation"}
             transitionEnterTimeout={150}
             transitionLeaveTimeout={150}>
             {props.snake.map((cell, i) => {

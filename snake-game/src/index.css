@@ -116,6 +116,28 @@ h1 {
   transition: all 1s ease;
 
 }
+
+.scale-enter {
+  opacity: 1;
+  transform: scale(1.25); 
+  transition: all 0.5s ease-in-out;
+
+}
+.scale-enter.scale-enter-active {
+  transform: scale(1.25);
+  transition: all 0.5s ease-in-out;
+}
+.scale-leave {
+  opacity: 0.01;
+  transform: scale(1);
+  transition: all 0.5s ease-in-out;
+
+}
+.scale-leave.scale-leave-active {
+  transform: scale(1);
+  transition: all 0.5s ease-in-out;
+}
+
 .parent {
   display: flex;
   flex-wrap: wrap;
@@ -233,7 +255,7 @@ span#answer {
   font-weight: 100;
   text-align: center;
   font: 40px arial, sans-serif;
-  color: rgba(245, 73, 151, 1); 
+  color: azure; 
   position: absolute;
   width: 300px;
   top:50px;
