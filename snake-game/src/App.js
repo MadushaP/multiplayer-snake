@@ -29,6 +29,7 @@ function App() {
   const [acronymMap, setAcronymsMap] = useState(acronyms);
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
   const [closeToFood, setCloseToFood] = useState(false);
+  const [acronymStatus, setAcronymStatus] = useState(false);
 
   gamepad.load(setDirection, prevDirection.current)
 
@@ -193,10 +194,10 @@ function App() {
   return (
     <div>
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-      <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
+      <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus}  acronymStatus={acronymStatus}  aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
         <Snake snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver}/>
-        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
+        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus}/>
       </div>
     </div>
   );

@@ -18,22 +18,32 @@ export default (props) => {
           props.setAi(true)
       }
 
+      function seAcronymStatus() {
+        console.log(props.acronymStatus)
+        if (props.acronymStatus)
+          props.setAcronymStatus(false)
+        else
+          props.setAcronymStatus(true)
+      }
+
     return (
         <div className="parent">
             <div className="child">
                 <div className="gameBoardText">Score: {props.score}</div>
             </div>
-            <div className="child">
+            <div className="child2">
                 <div className="gameBoardText">{props.fullWord} </div>
             </div>
-            <div className="child">
+            <div className="child3">
                 <div className="settings">
-                    <div>AI
-                      <Toggle className="spacing" defaultChecked={false} onChange={() => setAiStatus()} />
+                    <div style={{'width':'37%'}}>AI
+                      <Toggle className="spacing"  style={{'padding-top':'37%'}} defaultChecked={false} onChange={() => setAiStatus()} />
                     </div>
-                    <div className="larger-spacing"></div>
-                    <div>Sound
+                    <div  style={{'width':'60%'}}>Sound
                       <Toggle className="spacing" defaultChecked={true} onChange={() => setSound()} />
+                    </div>
+                    <div  style={{'width':'71%'}}> Acronym
+                      <Toggle className="spacing" defaultChecked={props.acronymsStatus} onChange={() => seAcronymStatus()} />
                     </div>
                 </div>
             </div>

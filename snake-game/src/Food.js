@@ -24,15 +24,16 @@ export default (props) => {
         <div>
             <div className="food" style={style}>
                 <Confetti active={props.showConfetti} config={config} />
-                <div className="foodText"> {props.currentAcronym.acronym}</div>
-                <ReactCSSTransitionGroup
+                {props.acronymStatus ? 
+                 <div className="foodText"> {props.currentAcronym.acronym}
+                 <ReactCSSTransitionGroup
                     transitionName="foodAnswer"
                     transitionEnterTimeout={500}
                     transitionLeaveTimeout={500}>
                     <h1  key={props.currentAcronym.fullWord} >
                         <span aria-hidden="true" id="answer">{props.currentAcronym.fullWord} </span>
                     </h1>
-                </ReactCSSTransitionGroup>
+                </ReactCSSTransitionGroup> </div> : null}
             </div>
         </div>)
 }
