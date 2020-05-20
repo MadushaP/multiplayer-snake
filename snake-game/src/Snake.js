@@ -29,8 +29,8 @@ export default (props) => {
     return (
         <ReactCSSTransitionGroup
             transitionName="animation"
-            transitionEnterTimeout={150}
-            transitionLeaveTimeout={150}>
+            transitionEnterTimeout={props.speed}
+            transitionLeaveTimeout={props.speed}>
             {props.snake.map((cell, i) => {
                 const style = {
                     left: `${cell.x}%`,

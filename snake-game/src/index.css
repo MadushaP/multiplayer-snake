@@ -113,7 +113,7 @@ h1 {
 
 .animation-leave {
   opacity: 0.01;
-  transition: all 1s ease;
+  transition: all 0.1s ease;
 
 }
 .parent {

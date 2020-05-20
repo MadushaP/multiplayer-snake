@@ -195,7 +195,7 @@ function App() {
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
-        <Snake snake={snakeCells} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver}/>
+        <Snake snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver}/>
         <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} />
       </div>
     </div>
