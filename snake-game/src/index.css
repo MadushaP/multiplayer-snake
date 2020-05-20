@@ -1,18 +1,20 @@
+@import url(https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap);
+
 body,
 html {
   overflow-x: hidden;
   overflow-y: hidden;
+  background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
 }
 
 .game-area {
   position: relative;
   margin: 0 auto;
   width: 1300px;
-  height: 1150px;
-  border: 2px solid #000;
-  background: #0c101c;
+  height: 1170px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  border-radius: 5px;
+  border-radius: 10px;
+  background-image: linear-gradient(180deg, #29323c 0%, #485563 100%);
 }
 
 .snake-body {
@@ -46,13 +48,8 @@ html {
   position: absolute;
   width: 2%;
   height: 2.2%;
-  background: linear-gradient(
-    354deg,
-    rgba(224, 43, 125, 1) 0%,
-    rgba(245, 73, 151, 1) 100%
-  );
-  border: 1px solid black;
-  box-shadow: inset 0 0 5px #000000;
+  background-color: rgba(224, 43, 125, 1);
+  box-shadow: inset 0 0 7px #000000;
   border-radius: 100px;
 }
 
@@ -82,6 +79,7 @@ h1 {
   display: flex;
   width: 500px;
   margin-left: 5%;
+  margin-top: 0.5%;
 }
 
 
@@ -124,22 +122,23 @@ h1 {
 }
 
 .child {
-  flex: 1 0 20%;
-  margin: 5px;
+  flex: 1 0 19%;
+  margin: 12px;
   height: 35px;
   background-color: #080b13;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-family: 'Fredoka One', cursive;
   font-size: 26px;
-  letter-spacing: 2px;
+  letter-spacing: 5px;
   word-spacing: 2px;
   color: white;
   border-radius: 10px;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background: rgba(224, 43, 125, 1);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
 
 }
-
 .gameBoardText {
   text-align: center;
+  margin:3px
 }
 
 .game-over {
@@ -180,7 +179,7 @@ nav ul li {
   height: 3em;
   text-transform: uppercase;
   font-weight: bold;
-  font-family: sans-serif;
+  font-family: 'Fredoka One', cursive;
   letter-spacing: 0.1em;
   text-align: center;
   line-height: 3em;
@@ -233,7 +232,7 @@ span#answer {
   font-weight: 100;
   text-align: center;
   font: 40px arial, sans-serif;
-  color: rgba(245, 73, 151, 1); 
+  color: white; 
   position: absolute;
   width: 300px;
   top:50px;
