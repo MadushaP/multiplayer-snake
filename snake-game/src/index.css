@@ -1,10 +1,13 @@
-@import url(https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap);
+@font-face { font-family: FredokaOne; 
+  src: url('fonts/FredokaOne-Regular.ttf'); } 
 
 body,
 html {
   overflow-x: hidden;
   overflow-y: hidden;
   background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+  background-image: url("/iPlayerBackground.jpeg");
+  background-size: auto 120%;
 }
 
 .game-area {
@@ -14,17 +17,16 @@ html {
   height: 1170px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 10px;
-  border:7px solid rgba(224, 43, 125, 1);
-  background-image: linear-gradient(180deg, #29323c 0%, #485563 100%);
-  background-image: url('/iPlayerBackground.jpeg');
+  border: 5px solid rgba(224, 43, 125, 1);
+  background-image: linear-gradient(180deg, #1f2933 0%, #124e8e 100%);
   background-size: auto 100%;
 }
 
 .snake-head {
   position: absolute;
-  height: auto; 
-  width: auto; 
-  max-width: 35px; 
+  height: auto;
+  width: auto;
+  max-width: 35px;
   max-height: 60px;
 }
 
@@ -32,11 +34,15 @@ html {
   position: absolute;
   width: 2%;
   height: 2%;
-  background: rgb(58,191,6);
-  background: linear-gradient(354deg, rgba(58,191,6,1) 0%, rgba(72,223,8,1) 100%);
+  background: rgb(58, 191, 6);
+  background: linear-gradient(
+    354deg,
+    rgba(58, 191, 6, 1) 0%,
+    rgba(72, 223, 8, 1) 100%
+  );
   border-radius: 2px;
   box-shadow: inset 0 0 2px #000000;
-  }
+}
 
 .food {
   position: absolute;
@@ -44,12 +50,12 @@ html {
   height: 2.2%;
   background-color: rgba(255, 43, 125, 1);
   border-radius: 100px;
-  animation: pulse .8s infinite;
+  animation: pulse 0.8s infinite;
   border: 1px solid #242424;
-  box-shadow:   inset rgba(255,255,255,.25) 0 1px 0,  
-                inset rgba(0,0,0,.5) 0 0 0, 
-                inset rgba(0,0,0,.001) 0 -1.25rem 1.25rem, 
-                inset rgba(255,255,255,.1) 0 1.25rem 1.25rem;
+  box-shadow: inset rgba(255, 255, 255, 0.25) 0 1px 0,
+    inset rgba(0, 0, 0, 0.5) 0 0 0,
+    inset rgba(0, 0, 0, 0.001) 0 -1.25rem 1.25rem,
+    inset rgba(255, 255, 255, 0.1) 0 1.25rem 1.25rem;
 }
 
 .foodText {
@@ -67,11 +73,11 @@ h1 {
 }
 
 .spacing {
-  margin-left:10px;
+  margin-left: 10px;
 }
 
 .larger-spacing {
-  margin-left:30px;
+  margin-left: 30px;
 }
 
 .settings {
@@ -80,7 +86,6 @@ h1 {
   margin-left: 5%;
   margin-top: 0.5%;
 }
-
 
 .ai-button {
   margin-left: 10%;
@@ -111,7 +116,6 @@ h1 {
 .animation-leave {
   opacity: 0.01;
   transition: all 0.1s ease;
-
 }
 .parent {
   display: flex;
@@ -125,7 +129,7 @@ h1 {
   height: 35px;
   width: 200px;
   background-color: #080b13;
-  font-family: 'Fredoka One', cursive;
+  font-family: FredokaOne, cursive;
   font-size: 26px;
   letter-spacing: 5px;
   word-spacing: 2px;
@@ -140,7 +144,7 @@ h1 {
   margin: 12px;
   height: 35px;
   background-color: #080b13;
-  font-family: 'Fredoka One', cursive;
+  font-family: FredokaOne, cursive;
   font-size: 26px;
   letter-spacing: 5px;
   word-spacing: 2px;
@@ -152,7 +156,7 @@ h1 {
 
 .gameBoardText {
   text-align: center;
-  margin:3px
+  margin: 3px;
 }
 
 .game-over {
@@ -166,19 +170,19 @@ h1 {
   transition: opacity 200ms ease-in-out;
 }
 
-.ReactModal__Overlay--after-open{
+.ReactModal__Overlay--after-open {
   opacity: 1;
+  
 }
 
-.ReactModal__Overlay--before-close{
+.ReactModal__Overlay--before-close {
   opacity: 0;
 }
-
 
 nav ul {
   list-style-type: none;
   margin: auto;
-  padding: 0;   
+  padding: 0;
   width: 80%;
   cursor: pointer;
 }
@@ -193,7 +197,7 @@ nav ul li {
   height: 3em;
   text-transform: uppercase;
   font-weight: bold;
-  font-family: 'Fredoka One', cursive;
+  font-family: FredokaOne, cursive;
   letter-spacing: 0.1em;
   text-align: center;
   line-height: 3em;
@@ -246,10 +250,10 @@ span#answer {
   font-weight: 100;
   text-align: center;
   font: 40px arial, sans-serif;
-  color: white; 
+  color: white;
   position: absolute;
   width: 300px;
-  top:50px;
+  top: 50px;
   left: -130px;
   height: 100px;
   opacity: 0;
@@ -258,8 +262,13 @@ span#answer {
 }
 
 @keyframes fade {
-  0%,100% { opacity: 0 }
-  75% { opacity: 1 }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
 }
 
 @keyframes pulse {
@@ -267,10 +276,9 @@ span#answer {
     transform: scale(1);
   }
   70% {
-    transform:scale(1.2);
- 
+    transform: scale(1.2);
   }
-    100% {
-    transform:scale(1);
+  100% {
+    transform: scale(1);
   }
 }

@@ -12,7 +12,8 @@ const customStyles = {
     height: '200px',
     width: '300px',
     boxShadow: '0 3px 7px rgba(0, 0, 0, 0.3)',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    border: '2px solid rgba(224, 43, 125, 1)'
   }
 };
 

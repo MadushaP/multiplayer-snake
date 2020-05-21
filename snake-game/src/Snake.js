@@ -23,7 +23,6 @@ function rotateHead(cell, direction, style) {
             break;
     }
 }
-let previousFoodPosition;
 
 export default (props) => {
     return (
