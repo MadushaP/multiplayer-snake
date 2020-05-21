@@ -21,6 +21,8 @@ function rotateHead(cell, direction, style) {
             style.top = `${cell.y - 1}%`;
             style['transform'] = 'rotate(180deg)';
             break;
+        default:
+            break;
     }
 }
 
@@ -35,19 +37,19 @@ export default (props) => {
                     left: `${cell.x}%`,
                     top: `${cell.y}%`
                 }
-    
-                if (props.snake.length - 1 == i) {                 
-                   let snakeHeadImage = 'snake-head.png'
-                    if(props.isGameOver) { 
-                        snakeHeadImage = 'snake-head-dead.png'}
+
+                if (props.snake.length - 1 == i) {
+                    let snakeHeadImage = 'snake-head.png'
+                    if (props.isGameOver) {
+                        snakeHeadImage = 'snake-head-dead.png'
+                    }
                     else {
                         rotateHead(cell, props.direction, style)
                     }
-
-                    if(props.closeToFood) { 
-                      snakeHeadImage = 'snake-head-eat.png'
+                    if (props.closeToFood) {
+                        snakeHeadImage = 'snake-head-eat.png'
                     }
-                    return <img key="head" className="snake-head" src={snakeHeadImage} style={style} ></img>                
+                    return <img key="head" className="snake-head" src={snakeHeadImage} style={style} ></img>
                 }
                 else {
                     return <div key={[cell.x, cell.y]} className="snake-body" style={style}></div>

@@ -71,21 +71,23 @@ function App() {
   function keypress({ key }) {
     switch (key) {
       case "ArrowRight":
-        if (prevDirection.current != "left")
+        if (prevDirection.current !== "left")
           setDirection("right")
         break
       case "ArrowLeft":
-        if (prevDirection.current != "right")
+        if (prevDirection.current !== "right")
           setDirection("left")
         break
       case "ArrowDown":
-        if (prevDirection.current != "up")
+        if (prevDirection.current !== "up")
           setDirection("down")
         break
       case "ArrowUp":
-        if (prevDirection.current != "down")
+        if (prevDirection.current !== "down")
           setDirection("up")
         break
+      default:
+        break;
     }
   }
 
@@ -140,7 +142,7 @@ function App() {
     let distanceY = Math.abs(food.y - snakeHead.y)
 
     if (distanceX < 12 && distanceY < 12) {
-      if(!closeToFood) {
+      if (!closeToFood) {
         playSound('mouth.mp3')
       }
       setCloseToFood(true)
@@ -153,7 +155,7 @@ function App() {
   function foodCheck(snakeHead, updatedCells) {
     handleCloseToFood(snakeHead, updatedCells)
     if (hasEatenFood(snakeHead)) {
-      setConfettiLocation({'x': snakeHead.x, 'y': snakeHead.y})
+      setConfettiLocation({ 'x': snakeHead.x, 'y': snakeHead.y })
       setConfetti(true)
       setFood(randomLocation())
       // setSpeed(speed - 10)
@@ -185,6 +187,8 @@ function App() {
       case "up":
         snakeHead.y -= 2;
         break
+      default:
+        break;
     }
 
     outOfBoundsCheck(snakeHead)
@@ -197,10 +201,10 @@ function App() {
   return (
     <div>
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-      <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus}  acronymStatus={acronymStatus}  aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
+      <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
-        <Snake snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver}/>
-        <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus}/>
+        <Snake snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver} />
+        <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />
       </div>
     </div>
   );

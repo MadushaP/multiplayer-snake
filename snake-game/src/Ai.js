@@ -21,22 +21,22 @@ function moveToFood(food, snakeHead, setDirection, direction) {
     let distanceY = food.y - snakeHead.y
 
     if (distanceX > 0 || distanceY > 0) {
-        if (distanceX != 0) {
+        if (distanceX !== 0) {
             snakeHead.x += 2
             if (snakeHead.x > 99) {
                 setDirection("down")
             } else
                 setDirection("right")
-        } else if (distanceY != 0) {
+        } else if (distanceY !== 0) {
             snakeHead.y += 2
             setDirection("down")
         }
     }
     else if (distanceX < 0 || distanceY < 0) {
-        if (distanceX != 0) {
+        if (distanceX !== 0) {
             snakeHead.x -= 2
             setDirection("left")
-        } else if (distanceY != 0) {
+        } else if (distanceY !== 0) {
             snakeHead.y -= 2
             setDirection("up")
         }
@@ -45,17 +45,17 @@ function moveToFood(food, snakeHead, setDirection, direction) {
 
 function headBodyAlignment(snakeHead, updatedCells, direction) {
     for (let i = 0; i < updatedCells.length - 1; i++) {
-        if (snakeHead.x == updatedCells[i].x && snakeHead.y == updatedCells[i].y) {
-            if (direction == "left") {
+        if (snakeHead.x === updatedCells[i].x && snakeHead.y === updatedCells[i].y) {
+            if (direction === "left") {
                 snakeHead.x -= 2
                 snakeHead.y -= 2
-            } else if (direction == "right") {
+            } else if (direction === "right") {
                 snakeHead.x += 2
                 snakeHead.y += 2
-            } else if (direction == "up") {
+            } else if (direction === "up") {
                 snakeHead.x -= 2
                 snakeHead.y += 2
-            } else if (direction == "down") {
+            } else if (direction === "down") {
                 snakeHead.x += 2
                 snakeHead.y -= 2
             }

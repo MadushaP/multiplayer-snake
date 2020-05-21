@@ -8,24 +8,24 @@ function load(setDirection, prevDir) {
         var gp = gamepads[0];
         //Add logic not to go back on its self and analogue
         if (gp) {
-            if(!prevDir)
-             return
+            if (!prevDir)
+                return
             if (gp.buttons[13].pressed || gp.axes[1] > 0.5) {
-                if (prevDir.current != "up")
-                setDirection("down")
-            } else 
-            if (gp.buttons[15].pressed || gp.axes[0] > 0.5) {
-                if (prevDir.current != "left")
-                  setDirection("right")
-            } else 
-            if (gp.buttons[12].pressed || gp.axes[1] < -0.5) {
-                if (prevDir.current != "down")
-                setDirection("up")
-            } else 
-            if (gp.buttons[14].pressed || gp.axes[0] < -0.5) {
-                if (prevDir.current != "right")
-                setDirection("left")
-            }
+                if (prevDir.current !== "up")
+                    setDirection("down")
+            } else
+                if (gp.buttons[15].pressed || gp.axes[0] > 0.5) {
+                    if (prevDir.current !== "left")
+                        setDirection("right")
+                } else
+                    if (gp.buttons[12].pressed || gp.axes[1] < -0.5) {
+                        if (prevDir.current !== "down")
+                            setDirection("up")
+                    } else
+                        if (gp.buttons[14].pressed || gp.axes[0] < -0.5) {
+                            if (prevDir.current !== "right")
+                                setDirection("left")
+                        }
 
             clearInterval(interval);
         }

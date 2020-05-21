@@ -15,10 +15,10 @@ function arrayEquals(array1, array2) {
 
 function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)]
-  }
+}
 
 module.exports = {
-    isArrayInArray:isArrayInArray,
-    arrayEquals:arrayEquals,
-    randomItem:randomItem
+    isArrayInArray: isArrayInArray,
+    arrayEquals: arrayEquals,
+    randomItem: randomItem
 }

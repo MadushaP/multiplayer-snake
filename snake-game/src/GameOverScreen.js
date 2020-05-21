@@ -20,7 +20,7 @@ const customStyles = {
 export default (props) => {
 
   function afterOpenModal() {
-     //Confetti effects? 
+    //Confetti effects? 
   }
 
   function closeModal() {
