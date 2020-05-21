@@ -19,6 +19,8 @@ function App() {
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
   const [showConfetti, setConfetti] = useState(false);
+  const [confettiLocation, setConfettiLocation] = useState(food);
+
   const [snakeCells, setSnake] = useState([
     { 'x': 0, 'y': 0 },
     { 'x': 2, 'y': 0 },
@@ -151,6 +153,7 @@ function App() {
   function foodCheck(snakeHead, updatedCells) {
     handleCloseToFood(snakeHead, updatedCells)
     if (hasEatenFood(snakeHead)) {
+      setConfettiLocation({'x': snakeHead.x, 'y': snakeHead.y})
       setConfetti(true)
       setFood(randomLocation())
       // setSpeed(speed - 10)
@@ -197,7 +200,7 @@ function App() {
       <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus}  acronymStatus={acronymStatus}  aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
         <Snake snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver}/>
-        <Food food={food} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus}/>
+        <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus}/>
       </div>
     </div>
   );

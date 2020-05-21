@@ -18,22 +18,30 @@ const config = {
 export default (props) => {
     const style = {
         left: `${props.food.x}%`,
-        top: `${props.food.y}%`
+        top: `${props.food.y}%`,
+        position: 'absolute'
+    }
+    let confStyle = {
+        left: `${props.confettiLocation.x}%`,
+        top: `${props.confettiLocation.y}%`,
+        position: 'absolute'
     }
     return (
         <div>
-            <div className="food" style={style}>
+            <div style={confStyle}>
                 <Confetti active={props.showConfetti} config={config} />
-                {props.acronymStatus ? 
-                 <div className="foodText"> {props.currentAcronym.acronym}
-                 <ReactCSSTransitionGroup
-                    transitionName="foodAnswer"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={500}>
-                    <h1  key={props.currentAcronym.fullWord} >
-                        <span aria-hidden="true" id="answer">{props.currentAcronym.fullWord} </span>
-                    </h1>
-                </ReactCSSTransitionGroup> </div> : null}
+            </div>
+            <div className="food" style={style}>
+                {props.acronymStatus ?
+                    <div className="foodText"> {props.currentAcronym.acronym}
+                        <ReactCSSTransitionGroup
+                            transitionName="foodAnswer"
+                            transitionEnterTimeout={500}
+                            transitionLeaveTimeout={500}>
+                            <h1 key={props.currentAcronym.fullWord} >
+                                <span aria-hidden="true" id="answer">{props.currentAcronym.fullWord} </span>
+                            </h1>
+                        </ReactCSSTransitionGroup> </div> : null}
             </div>
         </div>)
 }
