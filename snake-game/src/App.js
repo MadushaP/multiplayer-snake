@@ -34,9 +34,21 @@ function App() {
   const [acronymStatus, setAcronymStatus] = useState(false);
 
   gamepad.load(setDirection, prevDirection.current)
+  
+  const [snakeCells2, setSnake2] = useState([
+    { 'x': 10, 'y': 10 },
+    { 'x': 12, 'y': 10 },
+    { 'x': 14, 'y': 10 },
+    { 'x': 16, 'y': 10 },
+  ]);
+  const [direction2, setDirection2] = useState("right")
+  const [closeToFood2, setCloseToFood2] = useState(false);
+  const prevDirection2 = usePrevious(direction2)
+
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
+    window.addEventListener('keydown', keypress2)
   }, []);
 
   useEffect(() => {
@@ -44,14 +56,18 @@ function App() {
       if (isGameOver) return;
 
       if (!aiStatus) {
-        tick()
+        tick(snakeCells ,setSnake, direction, setCloseToFood, closeToFood)
+        tick(snakeCells2, setSnake2, direction2, setCloseToFood2, closeToFood2)
+
       } else {
         AI.tick(snakeCells, food, updateBody, setSpeed,
-          setSnake, setDirection, direction, foodCheck)
+          setSnake, setDirection, direction, foodCheck, setCloseToFood, closeToFood)
+          AI.tick(snakeCells2, food, updateBody, setSpeed,
+            setSnake2, setDirection2, direction2, foodCheck, setCloseToFood2, closeToFood2)
       }
     }, speed);
     return () => clearInterval(interval);
-  }, [speed, direction, food, snakeCells]);
+  }, [speed, direction, food, snakeCells,snakeCells2,setCloseToFood2,closeToFood2]);
 
   function usePrevious(value) {
     const ref = useRef();
@@ -66,6 +82,29 @@ function App() {
     let x = Math.floor(Math.random() * 100 / 2) * 2;
     let y = Math.floor(Math.random() * 100 / 2) * 2;
     return { 'x': x, 'y': y }
+  }
+
+  function keypress2({ key }) {
+    switch (key) {
+      case "d":
+        if (prevDirection2.current !== "left")
+          setDirection2("right")
+        break
+      case "a":
+        if (prevDirection2.current !== "right")
+          setDirection2("left")
+        break
+      case "s":
+        if (prevDirection2.current !== "up")
+          setDirection2("down")
+        break
+      case "w":
+        if (prevDirection2.current !== "down")
+          setDirection2("up")
+        break
+      default:
+        break;
+    }
   }
 
   function keypress({ key }) {
@@ -90,6 +129,7 @@ function App() {
         break;
     }
   }
+
 
   function updateBody(snakeCells) {
     let updatedCells = [...snakeCells]
@@ -137,7 +177,7 @@ function App() {
     updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
   }
 
-  function handleCloseToFood(snakeHead) {
+  function handleCloseToFood(snakeHead,setCloseToFood, closeToFood) {
     let distanceX = Math.abs(food.x - snakeHead.x)
     let distanceY = Math.abs(food.y - snakeHead.y)
 
@@ -152,8 +192,8 @@ function App() {
     }
   }
 
-  function foodCheck(snakeHead, updatedCells) {
-    handleCloseToFood(snakeHead, updatedCells)
+  function foodCheck(snakeHead, updatedCells, setCloseTofood, closeToFood) {
+    handleCloseToFood(snakeHead, setCloseTofood, closeToFood)
     if (hasEatenFood(snakeHead)) {
       setConfettiLocation({ 'x': snakeHead.x, 'y': snakeHead.y })
       setConfetti(true)
@@ -169,9 +209,9 @@ function App() {
     }
   }
 
-  function tick() {
+  function tick(sc, setSnake, direction, setCloseToFood, closeToFood) {
 
-    let updatedCells = updateBody(snakeCells)
+    let updatedCells = updateBody(sc)
     let snakeHead = updatedCells.slice(-1)[0]
 
     switch (direction) {
@@ -191,9 +231,9 @@ function App() {
         break;
     }
 
-    outOfBoundsCheck(snakeHead)
+    // outOfBoundsCheck(snakeHead)
     headBodyCollisionCheck(snakeHead)
-    foodCheck(snakeHead, updatedCells)
+    foodCheck(snakeHead, updatedCells, setCloseToFood, closeToFood)
 
     setSnake(updatedCells)
   }
@@ -203,7 +243,8 @@ function App() {
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
       <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
-        <Snake snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver} />
+        <Snake num={1} snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver} />
+        <Snake num={2} snake={snakeCells2} speed={speed} direction={direction2} closeToFood={closeToFood2} isGameOver={isGameOver} />
         <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />
       </div>
     </div>

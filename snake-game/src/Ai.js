@@ -65,7 +65,7 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
 }
 
 function tick(snakeCells, food, updateBody, setSpeed,
-    setSnake, setDirection, direction, foodCheck) {
+    setSnake, setDirection, direction, foodCheck, setCloseToFood, closeToFood) {
     setSpeed(25)
 
     let updatedCells = updateBody(snakeCells)
@@ -79,7 +79,7 @@ function tick(snakeCells, food, updateBody, setSpeed,
     //headBodyCollisionCheck(snakeHead)    
     // outOfBoundsCheck(snakeHead)
 
-    foodCheck(snakeHead, updatedCells)
+    foodCheck(snakeHead, updatedCells, setCloseToFood, closeToFood)
 
     setSnake(updatedCells)
 }
