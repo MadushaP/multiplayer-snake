@@ -1,6 +1,7 @@
 import React from 'react';
 import Toggle from 'react-toggle'
 import "react-toggle/style.css"
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 export default (props) => {
 
@@ -29,10 +30,20 @@ export default (props) => {
   return (
     <div className="parent">
       <div className="child">
-        <div className="gameBoardText">Score: {props.score}</div>
+      <div className="scoreText">
+      Score:
+        <ReactCSSTransitionGroup
+          transitionName="score"
+          transitionEnterTimeout={500}
+          transitionLeaveTimeout={1}>
+            <div  key={props.score} style={{ 'display': 'inline-block', 'padding-left': '5px' }}>
+            {props.score}
+            </div>
+        </ReactCSSTransitionGroup>
+        </div>
       </div>
       <div className="child" style={{ 'width': '500px' }}>
-        <div className="gameBoardText">{props.fullWord} </div>
+        <div className="fullWordText">{props.fullWord} </div>
       </div>
       <div className="settingContainer">
         <div className="settings">
