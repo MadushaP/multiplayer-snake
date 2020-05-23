@@ -36,7 +36,7 @@ export default (props) => {
           transitionName="score"
           transitionEnterTimeout={500}
           transitionLeaveTimeout={1}>
-            <div  key={props.score} style={{ 'display': 'inline-block', 'padding-left': '5px' }}>
+            <div  key={props.score} style={{ 'display': 'inline-block', 'paddingLeft': '5px' }}>
             {props.score}
             </div>
         </ReactCSSTransitionGroup>

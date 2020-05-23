@@ -4,15 +4,23 @@ import Food from './Food';
 import ScoreBoard from './ScoreBoard';
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
+import io from 'socket.io-client';
+const socket = io('http://192.168.1.11:3001/');
 
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
 const gamepad = require('./gamepad.js');
 
+function randomLocation() {
+  let x = Math.floor(Math.random() * 100 / 2) * 2;
+  let y = Math.floor(Math.random() * 100 / 2) * 2;
+  return { 'x': x, 'y': y }
+}
+
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(50)
+  const [speed, setSpeed] = useState(100)
   const [direction, setDirection] = useState("right")
   const prevDirection = usePrevious(direction)
   const [aiStatus, setAi] = useState(false)
@@ -45,10 +53,51 @@ function App() {
   const [closeToFood2, setCloseToFood2] = useState(false);
   const prevDirection2 = usePrevious(direction2)
 
+  const [playerCount, setPlayerCount] = useState(0);
+
+  const [playerSnakeArray, setPlayerSnakeArray] = useState([
+    {'playerId': '1',
+     'snakeCells': snakeCells,
+    }
+  ]);
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
     window.addEventListener('keydown', keypress2)
+
+
+    socket.emit('getFood', 'getFood');
+
+    socket.on('playerCount', (data) => {
+      setPlayerCount(data)
+    })
+
+    socket.on('sendFood', (data) => {
+      setFood(data)
+    } )
+
+    socket.on('updateDirectionBroadcast', (data) => {
+      setDirection(data)
+    } )
+ 
+
+    socket.on('updateBodyBroadcast', (data) => {
+      setSnake(data)
+    } )
+
+    socket.on('updateFoodBroadcast', (data) => {
+      setFood(data)
+    } )
+
+    //Player 2
+    socket.on('updateBodyBroadcast2', (data) => {
+      setSnake2(data)
+    } )
+
+    socket.on('updateDirectionBroadcast2', (data) => {
+      setDirection2(data)
+    } )
+ 
   }, []);
 
   useEffect(() => {
@@ -56,8 +105,10 @@ function App() {
       if (isGameOver) return;
 
       if (!aiStatus) {
-        tick(snakeCells ,setSnake, direction, setCloseToFood, closeToFood)
-        tick(snakeCells2, setSnake2, direction2, setCloseToFood2, closeToFood2)
+       tick(snakeCells ,setSnake, direction, setCloseToFood, closeToFood, 1)
+       if(playerCount > 1){    
+         tick(snakeCells2, setSnake2, direction2, setCloseToFood2, closeToFood2, 2)
+        }
 
       } else {
         AI.tick(snakeCells, food, updateBody, setSpeed,
@@ -67,7 +118,7 @@ function App() {
       }
     }, speed);
     return () => clearInterval(interval);
-  }, [speed, direction, food, snakeCells,snakeCells2,setCloseToFood2,closeToFood2]);
+  }, [speed, direction, food, direction2, snakeCells, snakeCells2, setCloseToFood2,closeToFood2,playerSnakeArray, setPlayerSnakeArray ]);
 
   function usePrevious(value) {
     const ref = useRef();
@@ -78,29 +129,28 @@ function App() {
     return ref;
   }
 
-  function randomLocation() {
-    let x = Math.floor(Math.random() * 100 / 2) * 2;
-    let y = Math.floor(Math.random() * 100 / 2) * 2;
-    return { 'x': x, 'y': y }
-  }
 
   function keypress2({ key }) {
     switch (key) {
       case "d":
         if (prevDirection2.current !== "left")
           setDirection2("right")
+          socket.emit('updateDirection2', "right");
         break
       case "a":
         if (prevDirection2.current !== "right")
           setDirection2("left")
+          socket.emit('updateDirection2', "left");
         break
       case "s":
         if (prevDirection2.current !== "up")
           setDirection2("down")
+          socket.emit('updateDirection2', "down");
         break
       case "w":
         if (prevDirection2.current !== "down")
           setDirection2("up")
+          socket.emit('updateDirection2', "up");
         break
       default:
         break;
@@ -112,18 +162,22 @@ function App() {
       case "ArrowRight":
         if (prevDirection.current !== "left")
           setDirection("right")
+          socket.emit('updateDirection', "right");
         break
       case "ArrowLeft":
         if (prevDirection.current !== "right")
           setDirection("left")
+          socket.emit('updateDirection', "left");
         break
       case "ArrowDown":
         if (prevDirection.current !== "up")
           setDirection("down")
+          socket.emit('updateDirection', "down");
         break
       case "ArrowUp":
         if (prevDirection.current !== "down")
           setDirection("up")
+          socket.emit('updateDirection', "up");
         break
       default:
         break;
@@ -169,7 +223,7 @@ function App() {
   function playSound(sound) {
     var bloop = new Audio(sound)
     bloop.volume = volume
-    bloop.play()
+    // bloop.play()
   }
 
   function increaseSnakeLength(updatedCells) {
@@ -197,7 +251,10 @@ function App() {
     if (hasEatenFood(snakeHead)) {
       setConfettiLocation({ 'x': snakeHead.x, 'y': snakeHead.y })
       setConfetti(true)
-      setFood(randomLocation())
+      // let location = randomLocation()
+      // setFood(location)
+      socket.emit('randomFood');
+
       // setSpeed(speed - 10)
       setScore(score => score + 1)
       setAcronym(helper.randomItem(acronymMap))
@@ -209,12 +266,12 @@ function App() {
     }
   }
 
-  function tick(sc, setSnake, direction, setCloseToFood, closeToFood) {
-
+  function tick(sc, setSnake, direction, setCloseToFood, closeToFood, player) {
     let updatedCells = updateBody(sc)
     let snakeHead = updatedCells.slice(-1)[0]
 
-    switch (direction) {
+   switch (direction) {
+
       case "right":
         snakeHead.x += 2;
         break
@@ -231,11 +288,16 @@ function App() {
         break;
     }
 
-    // outOfBoundsCheck(snakeHead)
-    headBodyCollisionCheck(snakeHead)
+    outOfBoundsCheck(snakeHead)
+    // headBodyCollisionCheck(snakeHead)
     foodCheck(snakeHead, updatedCells, setCloseToFood, closeToFood)
-
     setSnake(updatedCells)
+    if(player == 1)
+    socket.emit('updateBody', updatedCells);
+    else 
+    socket.emit('updateBody2', updatedCells);
+
+
   }
 
   return (
@@ -244,7 +306,7 @@ function App() {
       <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
       <div className="game-area">
         <Snake num={1} snake={snakeCells} speed={speed} direction={direction} closeToFood={closeToFood} isGameOver={isGameOver} />
-        <Snake num={2} snake={snakeCells2} speed={speed} direction={direction2} closeToFood={closeToFood2} isGameOver={isGameOver} />
+       {(playerCount > 1) ? <Snake num={2} snake={snakeCells2} speed={speed} direction={direction2} closeToFood={closeToFood2} isGameOver={isGameOver} /> : null} 
         <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />
       </div>
     </div>
