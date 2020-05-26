@@ -10,6 +10,7 @@ const socket = io('http://192.168.1.11:3001/');
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
 const gamepad = require('./gamepad.js');
+let playerCount = 0;
 
 function randomLocation() {
   let x = Math.floor(Math.random() * 100 / 2) * 2;
@@ -21,31 +22,19 @@ function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
   const [speed, setSpeed] = useState(50)
-  const [direction, setDirection] = useState("right")
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
   const [showConfetti, setConfetti] = useState(false);
   const [confettiLocation, setConfettiLocation] = useState(food);
 
-  // const [snakeCells, setSnake] = useState([
-  //   { 'x': 0, 'y': 0 },
-  //   { 'x': 2, 'y': 0 },
-  //   { 'x': 4, 'y': 0 },
-  //   { 'x': 6, 'y': 0 },
-  // ]);
-
   const [acronymMap, setAcronymsMap] = useState(acronyms);
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
-  const [closeToFood, setCloseToFood] = useState(false);
   const [acronymStatus, setAcronymStatus] = useState(false);
 
 
-  const [direction2, setDirection2] = useState("right")
-  const [closeToFood2, setCloseToFood2] = useState(false);
 
-  const [playerCount, setPlayerCount] = useState(0);
-
+  //On second player load push into this array
   const [playerSnakeArray, setPlayerSnakeArray] = useState([
     {
       playerId: 1,
@@ -57,8 +46,7 @@ function App() {
       ],
       direction: "right",
       closeToFood: false
-    },
-    {
+    },{
       playerId: 2,
       snakeCells: [
         { 'x': 10, 'y': 10 },
@@ -68,40 +56,62 @@ function App() {
       ],
       direction: "right",
       closeToFood: false
-    },
+    }
+    
   ]);
 
   const prevDirection = usePrevious(playerSnakeArray[0].direction)
   const prevDirection2 = usePrevious(playerSnakeArray[1].direction)
 
 
-  const updateFieldChanged = (index, prop, value) => {
+  const updateFieldChanged = (playerId, prop, value) => {
     let newArr = [...playerSnakeArray];
-    newArr[index][prop] = value;
+    newArr[playerId][prop] = value;
 
     setPlayerSnakeArray(newArr);
+
   }
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
     window.addEventListener('keydown', keypress2)
 
+  
+    socket.emit('getFood');
+    socket.emit('playerCount');
+
+
     socket.on('playerCount', (data) => {
-      setPlayerCount(data)
+      playerCount = data;
     })
 
-    socket.emit('getFood', 'getFood');
     socket.on('sendFood', (data) => { setFood(data) })
-
-
-    socket.on('updateDirectionBroadcast', (data) => { updateFieldChanged(0, 'direction', data) })
-    socket.on('updateBodyBroadcast', (data) => { updateFieldChanged(0, 'snakeCells', data) })
+    socket.on('updateDirectionBroadcast', (data) => { updateFieldChanged(data.playerId, 'direction', data.direction) })
+    socket.on('updateBodyBroadcast', (data) => {  updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells) })
     socket.on('updateFoodBroadcast', (data) => { setFood(data) })
 
-    //Player 2
-    socket.on('updateBodyBroadcast2', (data) => { updateFieldChanged(1, 'snakeCells', data) })
-    socket.on('updateDirectionBroadcast2', (data) => { updateFieldChanged(1, 'direction', data) })
+     //check how many players connected
+     //Set id on client
+     //if more than 1 then get player2 cells and set
 
+    //  if(playerCount == 2) {
+    //   let newArr = [...playerSnakeArray];
+    //   newArr.push({
+    //     playerId: 2,
+    //     snakeCells: [
+    //       { 'x': 10, 'y': 10 },
+    //       { 'x': 12, 'y': 10 },
+    //       { 'x': 14, 'y': 10 },
+    //       { 'x': 16, 'y': 10 },
+    //     ],
+    //     direction: "right",
+    //     closeToFood: false
+    //   })
+    //   setPlayerSnakeArray(newArr)
+    //  }
+
+     
+     // On disconnected remove player 2 cells
   }, []);
 
   useEffect(() => {
@@ -109,10 +119,12 @@ function App() {
       if (isGameOver) return;
 
       if (!aiStatus) {
-        tick(playerSnakeArray[0].snakeCells, playerSnakeArray[0].direction, playerSnakeArray[0].closeToFood, playerSnakeArray[0].playerId - 1)
-        if (playerCount > 1) {
-          tick(playerSnakeArray[1].snakeCells, playerSnakeArray[1].direction, playerSnakeArray[1].closeToFood, playerSnakeArray[1].playerId - 1)
-        }
+        //make into loop
+        playerSnakeArray.forEach(player => tick(player.snakeCells, player.direction, player.closeToFood, player.playerId-1))
+        // tick(playerSnakeArray[0].snakeCells, playerSnakeArray[0].direction, playerSnakeArray[0].closeToFood, playerSnakeArray[0].playerId - 1)
+        // if (playerCount > 1) {
+        //   tick(playerSnakeArray[1].snakeCells, playerSnakeArray[1].direction, playerSnakeArray[1].closeToFood, playerSnakeArray[1].playerId - 1)
+        // }
       }
       // } else {
       //   AI.tick(snakeCells, food, updateBody, setSpeed,
@@ -122,7 +134,7 @@ function App() {
       // }
     }, speed);
     return () => clearInterval(interval);
-  }, [speed, direction, food, direction2, playerSnakeArray]);
+  }, [speed, food, playerSnakeArray]);
 
   function usePrevious(value) {
     const ref = useRef();
@@ -139,25 +151,25 @@ function App() {
       case "d":
         if (prevDirection2.current !== "left") {
           updateFieldChanged(1, "direction", "right")
-          socket.emit('updateDirection2', "right");
+          socket.emit('updateDirection', {"playerId": 1, "direction": "right"})
         }
         break
       case "a":
         if (prevDirection2.current !== "right") {
           updateFieldChanged(1, "direction", "left")
-          socket.emit('updateDirection2', "left")
+          socket.emit('updateDirection', {"playerId": 1, "direction": "left"})
         }
         break
       case "s":
         if (prevDirection2.current !== "up") {
           updateFieldChanged(1, "direction", "down")
-          socket.emit('updateDirection2', "down")
+          socket.emit('updateDirection', {"playerId": 1, "direction": "down"})
         }
         break
       case "w":
         if (prevDirection2.current !== "down") {
           updateFieldChanged(1, "direction", "up")
-          socket.emit('updateDirection2', "up")
+          socket.emit('updateDirection', {"playerId": 1, "direction": "up"})
         }
         break
       default:
@@ -170,25 +182,25 @@ function App() {
       case "ArrowRight":
         if (prevDirection.current !== "left") {
           updateFieldChanged(0, "direction", "right")
-          socket.emit('updateDirection', "right")
+          socket.emit('updateDirection', {"playerId": 0, "direction": "right"})
         }
         break
       case "ArrowLeft":
         if (prevDirection.current !== "right") {
           updateFieldChanged(0, "direction", "left")
-          socket.emit('updateDirection', "left")
+          socket.emit('updateDirection', {"playerId": 0, "direction": "left"})
         }
         break
       case "ArrowDown":
         if (prevDirection.current !== "up") {
           updateFieldChanged(0, "direction", "down")
-          socket.emit('updateDirection', "down")
+          socket.emit('updateDirection',  {"playerId": 0, "direction": "down"})
         }
         break
       case "ArrowUp":
         if (prevDirection.current !== "down") {
           updateFieldChanged(0, "direction", "up")
-          socket.emit('updateDirection', "up")
+          socket.emit('updateDirection', {"playerId": 0, "direction": "up"})
         }
         break
       default:
@@ -243,25 +255,24 @@ function App() {
     updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
   }
 
-  function handleCloseToFood(snakeHead, closeToFood, player) {
+  function handleCloseToFood(snakeHead, closeToFood, playerId) {
     let distanceX = Math.abs(food.x - snakeHead.x)
     let distanceY = Math.abs(food.y - snakeHead.y)
 
     if (distanceX < 12 && distanceY < 12) {
-      console.log(closeToFood)
       if (!closeToFood) {
         playSound('mouth.mp3')
       }
-      updateFieldChanged(player, "closeToFood", true)
+      updateFieldChanged(playerId, "closeToFood", true)
     }
     else {
-      updateFieldChanged(player, "closeToFood", false)
+      updateFieldChanged(playerId, "closeToFood", false)
 
     }
   }
 
-  function foodCheck(snakeHead, updatedCells, closeToFood, player) {
-    handleCloseToFood(snakeHead, closeToFood, player)
+  function foodCheck(snakeHead, updatedCells, closeToFood, playerId) {
+    handleCloseToFood(snakeHead, closeToFood, playerId)
     if (hasEatenFood(snakeHead)) {
       setConfettiLocation({ 'x': snakeHead.x, 'y': snakeHead.y })
       setConfetti(true)
@@ -280,12 +291,11 @@ function App() {
     }
   }
 
-  function tick(snakeCells, direction, closeToFood, player) {
+  function tick(snakeCells, direction, closeToFood, playerId) {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
 
     switch (direction) {
-
       case "right":
         snakeHead.x += 2;
         break
@@ -304,18 +314,9 @@ function App() {
 
     outOfBoundsCheck(snakeHead)
     // headBodyCollisionCheck(snakeHead)
-    foodCheck(snakeHead, updatedCells, closeToFood, player)
-
-    if (player == 0) {
-      updateFieldChanged(0, 'snakeCells', updatedCells)
-      socket.emit('updateBody', updatedCells);
-    }
-    else {
-      updateFieldChanged(1, 'snakeCells', updatedCells)
-      socket.emit('updateBody2', updatedCells);
-    }
-
-
+    foodCheck(snakeHead, updatedCells, closeToFood, playerId)
+    updateFieldChanged(playerId, 'snakeCells', updatedCells)
+    socket.emit('updateBody', {'playerId': playerId, 'snakeCells': updatedCells})
   }
 
   return (

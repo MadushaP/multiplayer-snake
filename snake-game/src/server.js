@@ -24,20 +24,24 @@ let snakeCells =[
   
 
 let food = randomLocation()
-let direction = "right"
-let direction2 = "right"
 
 io.on('connection', (socket) => {
     console.log(`Player ${io.engine.clientsCount} connected`)
-    io.sockets.emit('playerCount', io.engine.clientsCount)
+
+    // socket.emit('playerCount', io.engine.clientsCount)
+
+    socket.on('playerCount', function(data) {
+        socket.emit("sendFood", io.engine.clientsCount)
+     });
+
 
      socket.on('getFood', function(data) {
         socket.emit("sendFood", food)
      });
 
-     socket.on('updateBody', function(updatedBody) {
-        snakeCells = [...updatedBody]
-        socket.broadcast.emit('updateBodyBroadcast', snakeCells)
+     socket.on('updateBody', function(data) {
+        snakeCells = [...data.snakeCells]
+        socket.broadcast.emit('updateBodyBroadcast', {"playerId": data.playerId,"snakeCells": snakeCells})
      });
 
 
@@ -52,24 +56,13 @@ io.on('connection', (socket) => {
      });
      
      socket.on('updateDirection', function(data) {
-        direction = data
-        socket.broadcast.emit('updateDirectionBroadcast', direction)
+        socket.broadcast.emit('updateDirectionBroadcast', ({"playerId": data.playerId,'direction': data.direction}))
      });
 
-//Player 2
-     socket.on('updateBody2', function(updatedBody) {
-        snakecells2 = [...updatedBody]
-        socket.broadcast.emit('updateBodyBroadcast2', snakecells2)
-     });
 
-     socket.on('updateDirection2', function(data) {
-        direction2 = data
-        socket.broadcast.emit('updateDirectionBroadcast2', direction2)
-     });
-
-    // socket.on('disconnect', (socket) => {
-    //     console.log('a player disconnected');
-    // });
+    socket.on('disconnect', (socket) => {
+        socket.broadcast.emit('updateDirectionBroadcast', ({"playerId": data.playerId,'direction': data.direction}))
+    });
 });
 
 http.listen(3001, () => {
