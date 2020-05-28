@@ -52,8 +52,7 @@ export default (props) => {
                     return <img key="head" className="snake-head" src={snakeHeadImage} style={style} ></img>
                 }
                 else {
-                    if(props.num == 2) 
-                      style.background = "#C70039"
+                      style.background = props.colour
                     return <div key={[cell.x, cell.y]} className="snake-body" style={style}></div>
                 }
             })}
