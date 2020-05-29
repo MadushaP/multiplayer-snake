@@ -8,6 +8,7 @@ function randomLocation() {
     return { 'x': x, 'y': y }
 }
 
+let snakeColours = ['C70039','FFC300','DAF7A6','DEDEDE','5CFFE7']
 let snakeCells = [];
 let food = randomLocation()
 
@@ -17,8 +18,9 @@ io.on('connection', (socket) => {
 
     socket.emit("getPlayerId", socket.id)
     socket.emit("getFood", food)
-    socket.emit("sendPlayerSnakeArray", snakeCells)
 
+    const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)];
+    snakeColours = snakeColours.filter(colour => colour != randomColour )
     snakeCells.push({
         playerId: socket.id,
         snakeCells: [
@@ -29,8 +31,8 @@ io.on('connection', (socket) => {
         ],
         direction: "right",
         closeToFood: false,
-        colour: '#' + (Math.random() * 0xFFFFFF << 0).toString(16)
-    })
+        colour: randomColour
+        })
     io.sockets.emit("sendPlayerSnakeArray", snakeCells)
 
     socket.on('setPlayerSnakeArray', function (data) {
@@ -50,6 +52,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
+        snakeColours.push(randomColour)
         snakeCells = snakeCells.filter(x => x.playerId != socket.id)
         io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     });

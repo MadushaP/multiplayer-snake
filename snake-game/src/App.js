@@ -246,7 +246,7 @@ function App() {
       <div className="game-area">
 
         {playerSnakeArray.map((player, index) => {
-          return <Snake playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} />
+          return <Snake playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} />
         })}
 
         <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />

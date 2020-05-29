@@ -39,7 +39,7 @@ export default (props) => {
                 }
 
                 if (props.snake.length - 1 == i) {
-                    let snakeHeadImage = 'snake-head.png'
+                    let snakeHeadImage = props.colour ? `snake-head-${props.colour}.png`: 'snake-head.png'
                     if (props.isGameOver) {
                         snakeHeadImage = 'snake-head-dead.png'
                     }
@@ -47,12 +47,12 @@ export default (props) => {
                         rotateHead(cell, props.direction, style)
                     }
                     if (props.closeToFood) {
-                        snakeHeadImage = 'snake-head-eat.png'
+                        snakeHeadImage =  props.colour ? `snake-head-eat-${props.colour}.png`: 'snake-head-eat.pngg'
                     }
                     return <img key="head" className="snake-head" src={snakeHeadImage} style={style} ></img>
                 }
                 else {
-                      style.background = props.colour
+                      style.background = '#'+props.colour
                     return <div key={[cell.x, cell.y]} className="snake-body" style={style}></div>
                 }
             })}
