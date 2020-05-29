@@ -31,10 +31,10 @@ function App() {
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
   const [acronymStatus, setAcronymStatus] = useState(false);
   const [playerId, setPlayerId] = useState(0);
+  const playerRef = useRef(playerId);
 
    const [playerSnakeArray, setPlayerSnakeArray] = useState([]);
-
-   const prevDirection = usePrevious("UNKNOWN")
+   const playerSnakeArrayRef = useRef(playerSnakeArray);
 
   const updateFieldChanged = (playerId, prop, value) => {
     let newArr = [...playerSnakeArray];
@@ -45,13 +45,26 @@ function App() {
 
 
   useEffect(() => {
-    window.addEventListener('keydown', keypress)
+    window.addEventListener('keydown', keypress);
+    return () => {
+      window.removeEventListener('keydown', keypress);
+    };
+  }, [])
+
+  useEffect(() => {
+   
     socket.emit('getPlayerSnakeArray')
+    socket.on('getPlayerId', (data) => { 
+      console.log("player ID:", data)
+      setPlayerId(data)
+      playerRef.current = data
+    })
+
     socket.on('getFood', (data) => { setFood(data) })
-
-    socket.on('sendPlayerSnakeArray', (data) => {  setPlayerSnakeArray(data)  })
-
-    // socket.on('updateDirectionBroadcast', (data) => { updateFieldChanged(data.playerId, 'direction', data.direction) })
+    socket.on('sendPlayerSnakeArray', (data) => {  
+      playerSnakeArrayRef.current = data
+      setPlayerSnakeArray(data) 
+     })
     socket.on('updateBodyBroadcast', (data) => {  updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells)})
     socket.on('updateFoodBroadcast', (data) => { setFood(data) })
 
@@ -80,45 +93,32 @@ function App() {
     const ref = useRef();
     useEffect(() => {
       ref.current = value;
-    }, [value]); // Only re-run if value changes
+    }, [value]); 
 
     return ref;
   }
 
   function keypress({ key }) {
+    let currentDirection = playerSnakeArrayRef.current[playerRef.current].direction
 
     switch (key) {      
       case "ArrowRight":
-        if (prevDirection.current !== "left") {
-          socket.emit('getPlayerId')
-          socket.on('getPlayerId', (data) => { 
-            socket.emit('setPlayerSnakeArray', {'playerId': data, 'prop':'direction', 'value': "right"})
-          })
+        if (currentDirection !== "left") {
+          socket.emit('updateDirection', {'playerId': playerRef.current, 'direction': "right"})
         }
         break
       case "ArrowLeft":
-        if (prevDirection.current !== "right") {
-          socket.emit('getPlayerId')
-          socket.on('getPlayerId', (data) => { 
-            socket.emit('setPlayerSnakeArray', {'playerId': data, 'prop':'direction', 'value': "left"})
-          })
-              }
+        if (currentDirection !== "right") {
+          socket.emit('updateDirection', {'playerId': playerRef.current, 'direction': "left"})
+        }
         break
       case "ArrowDown":
-        if (prevDirection.current !== "up") {
-          socket.emit('getPlayerId')
-          socket.on('getPlayerId', (data) => { 
-            socket.emit('setPlayerSnakeArray', {'playerId': data, 'prop':'direction', 'value': "down"})
-          })
-        }
+        if (currentDirection !== "up") {
+          socket.emit('updateDirection', {'playerId': playerRef.current, 'direction': "down"})}
         break
       case "ArrowUp":
-        if (prevDirection.current !== "down") {
-          socket.emit('getPlayerId')
-          socket.on('getPlayerId', (data) => { 
-            socket.emit('setPlayerSnakeArray', {'playerId': data, 'prop':'direction', 'value': "up"})
-          })
-        }
+        if (currentDirection !== "down") {
+          socket.emit('updateDirection', {'playerId': playerRef.current, 'direction': "up"})}
         break
       default:
         break;
@@ -137,6 +137,7 @@ function App() {
   }
 
   function gameOver() {
+    socket.disconnect()
     setGameOver(true)
     playSound('game-over.mp3')
   }
@@ -149,10 +150,12 @@ function App() {
   //   }
   // }
 
-  function outOfBoundsCheck(snakeHead) {
+  function outOfBoundsCheck(snakeHead, currentPlayer) {
     if (snakeHead.x > 99 || snakeHead.x < 0
       || snakeHead.y < 0 || snakeHead.y > 99) {
-      gameOver()
+      if(currentPlayer == playerId){
+        gameOver()
+      } 
     } else
       return false;
   }
@@ -228,7 +231,7 @@ function App() {
         break;
     }
 
-    outOfBoundsCheck(snakeHead)
+    outOfBoundsCheck(snakeHead, playerId)
     // headBodyCollisionCheck(snakeHead)
     foodCheck(snakeHead, updatedCells, closeToFood, playerId)
     socket.emit('setPlayerSnakeArray', {'playerId': playerId, 'prop':'snakeCells', 'value': updatedCells})

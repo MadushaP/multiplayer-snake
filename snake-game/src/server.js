@@ -16,9 +16,9 @@ io.on('connection', (socket) => {
 
     socket.id = io.engine.clientsCount - 1
     console.log(socket.id)
+    socket.emit("getPlayerId", socket.id)
 
-    // io.sockets.emit("getPlayerId", socket.id)
-    io.sockets.emit("getFood", food)
+    socket.emit("getFood", food)
 
     snakeCells.push({
         snakeCells: [
@@ -33,11 +33,6 @@ io.on('connection', (socket) => {
     })
     io.sockets.emit("sendPlayerSnakeArray", snakeCells)
 
-    
-    socket.on('getPlayerId', function (data) {
-        socket.emit("getPlayerId", socket.id)
-    });
-
     socket.on('getPlayerSnakeArray', function (data) {
         socket.emit("sendPlayerSnakeArray", snakeCells)
     });
@@ -46,11 +41,8 @@ io.on('connection', (socket) => {
         let newArr = [...snakeCells];
 
         newArr[data.playerId][data.prop] = data.value;
-        console.log(newArr)
-
         io.sockets.emit("sendPlayerSnakeArray", newArr)
     });
-
 
     socket.on('updateFood', function (data) {
         food = data
@@ -63,7 +55,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('updateDirection', function (data) {
-        socket.emit('updateDirectionBroadcast', ({ "playerId": data.playerId, 'direction': data.direction }))
+
+        snakeCells[data.playerId].direction = data.direction
+        socket.emit('sendPlayerSnakeArray', snakeCells)
     });
 
 
