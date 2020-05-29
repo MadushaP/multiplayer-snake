@@ -12,15 +12,15 @@ let snakeCells = [];
 let food = randomLocation()
 
 io.on('connection', (socket) => {
-    console.log(`Player ${io.engine.clientsCount} connected`)
+    console.log(`Player ${io.engine.clientsCount}: ${socket.id}, connected`)
+    socket.playerNum = io.engine.clientsCount
 
-    socket.id = io.engine.clientsCount - 1
-    console.log(socket.id)
     socket.emit("getPlayerId", socket.id)
-
     socket.emit("getFood", food)
+    socket.emit("sendPlayerSnakeArray", snakeCells)
 
     snakeCells.push({
+        playerId: socket.id,
         snakeCells: [
             { 'x': 10, 'y': 10 },
             { 'x': 12, 'y': 10 },
@@ -33,20 +33,9 @@ io.on('connection', (socket) => {
     })
     io.sockets.emit("sendPlayerSnakeArray", snakeCells)
 
-    socket.on('getPlayerSnakeArray', function (data) {
-        socket.emit("sendPlayerSnakeArray", snakeCells)
-    });
-
     socket.on('setPlayerSnakeArray', function (data) {
-        let newArr = [...snakeCells];
-
-        newArr[data.playerId][data.prop] = data.value;
-        io.sockets.emit("sendPlayerSnakeArray", newArr)
-    });
-
-    socket.on('updateFood', function (data) {
-        food = data
-        socket.broadcast.emit('updateFoodBroadcast', food)
+        snakeCells.find(x => x.playerId == data.playerId)[data.prop] = data.value
+        io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     });
 
     socket.on('randomFood', function (data) {
@@ -55,16 +44,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('updateDirection', function (data) {
-
-        snakeCells[data.playerId].direction = data.direction
+        snakeCells.find(x => x.playerId == data.playerId).direction = data.direction
         socket.emit('sendPlayerSnakeArray', snakeCells)
     });
 
-
     socket.on('disconnect', () => {
-        console.log("player", socket.id + 1, "disconnected")
-        snakeCells.splice(socket.id, 1)
-        socket.id=-1
+        console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
+        snakeCells = snakeCells.filter(x => x.playerId != socket.id)
         io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     });
 });
