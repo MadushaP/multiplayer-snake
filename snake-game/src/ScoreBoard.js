@@ -13,10 +13,12 @@ export default (props) => {
   }
 
   function setAiStatus() {
-    if (props.aiStatus)
-      props.setAi(false)
+    let currentSnake = props.playerSnakeArray.find(x => x.playerId == props.clientId)
+    console.log(currentSnake.aiStatus)
+    if (currentSnake.aiStatus)
+    props.socket.emit('setPlayerSnakeArray', { 'playerId': props.clientId, 'prop': 'aiStatus', 'value': false })
     else
-      props.setAi(true)
+    props.socket.emit('setPlayerSnakeArray', { 'playerId': props.clientId, 'prop': 'aiStatus', 'value': true })
   }
 
   function seAcronymStatus() {

@@ -20,7 +20,7 @@ function randomLocation() {
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(500)
+  const [speed, setSpeed] = useState(50)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
@@ -73,17 +73,13 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (isGameOver) return;
-      if (!aiStatus) {
-
-        playerSnakeArray.forEach((player, index) => tick(player.snakeCells, player.direction, player.closeToFood, player.playerId))
-
-      }
-      // } else {
-      //   AI.tick(snakeCells, food, updateBody, setSpeed,
-      //     setSnake, setDirection, direction, foodCheck, setCloseToFood, closeToFood)
-      //     AI.tick(snakeCells2, food, updateBody, setSpeed,
-      //       setSnake2, setDirection2, direction2, foodCheck, setCloseToFood2, closeToFood2)
-      // }
+        playerSnakeArray.forEach((player) => {
+          if(!player.aiStatus) { 
+            tick(player.snakeCells, player.direction, player.closeToFood, player.playerId)
+          } else {
+            AI.tick(player.snakeCells, player.direction, player.closeToFood, foodCheck, player.playerId, setSpeed, updateBody, food,socket)
+          }
+        })
     }, speed);
     return () => clearInterval(interval);
   }, [speed, food, playerSnakeArray, playerId]);
@@ -242,11 +238,11 @@ function App() {
   return (
     <div>
       <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-      <ScoreBoard score={score} setAi={setAi} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} aiStatus={aiStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} />
+      <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord}   playerSnakeArray={playerSnakeArray} clientId={playerId} />
       <div className="game-area">
 
         {playerSnakeArray.map((player, index) => {
-          return <Snake playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} />
+          return <Snake playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} playerId={player.playerId} clientId={playerId} />
         })}
 
         <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />

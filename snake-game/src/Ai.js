@@ -16,7 +16,7 @@ function aiGridAlignment(snakeHead, setDirection) {
     }
 }
 
-function moveToFood(food, snakeHead, setDirection, direction) {
+function moveToFood(food, snakeHead, socket,playerId) {
     let distanceX = food.x - snakeHead.x
     let distanceY = food.y - snakeHead.y
 
@@ -24,21 +24,22 @@ function moveToFood(food, snakeHead, setDirection, direction) {
         if (distanceX !== 0) {
             snakeHead.x += 2
             if (snakeHead.x > 99) {
-                setDirection("down")
+                socket.emit('updateDirection', { 'playerId': playerId, 'direction': "down" })
             } else
-                setDirection("right")
+               socket.emit('updateDirection', { 'playerId': playerId, 'direction': "right" })
         } else if (distanceY !== 0) {
             snakeHead.y += 2
-            setDirection("down")
+            socket.emit('updateDirection', { 'playerId': playerId, 'direction': "down" })
         }
     }
     else if (distanceX < 0 || distanceY < 0) {
         if (distanceX !== 0) {
             snakeHead.x -= 2
-            setDirection("left")
+            socket.emit('updateDirection', { 'playerId': playerId, 'direction': "left" })
+
         } else if (distanceY !== 0) {
             snakeHead.y -= 2
-            setDirection("up")
+            socket.emit('updateDirection', { 'playerId': playerId, 'direction': "up" })
         }
     }
 }
@@ -64,24 +65,22 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
     }
 }
 
-function tick(snakeCells, food, updateBody, setSpeed,
-    setSnake, setDirection, direction, foodCheck, setCloseToFood, closeToFood) {
-    setSpeed(25)
+function tick(snakeCells, direction, closeToFood, foodCheck, playerId, setSpeed, updateBody, food, socket) {
+   
+    // setSpeed(25)
 
     let updatedCells = updateBody(snakeCells)
     let snakeHead = snakeCells.slice(-1)[0]
 
-    moveToFood(food, snakeHead, setDirection, direction)
+    moveToFood(food, snakeHead, socket, playerId)
     headBodyAlignment(snakeHead, updatedCells, direction)
-    aiGridAlignment(snakeHead, setDirection)
+    aiGridAlignment(snakeHead)
 
     //Turn this on when AI is improved
     //headBodyCollisionCheck(snakeHead)    
     // outOfBoundsCheck(snakeHead)
-
-    foodCheck(snakeHead, updatedCells, setCloseToFood, closeToFood)
-
-    setSnake(updatedCells)
+    foodCheck(snakeHead, updatedCells, closeToFood, playerId, socket)
+    socket.emit('setPlayerSnakeArray', { 'playerId': playerId, 'prop': 'snakeCells', 'value': updatedCells })
 }
 
 

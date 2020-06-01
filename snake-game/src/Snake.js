@@ -25,7 +25,7 @@ function rotateHead(cell, direction, style) {
             break;
     }
 }
-
+let a = 0
 export default (props) => {
     return (
         <ReactCSSTransitionGroup
@@ -37,7 +37,8 @@ export default (props) => {
                     left: `${cell.x}%`,
                     top: `${cell.y}%`
                 }
-
+                {/* console.log(props.playerId, props.clientId) */}
+              
                 if (props.snake.length - 1 == i) {
                     let snakeHeadImage = props.colour ? `snake-head-${props.colour}.png`: 'snake-head.png'
                     if (props.isGameOver) {
@@ -47,7 +48,7 @@ export default (props) => {
                         rotateHead(cell, props.direction, style)
                     }
                     if (props.closeToFood) {
-                        snakeHeadImage =  props.colour ? `snake-head-eat-${props.colour}.png`: 'snake-head-eat.pngg'
+                        snakeHeadImage =  props.colour ? `snake-head-eat-${props.colour}.png`: 'snake-head-eat.png'
                     }
                     return <img key="head" className="snake-head" src={snakeHeadImage} style={style} ></img>
                 }
