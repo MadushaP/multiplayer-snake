@@ -3,12 +3,11 @@ import React from 'react';
 export default (props) => {
 
   return (
-    <div className="game-over">
-      <div>Game Over</div>
+    <div>
       <nav>
         <ul>
-          <li onClick={props.closeModal}>
-            Restart
+          <li onClick={props.buttonClick} style={{'userSelect': 'none'}}>
+            {props.text}
               <span></span><span></span><span></span><span></span>
           </li>
         </ul>

@@ -5,7 +5,8 @@ import ScoreBoard from './ScoreBoard';
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
 import io from 'socket.io-client';
-const socket = io.connect('http://192.168.1.11:3001/', {transports: ['websocket'], upgrade: false})
+import GameMenu from './GameMenu';
+const socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
 
 const helper = require('./helper.js');
 const acronyms = require('./acronyms.js');
@@ -20,12 +21,14 @@ function randomLocation() {
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(50)
+  const [speed, setSpeed] = useState(150)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
   const [showConfetti, setConfetti] = useState(false);
   const [confettiLocation, setConfettiLocation] = useState(food);
+  const [gameStart, setGameStart] = useState(false);
+  const [gameMode, setGameMode] = useState("singlePlayer");
 
   const [acronymMap, setAcronymsMap] = useState(acronyms);
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
@@ -72,14 +75,14 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isGameOver) return;
-        playerSnakeArray.forEach((player) => {
-          if(!player.aiStatus) { 
-            tick(player.snakeCells, player.direction, player.closeToFood, player.playerId)
-          } else {
-            AI.tick(player.snakeCells, player.direction, player.closeToFood, foodCheck, player.playerId, setSpeed, updateBody, food,socket)
-          }
-        })
+      if (isGameOver && !gameStart ) return;
+      playerSnakeArray.forEach((player) => {
+        if (!player.aiStatus) {
+          tick(player.snakeCells, player.direction, player.closeToFood, player.playerId)
+        } else {
+          AI.tick(player.snakeCells, player.direction, player.closeToFood, foodCheck, player.playerId, setSpeed, updateBody, food, socket)
+        }
+      })
     }, speed);
     return () => clearInterval(interval);
   }, [speed, food, playerSnakeArray, playerId]);
@@ -237,16 +240,17 @@ function App() {
 
   return (
     <div>
-      <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-      <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord}   playerSnakeArray={playerSnakeArray} clientId={playerId} />
-      <div className="game-area">
-
-        {playerSnakeArray.map((player, index) => {
-          return <Snake playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} playerId={player.playerId} clientId={playerId} />
-        })}
-
-        <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />
-      </div>
+      {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} /> :
+        <div>
+          <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
+          <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} clientId={playerId} />
+          <div className="game-area">
+            {playerSnakeArray.map((player, index) => {
+              return <Snake key={index} playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} playerId={player.playerId} clientId={playerId} />
+            })}
+            <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />
+          </div>
+        </div>}
     </div>
   );
 }

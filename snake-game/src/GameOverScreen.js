@@ -36,7 +36,10 @@ export default (props) => {
         onRequestClose={closeModal}
         style={customStyles}
         shouldCloseOnOverlayClick={false} >
-        <FancyButton closeModal={closeModal} />
+        <div className="game-over">
+          <div>Game Over</div>
+        </div>
+        <FancyButton text="restart" buttonClick={closeModal} />
       </Modal>
     </div>
   );

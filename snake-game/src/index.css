@@ -57,6 +57,16 @@ html {
   width: auto;
   max-width: 35px;
   max-height: 60px;
+  border-radius: 200px;
+  filter: drop-shadow(1px 0px 0px rgba(0, 0, 0, 0));
+  /* animation: glow 0.5s linear infinite alternate; */
+  animation-iteration-count: 10;
+}
+
+@keyframes glow{
+  to {
+    filter: drop-shadow(1px 0px 30px rgba(255, 255, 255, 1));
+  }
 }
 
 .snake-body {
@@ -71,7 +81,10 @@ html {
   );
   border-radius: 2px;
   box-shadow: inset 0 0 2px #000000;
+  filter: drop-shadow(1px 0px 0px rgba(0, 0, 0, 0));
+
 }
+
 
 .food {
   position: absolute;
@@ -251,6 +264,7 @@ nav ul li {
   z-index: 1;
   transition: 0.5s;
   margin: 1em;
+  background-color: #01183a;
 }
 
 nav ul li span {
@@ -326,4 +340,19 @@ span#answer {
   100% {
     transform: scale(1);
   }
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);}
+
+.snake-menu-image {
+  display: block;
+  margin: 0px auto;
+  padding-top:100px;
+  padding-bottom: 50px;
 }

@@ -11,6 +11,7 @@ function randomLocation() {
 let snakeColours = ['C70039','FFC300','DAF7A6','DEDEDE','5CFFE7']
 let snakeCells = [];
 let food = randomLocation()
+let singlePlayerStart = false;
 
 io.on('connection', (socket) => {
     console.log(`Player ${io.engine.clientsCount}: ${socket.id}, connected`)
@@ -21,7 +22,7 @@ io.on('connection', (socket) => {
 
     const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)];
     snakeColours = snakeColours.filter(colour => colour != randomColour)
-    
+
     snakeCells.push({
         playerId: socket.id,
         snakeCells: [
@@ -38,11 +39,14 @@ io.on('connection', (socket) => {
 
     io.sockets.emit("sendPlayerSnakeArray", snakeCells)
 
+    //  socket.on('startSinglePlayer', function (data) {
+    //     socket.emit("sendPlayerSnakeArray", snakeCells)
+    // });
+
     socket.on('setPlayerSnakeArray', function (data) {
         snakeCells.find(x => x.playerId == data.playerId)[data.prop] = data.value
         io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     });
-
 
     socket.on('randomFood', function (data) {
         food = randomLocation()
@@ -64,4 +68,9 @@ io.on('connection', (socket) => {
 
 http.listen(3001, () => {
     console.log('listening on *:3001');
+});
+
+process.on('uncaughtException', function (exception) {
+    console.log(snakeCells)
+    console.log(exception)
 });
