@@ -11,7 +11,6 @@ function randomLocation() {
 let snakeColours = ['C70039','FFC300','DAF7A6','DEDEDE','5CFFE7']
 let snakeCells = [];
 let food = randomLocation()
-let singlePlayerStart = false;
 
 io.on('connection', (socket) => {
     console.log(`Player ${io.engine.clientsCount}: ${socket.id}, connected`)
@@ -38,10 +37,6 @@ io.on('connection', (socket) => {
         })
 
     io.sockets.emit("sendPlayerSnakeArray", snakeCells)
-
-    //  socket.on('startSinglePlayer', function (data) {
-    //     socket.emit("sendPlayerSnakeArray", snakeCells)
-    // });
 
     socket.on('setPlayerSnakeArray', function (data) {
         snakeCells.find(x => x.playerId == data.playerId)[data.prop] = data.value

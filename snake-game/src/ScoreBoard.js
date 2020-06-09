@@ -11,18 +11,19 @@ export default (props) => {
     else
       props.setVolume(1)
   }
-
+  
   function setAiStatus() {
-    let currentSnake = props.playerSnakeArray.find(x => x.playerId == props.clientId)
-    console.log(currentSnake.aiStatus)
-    if (currentSnake.aiStatus)
-    props.socket.emit('setPlayerSnakeArray', { 'playerId': props.clientId, 'prop': 'aiStatus', 'value': false })
-    else
-    props.socket.emit('setPlayerSnakeArray', { 'playerId': props.clientId, 'prop': 'aiStatus', 'value': true })
+    let currentSnake = props.playerSnakeArray.find(x => x.playerId == props.playerId)
+    if (currentSnake.aiStatus) {
+      props.updateFieldChange(props.playerId, 'aiStatus', false)
+
+    }
+    else {
+      props.updateFieldChange(props.playerId, 'aiStatus', true)
+    }
   }
 
   function seAcronymStatus() {
-    console.log(props.acronymStatus)
     if (props.acronymStatus)
       props.setAcronymStatus(false)
     else
@@ -32,16 +33,16 @@ export default (props) => {
   return (
     <div className="parent">
       <div className="child">
-      <div className="scoreText">
-      Score:
+        <div className="scoreText">
+          Score:
         <ReactCSSTransitionGroup
-          transitionName="score"
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={1}>
-            <div  key={props.score} style={{ 'display': 'inline-block', 'paddingLeft': '5px' }}>
-            {props.score}
+            transitionName="score"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={1}>
+            <div key={props.score} style={{ 'display': 'inline-block', 'paddingLeft': '5px' }}>
+              {props.score}
             </div>
-        </ReactCSSTransitionGroup>
+          </ReactCSSTransitionGroup>
         </div>
       </div>
       <div className="child" style={{ 'width': '500px' }}>

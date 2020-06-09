@@ -25,7 +25,6 @@ function rotateHead(cell, direction, style) {
             break;
     }
 }
-let a = 0
 export default (props) => {
     return (
         <ReactCSSTransitionGroup

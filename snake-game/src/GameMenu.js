@@ -27,14 +27,21 @@ export default (props) => {
   }
 
   function startSinglePlayer() {
+    props.socket.disconnect()
+
     console.log("Started single player")
     props.setGameStart(true)
     props.setGameMode("singlePlayer")
-    props.socket.emit('startSinglePlayer')
+    props.gameModeRef.current = "singlePlayer"
+
+    props.setPlayerSnakeArray(array => [array[0]])
+
   }
 
   function startMultiplayer() {
     console.log("Started multiplayer player")
+    props.setGameMode("multiplayer")
+    props.gameModeRef.current = "multiplayer"
     props.setGameStart(true)
   }
 
@@ -51,7 +58,7 @@ export default (props) => {
         <div style={{ "display": "inline-flex" }}>
           <FancyButton text="Single player" buttonClick={startSinglePlayer} />
           <FancyButton text="vs CPU" />
-          <FancyButton text="Multiplayer"  buttonClick={startMultiplayer} />
+          <FancyButton text="Multiplayer" buttonClick={startMultiplayer} />
         </div>
       </Modal>
     </div>
