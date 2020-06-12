@@ -19,7 +19,7 @@ html {
   height: 1170px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 10px;
-  border: 5px solid rgba(224, 43, 125, 1);
+  border: 3px solid rgba(224, 43, 125, 1);
   background-image: linear-gradient(180deg, #1f2933 0%, #124e8e 100%);
 }
 

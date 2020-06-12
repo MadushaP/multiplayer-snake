@@ -16,17 +16,16 @@ io.on('connection', (socket) => {
     console.log(`Player ${io.engine.clientsCount}: ${socket.id}, connected`)
     socket.playerNum = io.engine.clientsCount
 
-    socket.emit("getFood", food)
-
     const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)];
     snakeColours = snakeColours.filter(colour => colour != randomColour)
 
-    // io.sockets.emit("sendPlayerSnakeArray", snakeCells)
-    socket.on('getPlayerId', function (data) {
+    socket.on('getPlayerId', function () {
         socket.emit('getPlayerId', socket.id)
+        socket.emit("getFood", food)
+
     })
 
-    socket.on('startMultiplayer', function (data) {
+    socket.on('startMultiplayer', function () {
         console.log("start multiplayer")
         snakeCells.push({
             playerId: socket.id,
@@ -50,7 +49,7 @@ io.on('connection', (socket) => {
         io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     });
 
-    socket.on('randomFood', function (data) {
+    socket.on('randomFood', function () {
         food = randomLocation()
         io.sockets.emit('updateFoodBroadcast', food)
     });

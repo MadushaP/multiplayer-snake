@@ -16,7 +16,6 @@ export default (props) => {
     let currentSnake = props.playerSnakeArray.find(x => x.playerId == props.playerId)
     if (currentSnake.aiStatus) {
       props.updateFieldChange(props.playerId, 'aiStatus', false)
-
     }
     else {
       props.updateFieldChange(props.playerId, 'aiStatus', true)

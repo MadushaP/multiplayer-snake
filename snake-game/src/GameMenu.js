@@ -44,7 +44,6 @@ export default (props) => {
       ],
       direction: "right",
       closeToFood: false,
-      colour: 'C70039',
       aiStatus: false,
       }])
       props.playerSnakeArrayRef.current = [{
@@ -57,11 +56,8 @@ export default (props) => {
         ],
         direction: "right",
         closeToFood: false,
-        colour: 'C70039',
         aiStatus: false,
         }]
-
-
   }
 
   function startMultiplayer() {

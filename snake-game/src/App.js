@@ -21,7 +21,7 @@ function randomLocation() {
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(500)
+  const [speed, setSpeed] = useState(100)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
@@ -49,7 +49,7 @@ function App() {
       setPlayerSnakeArray(newArr);
     } else {
       if (prop == "direction") {
-        socket.emit('updateDirection', { 'playerId': playerRef.current, 'direction': value })
+        socket.emit('updateDirection', { 'playerId': playerId, 'direction': value })
       } else {
         socket.emit('setPlayerSnakeArray', { 'playerId': playerId, 'prop': prop, 'value': value })
       }
