@@ -45,7 +45,7 @@ export default (props) => {
         </div>
       </div>
       <div className="child" style={{ 'width': '500px' }}>
-        <div className="fullWordText">{props.fullWord} </div>
+        <div className="fullWordText">{(props.gameMode === "singlePlayer") ?  props.fullWord : 'Multiplayer'} </div>
       </div>
       <div className="settingContainer">
         <div className="settings">

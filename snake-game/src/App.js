@@ -97,7 +97,7 @@ function App() {
       })
     }, speed);
     return () => clearInterval(interval);
-  }, [speed, food, playerSnakeArray, playerId, gameMode]);
+  }, [speed, food, playerSnakeArray, playerId]);
 
   function keypress({ key }) {
     //When still in menu disable keyboard input
@@ -254,7 +254,7 @@ function App() {
       {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-          <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} />
+          <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
           <div className="game-area">
             {playerSnakeArray.map((player, index) => {
               return <Snake key={index} playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} playerId={player.playerId} clientId={playerId} />
