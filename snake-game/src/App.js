@@ -21,7 +21,7 @@ function randomLocation() {
 function App() {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
-  const [speed, setSpeed] = useState(50)
+  const [speed, setSpeed] = useState(500)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false);
@@ -64,24 +64,30 @@ function App() {
   }, [])
 
   useEffect(() => {
-    socket.on('getPlayerId', (data) => {
-      console.log("player ID:", data)
-      setPlayerId(data)
-      playerRef.current = data
-    })
+    if (gameMode == 'multiplayer') {
 
-    socket.on('getFood', (data) => { setFood(data) })
-    socket.on('sendPlayerSnakeArray', (data) => {
-      playerSnakeArrayRef.current = data
-      setPlayerSnakeArray(data)
-    })
-    socket.on('updateBodyBroadcast', (data) => { updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells) })
-    socket.on('updateFoodBroadcast', (data) => { setFood(data) })
-  }, []);
+      socket.emit("startMultiplayer")
+      socket.emit("getPlayerId")
+
+      socket.on('getPlayerId', (data) => {
+        console.log("player ID:", data)
+        setPlayerId(data)
+        playerRef.current = data
+      })
+
+      socket.on('getFood', (data) => { setFood(data) })
+      socket.on('sendPlayerSnakeArray', (data) => {
+        playerSnakeArrayRef.current = data
+        setPlayerSnakeArray(data)
+      })
+      socket.on('updateBodyBroadcast', (data) => { updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells) })
+      socket.on('updateFoodBroadcast', (data) => { setFood(data) })
+    }
+  }, [gameMode]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isGameOver || !gameStart) { console.log("not runnin"); return};
+      if (isGameOver || !gameStart) { return };
       playerSnakeArray.forEach((player) => {
         if (!player.aiStatus) {
           tick(player.snakeCells, player.direction, player.closeToFood, player.playerId)
@@ -94,6 +100,10 @@ function App() {
   }, [speed, food, playerSnakeArray, playerId, gameMode]);
 
   function keypress({ key }) {
+    //When still in menu disable keyboard input
+    if (playerSnakeArrayRef.current.length == 0)
+      return;
+
     let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).direction
     switch (key) {
       case "ArrowRight":
@@ -241,7 +251,7 @@ function App() {
 
   return (
     <div>
-      {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} /> :
+      {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
           <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} />

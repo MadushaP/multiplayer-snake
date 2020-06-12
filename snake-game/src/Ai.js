@@ -16,7 +16,7 @@ function aiGridAlignment(snakeHead, setDirection) {
     }
 }
 
-function moveToFood(food, snakeHead, socket,playerId, gameMode, updateFieldChange) {
+function moveToFood(food, snakeHead, socket, playerId, gameMode, updateFieldChange) {
     let distanceX = food.x - snakeHead.x
     let distanceY = food.y - snakeHead.y
 
@@ -24,22 +24,22 @@ function moveToFood(food, snakeHead, socket,playerId, gameMode, updateFieldChang
         if (distanceX !== 0) {
             snakeHead.x += 2
             if (snakeHead.x > 99) {
-                if(gameMode == "singlePlayer") {
-                    updateFieldChange(0,'direction', 'down')
+                if (gameMode == "singlePlayer") {
+                    updateFieldChange(0, 'direction', 'down')
                 } else {
                     socket.emit('updateDirection', { 'playerId': playerId, 'direction': "down" })
                 }
             } else {
-                if(gameMode == "singlePlayer") {
-                    updateFieldChange(0,'direction', 'right')
+                if (gameMode == "singlePlayer") {
+                    updateFieldChange(0, 'direction', 'right')
                 } else {
                     socket.emit('updateDirection', { 'playerId': playerId, 'direction': "right" })
                 }
             }
         } else if (distanceY !== 0) {
             snakeHead.y += 2
-            if(gameMode == "singlePlayer") {
-                updateFieldChange(0,'direction', 'down')
+            if (gameMode == "singlePlayer") {
+                updateFieldChange(0, 'direction', 'down')
             } else {
                 socket.emit('updateDirection', { 'playerId': playerId, 'direction': "down" })
             }
@@ -48,16 +48,16 @@ function moveToFood(food, snakeHead, socket,playerId, gameMode, updateFieldChang
     else if (distanceX < 0 || distanceY < 0) {
         if (distanceX !== 0) {
             snakeHead.x -= 2
-            if(gameMode == "singlePlayer") {
-                updateFieldChange(0,'direction', 'left')
+            if (gameMode == "singlePlayer") {
+                updateFieldChange(0, 'direction', 'left')
             } else {
                 socket.emit('updateDirection', { 'playerId': playerId, 'direction': "left" })
             }
 
         } else if (distanceY !== 0) {
             snakeHead.y -= 2
-            if(gameMode == "singlePlayer") {
-                updateFieldChange(0,'direction', 'up')
+            if (gameMode == "singlePlayer") {
+                updateFieldChange(0, 'direction', 'up')
             } else {
                 socket.emit('updateDirection', { 'playerId': playerId, 'direction': "up" })
             }
@@ -87,7 +87,7 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
 }
 
 function tick(snakeCells, direction, closeToFood, foodCheck, playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChange) {
-   
+
     // setSpeed(25)
 
     let updatedCells = updateBody(snakeCells)
@@ -101,8 +101,8 @@ function tick(snakeCells, direction, closeToFood, foodCheck, playerId, setSpeed,
     //headBodyCollisionCheck(snakeHead)    
     // outOfBoundsCheck(snakeHead)
     foodCheck(snakeHead, updatedCells, closeToFood, playerId, socket)
-    updateFieldChange(playerId,'snakeCells',updatedCells)
-  
+    updateFieldChange(playerId, 'snakeCells', updatedCells)
+
 }
 
 

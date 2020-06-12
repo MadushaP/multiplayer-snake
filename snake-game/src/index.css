@@ -10,7 +10,6 @@ html {
   background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
   background-image: url("/iPlayerBackground.jpeg");
   background-size: auto 120%;
-
 }
 
 .game-area {
@@ -25,28 +24,28 @@ html {
 }
 
 @media (max-width: 1400px), (max-height: 1250px) {
-  .game-area {
+  html {
     zoom: 0.95;
   }
 }
 @media (max-width: 1300px), (max-height: 1200px) {
-  .game-area {
-    zoom: 0.90;
+  html {
+    zoom: 0.9;
   }
 }
 
-@media (max-width: 1200px),(max-height: 1150px) {
-  .game-area {
+@media (max-width: 1200px), (max-height: 1150px) {
+  html {
     zoom: 0.85;
   }
 }
-@media (max-width: 1100px),(max-height: 1100px) {
-  .game-area {
-    zoom: 0.80;
+@media (max-width: 1100px), (max-height: 1100px) {
+  html {
+    zoom: 0.8;
   }
 }
 @media (max-width: 800px), (max-height: 1000px) {
-  .game-area {
+  html {
     zoom: 0.58;
   }
 }
@@ -63,7 +62,7 @@ html {
   animation-iteration-count: 10;
 }
 
-@keyframes glow{
+@keyframes glow {
   to {
     filter: drop-shadow(1px 0px 30px rgba(255, 255, 255, 1));
   }
@@ -82,9 +81,7 @@ html {
   border-radius: 2px;
   box-shadow: inset 0 0 2px #000000;
   filter: drop-shadow(1px 0px 0px rgba(0, 0, 0, 0));
-
 }
-
 
 .food {
   position: absolute;
@@ -164,7 +161,7 @@ h1 {
   opacity: 0;
 }
 .score-enter {
-  color:yellow;
+  color: yellow;
   animation: pulse 0.5s ease-in-out;
 }
 
@@ -209,7 +206,7 @@ h1 {
   position: absolute;
   text-align: center;
   margin: 3px;
-  margin-left:30px;
+  margin-left: 30px;
 }
 
 .fullWordText {
@@ -348,11 +345,12 @@ span#answer {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);}
+  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
+}
 
 .snake-menu-image {
   display: block;
   margin: 0px auto;
-  padding-top:100px;
+  padding-top: 100px;
   padding-bottom: 50px;
 }

@@ -29,17 +29,43 @@ export default (props) => {
   function startSinglePlayer() {
     props.socket.disconnect()
 
-    console.log("Started single player")
+    // console.log("Started single player")
     props.setGameStart(true)
     props.setGameMode("singlePlayer")
     props.gameModeRef.current = "singlePlayer"
 
-    props.setPlayerSnakeArray(array => [array[0]])
+    props.setPlayerSnakeArray([{
+      playerId: 0,
+      snakeCells: [
+          { 'x': 10, 'y': 10 },
+          { 'x': 12, 'y': 10 },
+          { 'x': 14, 'y': 10 },
+          { 'x': 16, 'y': 10 },
+      ],
+      direction: "right",
+      closeToFood: false,
+      colour: 'C70039',
+      aiStatus: false,
+      }])
+      props.playerSnakeArrayRef.current = [{
+        playerId: 0,
+        snakeCells: [
+            { 'x': 10, 'y': 10 },
+            { 'x': 12, 'y': 10 },
+            { 'x': 14, 'y': 10 },
+            { 'x': 16, 'y': 10 },
+        ],
+        direction: "right",
+        closeToFood: false,
+        colour: 'C70039',
+        aiStatus: false,
+        }]
+
 
   }
 
   function startMultiplayer() {
-    console.log("Started multiplayer player")
+    // console.log("Started multiplayer player")
     props.setGameMode("multiplayer")
     props.gameModeRef.current = "multiplayer"
     props.setGameStart(true)
