@@ -97,7 +97,7 @@ function App() {
       })
     }, speed);
     return () => clearInterval(interval);
-  }, [speed, food, playerSnakeArray, playerId]);
+  }, [speed, food, playerSnakeArray, playerId, isGameOver]);
 
   function keypress({ key }) {
     //When still in menu disable keyboard input
@@ -143,8 +143,8 @@ function App() {
   }
 
   function gameOver() {
-    socket.disconnect()
     setGameOver(true)
+    socket.disconnect()
     playSound('game-over.mp3')
   }
 
@@ -173,7 +173,7 @@ function App() {
   function playSound(sound) {
     var bloop = new Audio(sound)
     bloop.volume = volume
-    // bloop.play()
+    bloop.play()
   }
 
   function increaseSnakeLength(updatedCells) {
@@ -241,7 +241,6 @@ function App() {
       default:
         break;
     }
-
     outOfBoundsCheck(snakeHead, playerId)
     // headBodyCollisionCheck(snakeHead)
     foodCheck(snakeHead, updatedCells, closeToFood, playerId)
