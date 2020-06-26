@@ -1,5 +1,5 @@
-import React from 'react';
-import Modal from 'react-modal';
+import React from 'react'
+import Modal from 'react-modal'
 import FancyButton from './FancyButton'
 
 const customStyles = {
@@ -17,16 +17,16 @@ const customStyles = {
     backgroundImage: 'linear-gradient(to top, #007adf 0%, #00ecbc 100%)',
     'border': '1px black'
   }
-};
+}
 
 export default (props) => {
 
-  function closeModal() {
-    props.setGameOver(false);
+  const closeModal = () => {
+    props.setGameOver(false)
     window.location.reload()
   }
 
-  function startSinglePlayer() {
+  const startSinglePlayer = () => {
     props.socket.disconnect()
 
     // console.log("Started single player")
@@ -37,30 +37,30 @@ export default (props) => {
     props.setPlayerSnakeArray([{
       playerId: 0,
       snakeCells: [
-          { 'x': 10, 'y': 10 },
-          { 'x': 12, 'y': 10 },
-          { 'x': 14, 'y': 10 },
-          { 'x': 16, 'y': 10 },
+        { 'x': 10, 'y': 10 },
+        { 'x': 12, 'y': 10 },
+        { 'x': 14, 'y': 10 },
+        { 'x': 16, 'y': 10 },
       ],
       direction: "right",
       closeToFood: false,
       aiStatus: false,
-      }])
-      props.playerSnakeArrayRef.current = [{
-        playerId: 0,
-        snakeCells: [
-            { 'x': 10, 'y': 10 },
-            { 'x': 12, 'y': 10 },
-            { 'x': 14, 'y': 10 },
-            { 'x': 16, 'y': 10 },
-        ],
-        direction: "right",
-        closeToFood: false,
-        aiStatus: false,
-        }]
+    }])
+    props.playerSnakeArrayRef.current = [{
+      playerId: 0,
+      snakeCells: [
+        { 'x': 10, 'y': 10 },
+        { 'x': 12, 'y': 10 },
+        { 'x': 14, 'y': 10 },
+        { 'x': 16, 'y': 10 },
+      ],
+      direction: "right",
+      closeToFood: false,
+      aiStatus: false,
+    }]
   }
 
-  function startMultiplayer() {
+  const startMultiplayer = () => {
     // console.log("Started multiplayer player")
     props.setGameMode("multiplayer")
     props.gameModeRef.current = "multiplayer"
@@ -84,5 +84,5 @@ export default (props) => {
         </div>
       </Modal>
     </div>
-  );
+  )
 }

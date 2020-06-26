@@ -1,52 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Snake from './Snake';
-import Food from './Food';
-import ScoreBoard from './ScoreBoard';
+import React, { useState, useEffect, useRef } from 'react'
+import Snake from './Snake'
+import Food from './Food'
+import ScoreBoard from './ScoreBoard'
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
-import io from 'socket.io-client';
-import GameMenu from './GameMenu';
+import io from 'socket.io-client'
+import GameMenu from './GameMenu'
 const socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
 
-const helper = require('./helper.js');
-const acronyms = require('./acronyms.js');
-const gamepad = require('./gamepad.js');
+const helper = require('./helper.js')
+const acronyms = require('./acronyms.js')
+const gamepad = require('./gamepad.js')
 
-function randomLocation() {
-  let x = Math.floor(Math.random() * 100 / 2) * 2;
-  let y = Math.floor(Math.random() * 100 / 2) * 2;
+const randomLocation = () => {
+  let x = Math.floor(Math.random() * 100 / 2) * 2
+  let y = Math.floor(Math.random() * 100 / 2) * 2
   return { 'x': x, 'y': y }
 }
 
-function App() {
+const App = () => {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
   const [speed, setSpeed] = useState(100)
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(1)
-  const [isGameOver, setGameOver] = useState(false);
-  const [showConfetti, setConfetti] = useState(false);
-  const [confettiLocation, setConfettiLocation] = useState(food);
-  const [gameStart, setGameStart] = useState(false);
-  const [gameMode, setGameMode] = useState("singlePlayer");
-  const gameModeRef = useRef(gameMode);
+  const [isGameOver, setGameOver] = useState(false)
+  const [showConfetti, setConfetti] = useState(false)
+  const [confettiLocation, setConfettiLocation] = useState(food)
+  const [gameStart, setGameStart] = useState(false)
+  const [gameMode, setGameMode] = useState("singlePlayer")
+  const gameModeRef = useRef(gameMode)
 
-  const [acronymMap, setAcronymsMap] = useState(acronyms);
+  const [acronymMap, setAcronymsMap] = useState(acronyms)
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
-  const [acronymStatus, setAcronymStatus] = useState(false);
+  const [acronymStatus, setAcronymStatus] = useState(false)
 
-  const [playerId, setPlayerId] = useState(0);
-  const playerRef = useRef(playerId);
+  const [playerId, setPlayerId] = useState(0)
+  const playerRef = useRef(playerId)
 
-  const [playerSnakeArray, setPlayerSnakeArray] = useState([]);
-  const playerSnakeArrayRef = useRef(playerSnakeArray);
+  const [playerSnakeArray, setPlayerSnakeArray] = useState([])
+  const playerSnakeArrayRef = useRef(playerSnakeArray)
 
 
   const updateFieldChanged = (playerId, prop, value) => {
     if (gameModeRef.current == "singlePlayer") {
-      let newArr = [...playerSnakeArrayRef.current];
-      newArr[0][prop] = value;
-      setPlayerSnakeArray(newArr);
+      let newArr = [...playerSnakeArrayRef.current]
+      newArr[0][prop] = value
+      setPlayerSnakeArray(newArr)
     } else {
       if (prop == "direction") {
         socket.emit('updateDirection', { 'playerId': playerId, 'direction': value })
@@ -57,10 +57,10 @@ function App() {
   }
 
   useEffect(() => {
-    window.addEventListener('keydown', keypress);
+    window.addEventListener('keydown', keypress)
     return () => {
-      window.removeEventListener('keydown', keypress);
-    };
+      window.removeEventListener('keydown', keypress)
+    }
   }, [])
 
   useEffect(() => {
@@ -83,11 +83,11 @@ function App() {
       socket.on('updateBodyBroadcast', (data) => { updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells) })
       socket.on('updateFoodBroadcast', (data) => { setFood(data) })
     }
-  }, [gameMode]);
+  }, [gameMode])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isGameOver || !gameStart) { return };
+      if (isGameOver || !gameStart) { return }
       playerSnakeArray.forEach((player) => {
         if (!player.aiStatus) {
           tick(player.snakeCells, player.direction, player.closeToFood, player.playerId)
@@ -95,14 +95,14 @@ function App() {
           AI.tick(player.snakeCells, player.direction, player.closeToFood, foodCheck, player.playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChanged)
         }
       })
-    }, speed);
-    return () => clearInterval(interval);
-  }, [speed, food, playerSnakeArray, playerId, isGameOver]);
+    }, speed)
+    return () => clearInterval(interval)
+  }, [speed, food, playerSnakeArray, playerId, isGameOver])
 
-  function keypress({ key }) {
+  const keypress = ({ key }) => {
     //When still in menu disable keyboard input
     if (playerSnakeArrayRef.current.length == 0)
-      return;
+      return
 
     let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).direction
     switch (key) {
@@ -127,28 +127,28 @@ function App() {
         }
         break
       default:
-        break;
+        break
     }
   }
 
 
-  function updateBody(snakeCells) {
+  const updateBody = (snakeCells) => {
     let updatedCells = [...snakeCells]
     for (let cell = 0; cell < updatedCells.length - 1; cell++) {
       updatedCells[cell].x = snakeCells[cell + 1].x
       updatedCells[cell].y = snakeCells[cell + 1].y
     }
 
-    return updatedCells;
+    return updatedCells
   }
 
-  function gameOver() {
+  const gameOver = () => {
     setGameOver(true)
     socket.disconnect()
     playSound('game-over.mp3')
   }
 
-  // function headBodyCollisionCheck(snakeHead) {
+  // const headBodyCollisionCheck = (snakeHead) => {
   //   let snakeBody = snakeCells.slice(0, -1)
 
   //   if (helper.isArrayInArray(snakeBody, snakeHead)) {
@@ -156,32 +156,32 @@ function App() {
   //   }
   // }
 
-  function outOfBoundsCheck(snakeHead, currentPlayer) {
+  const outOfBoundsCheck = (snakeHead, currentPlayer) => {
     if (snakeHead.x > 99 || snakeHead.x < 0
       || snakeHead.y < 0 || snakeHead.y > 99) {
       if (currentPlayer == playerId) {
         gameOver()
       }
     } else
-      return false;
+      return false
   }
 
-  function hasEatenFood(snakeHead) {
-    return helper.arrayEquals(snakeHead, food);
+  const hasEatenFood = (snakeHead) => {
+    return helper.arrayEquals(snakeHead, food)
   }
 
-  function playSound(sound) {
+  const playSound = (sound) => {
     var bloop = new Audio(sound)
     bloop.volume = volume
     bloop.play()
   }
 
-  function increaseSnakeLength(updatedCells) {
+  const increaseSnakeLength = (updatedCells) => {
     let snakeTail = updatedCells[0]
     updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
   }
 
-  function handleCloseToFood(snakeHead, closeToFood, playerId) {
+  const handleCloseToFood = (snakeHead, closeToFood, playerId) => {
     let distanceX = Math.abs(food.x - snakeHead.x)
     let distanceY = Math.abs(food.y - snakeHead.y)
 
@@ -194,11 +194,10 @@ function App() {
     }
     else {
       updateFieldChanged(playerId, 'closeToFood', false)
-
     }
   }
 
-  function foodCheck(snakeHead, updatedCells, closeToFood, playerId) {
+  const foodCheck = (snakeHead, updatedCells, closeToFood, playerId) => {
     handleCloseToFood(snakeHead, closeToFood, playerId)
     if (hasEatenFood(snakeHead)) {
       setConfettiLocation({ 'x': snakeHead.x, 'y': snakeHead.y })
@@ -221,25 +220,25 @@ function App() {
     }
   }
 
-  function tick(snakeCells, direction, closeToFood, playerId) {
+  const tick = (snakeCells, direction, closeToFood, playerId) => {
     let updatedCells = updateBody(snakeCells)
     let snakeHead = updatedCells.slice(-1)[0]
 
     switch (direction) {
       case "right":
-        snakeHead.x += 2;
+        snakeHead.x += 2
         break
       case "left":
-        snakeHead.x -= 2;
+        snakeHead.x -= 2
         break
       case "down":
-        snakeHead.y += 2;
+        snakeHead.y += 2
         break
       case "up":
-        snakeHead.y -= 2;
+        snakeHead.y -= 2
         break
       default:
-        break;
+        break
     }
     outOfBoundsCheck(snakeHead, playerId)
     // headBodyCollisionCheck(snakeHead)
@@ -262,7 +261,7 @@ function App() {
           </div>
         </div>}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

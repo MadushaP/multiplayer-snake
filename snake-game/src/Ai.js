@@ -1,4 +1,4 @@
-function aiGridAlignment(snakeHead, setDirection) {
+const aiGridAlignment = (snakeHead, setDirection) => {
     if (snakeHead.x > 98) {
         snakeHead.x -= 2
         snakeHead.y += 2
@@ -16,7 +16,7 @@ function aiGridAlignment(snakeHead, setDirection) {
     }
 }
 
-function moveToFood(food, snakeHead, socket, playerId, gameMode, updateFieldChanged) {
+const moveToFood = (food, snakeHead, socket, playerId, gameMode, updateFieldChanged) => {
     let distanceX = food.x - snakeHead.x
     let distanceY = food.y - snakeHead.y
 
@@ -44,7 +44,7 @@ function moveToFood(food, snakeHead, socket, playerId, gameMode, updateFieldChan
     }
 }
 
-function headBodyAlignment(snakeHead, updatedCells, direction) {
+const headBodyAlignment = (snakeHead, updatedCells, direction) => {
     for (let i = 0; i < updatedCells.length - 1; i++) {
         if (snakeHead.x === updatedCells[i].x && snakeHead.y === updatedCells[i].y) {
             if (direction === "left") {
@@ -60,12 +60,12 @@ function headBodyAlignment(snakeHead, updatedCells, direction) {
                 snakeHead.x += 2
                 snakeHead.y -= 2
             }
-            return;
+            return
         }
     }
 }
 
-function tick(snakeCells, direction, closeToFood, foodCheck, playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChange) {
+const tick = (snakeCells, direction, closeToFood, foodCheck, playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChange) => {
 
     // setSpeed(25)
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import Confetti from 'react-dom-confetti';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import React from 'react'
+import Confetti from 'react-dom-confetti'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 const config = {
     angle: "360",
@@ -13,7 +13,7 @@ const config = {
     width: "10px",
     height: "10px",
     colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
-};
+}
 
 export default (props) => {
     const style = {
@@ -41,7 +41,8 @@ export default (props) => {
                             <h1 key={props.currentAcronym.fullWord} >
                                 <span aria-hidden="true" id="answer">{props.currentAcronym.fullWord} </span>
                             </h1>
-                        </ReactCSSTransitionGroup> </div> : null}
+                        </ReactCSSTransitionGroup>
+                    </div> : null}
             </div>
         </div>)
 }

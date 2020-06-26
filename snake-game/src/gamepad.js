@@ -1,11 +1,11 @@
 function load(setDirection, prevDir) {
-    var interval;
+    var interval
     if (!('ongamepadconnected' in window)) {
         interval = setInterval(pollGamepads, 250)
     }
     function pollGamepads() {
-        var gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-        var gp = gamepads[0];
+        var gamepads = navigator.getGamepads ? navigator.getGamepads() : []
+        var gp = gamepads[0]
         //Add logic not to go back on its self and analogue
         if (gp) {
             if (!prevDir)
@@ -27,7 +27,7 @@ function load(setDirection, prevDir) {
                                 setDirection("left")
                         }
 
-            clearInterval(interval);
+            clearInterval(interval)
         }
     }
 }

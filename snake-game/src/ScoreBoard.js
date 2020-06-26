@@ -1,18 +1,18 @@
-import React from 'react';
+import React from 'react'
 import Toggle from 'react-toggle'
 import "react-toggle/style.css"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 export default (props) => {
 
-  function setSound() {
+  const setSound = () => {
     if (props.volume === 1)
       props.setVolume(0)
     else
       props.setVolume(1)
   }
-  
-  function setAiStatus() {
+
+  const setAiStatus = () => {
     let currentSnake = props.playerSnakeArray.find(x => x.playerId == props.playerId)
     if (currentSnake.aiStatus) {
       props.updateFieldChange(props.playerId, 'aiStatus', false)
@@ -22,7 +22,7 @@ export default (props) => {
     }
   }
 
-  function seAcronymStatus() {
+  const seAcronymStatus = () => {
     if (props.acronymStatus)
       props.setAcronymStatus(false)
     else
@@ -45,18 +45,18 @@ export default (props) => {
         </div>
       </div>
       <div className="child" style={{ 'width': '500px' }}>
-        <div className="fullWordText">{(props.gameMode === "singlePlayer") ?  props.fullWord : 'Multiplayer'} </div>
+        <div className="fullWordText">{(props.gameMode === "singlePlayer") ? props.fullWord : 'Multiplayer'} </div>
       </div>
       <div className="settingContainer">
         <div className="settings">
           <div style={{ 'width': '37%' }}>AI
-                      <Toggle className="spacing" style={{ 'paddingTop': '37%' }} defaultChecked={false} onChange={() => setAiStatus()} />
+            <Toggle className="spacing" style={{ 'paddingTop': '37%' }} defaultChecked={false} onChange={() => setAiStatus()} />
           </div>
           <div style={{ 'width': '60%' }}>Sound
-                      <Toggle className="spacing" defaultChecked={true} onChange={() => setSound()} />
+            <Toggle className="spacing" defaultChecked={true} onChange={() => setSound()} />
           </div>
           <div style={{ 'width': '71%' }}> Acronym
-                      <Toggle className="spacing" defaultChecked={props.acronymsStatus} onChange={() => seAcronymStatus()} />
+            <Toggle className="spacing" defaultChecked={props.acronymsStatus} onChange={() => seAcronymStatus()} />
           </div>
         </div>
       </div>
