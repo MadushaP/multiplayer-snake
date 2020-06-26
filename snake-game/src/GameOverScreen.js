@@ -1,5 +1,5 @@
-import React from 'react';
-import Modal from 'react-modal';
+import React from 'react'
+import Modal from 'react-modal'
 import FancyButton from './FancyButton'
 
 const customStyles = {
@@ -15,16 +15,16 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
     border: '2px solid rgba(224, 43, 125, 1)'
   }
-};
+}
 
 export default (props) => {
 
-  function afterOpenModal() {
+  const afterOpenModal = () => {
     //Confetti effects? 
   }
 
-  function closeModal() {
-    props.setGameOver(false);
+  const closeModal= () => {
+    props.setGameOver(false)
     window.location.reload()
   }
 
@@ -36,8 +36,11 @@ export default (props) => {
         onRequestClose={closeModal}
         style={customStyles}
         shouldCloseOnOverlayClick={false} >
-        <FancyButton closeModal={closeModal} />
+        <div className="game-over">
+          <div>Game Over</div>
+        </div>
+        <FancyButton text="restart" buttonClick={closeModal} />
       </Modal>
     </div>
-  );
+  )
 }

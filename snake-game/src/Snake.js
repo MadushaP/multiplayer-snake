@@ -1,31 +1,30 @@
-import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import React from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
-function rotateHead(cell, direction, style) {
+const rotateHead = (cell, direction, style) => {
     switch (direction) {
         case "right":
-            style.top = `${cell.y - 1}%`;
-            style['transform'] = 'rotate(270deg)';
-            break;
+            style.top = `${cell.y - 1}%`
+            style['transform'] = 'rotate(270deg)'
+            break
         case "left":
-            style.left = `${cell.x - 0.5}%`;
-            style.top = `${cell.y - 1}%`;
-            style['transform'] = 'rotate(90deg)';
-            break;
+            style.left = `${cell.x - 0.5}%`
+            style.top = `${cell.y - 1}%`
+            style['transform'] = 'rotate(90deg)'
+            break
         case "down":
-            style.left = `${cell.x - 0.3}%`;
-            style.top = `${cell.y - 1}%`;
-            break;
+            style.left = `${cell.x - 0.3}%`
+            style.top = `${cell.y - 1}%`
+            break
         case "up":
-            style.left = `${cell.x - 0.3}%`;
-            style.top = `${cell.y - 1}%`;
-            style['transform'] = 'rotate(180deg)';
-            break;
+            style.left = `${cell.x - 0.3}%`
+            style.top = `${cell.y - 1}%`
+            style['transform'] = 'rotate(180deg)'
+            break
         default:
-            break;
+            break
     }
 }
-
 export default (props) => {
     return (
         <ReactCSSTransitionGroup
@@ -37,9 +36,8 @@ export default (props) => {
                     left: `${cell.x}%`,
                     top: `${cell.y}%`
                 }
-
                 if (props.snake.length - 1 == i) {
-                    let snakeHeadImage = 'snake-head.png'
+                    let snakeHeadImage = props.colour ? `snake-head-${props.colour}.png` : 'snake-head.png'
                     if (props.isGameOver) {
                         snakeHeadImage = 'snake-head-dead.png'
                     }
@@ -47,14 +45,15 @@ export default (props) => {
                         rotateHead(cell, props.direction, style)
                     }
                     if (props.closeToFood) {
-                        snakeHeadImage = 'snake-head-eat.png'
+                        snakeHeadImage = props.colour ? `snake-head-eat-${props.colour}.png` : 'snake-head-eat.png'
                     }
                     return <img key="head" className="snake-head" src={snakeHeadImage} style={style} ></img>
                 }
                 else {
+                    style.background = '#' + props.colour
                     return <div key={[cell.x, cell.y]} className="snake-body" style={style}></div>
                 }
             })}
-        </ReactCSSTransitionGroup>);
+        </ReactCSSTransitionGroup>)
 }
 
