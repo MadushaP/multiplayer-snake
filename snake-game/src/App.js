@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Snake from './Snake'
 import Food from './Food'
 import ScoreBoard from './ScoreBoard'
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
 import io from 'socket.io-client'
 import GameMenu from './GameMenu'
+import CanvasWrapper from './CanvasWrapper'
+
 const socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
 
 const helper = require('./helper.js')
@@ -13,8 +14,8 @@ const acronyms = require('./acronyms.js')
 const gamepad = require('./gamepad.js')
 
 const randomLocation = () => {
-  let x = Math.floor(Math.random() * 100 / 2) * 2
-  let y = Math.floor(Math.random() * 100 / 2) * 2
+  let x = Math.floor(Math.random() * 380)
+  let y = Math.floor(Math.random() * 380)
   return { 'x': x, 'y': y }
 }
 
@@ -38,9 +39,21 @@ const App = () => {
   const [playerId, setPlayerId] = useState(0)
   const playerRef = useRef(playerId)
 
-  const [playerSnakeArray, setPlayerSnakeArray] = useState([])
+  const [playerSnakeArray, setPlayerSnakeArray] = useState([{
+    playerId: 0,
+    snakeCells: [
+      { 'x': 10, 'y': 10 },
+      { 'x': 12, 'y': 10 },
+      { 'x': 14, 'y': 10 },
+      { 'x': 16, 'y': 10 },
+    ],
+    direction: "right",
+    closeToFood: false,
+    aiStatus: false,
+  }])
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
+  let blockSize = 3
 
   const updateFieldChanged = (playerId, prop, value) => {
     if (gameModeRef.current == "singlePlayer") {
@@ -85,19 +98,32 @@ const App = () => {
     }
   }, [gameMode])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isGameOver || !gameStart) { return }
-      playerSnakeArray.forEach((player) => {
+
+
+  const requestRef = React.useRef();
+  const previousTimeRef = React.useRef();
+
+  const animate = time => {
+    // if (isGameOver || !gameStart) { return };
+
+    if (previousTimeRef.current != undefined) {
+      playerSnakeArrayRef.current.forEach((player) => {
         if (!player.aiStatus) {
           tick(player.snakeCells, player.direction, player.closeToFood, player.playerId)
         } else {
-          AI.tick(player.snakeCells, player.direction, player.closeToFood, foodCheck, player.playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChanged)
+          AI.tick(player.snakeCells, player.direction, player.closeToFood, foodCheck, player.playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChanged, draw)
         }
       })
-    }, speed)
-    return () => clearInterval(interval)
-  }, [speed, food, playerSnakeArray, playerId, isGameOver])
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  }
+
+
+  React.useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [speed, food, playerSnakeArray, playerId, isGameOver]);
 
   const keypress = ({ key }) => {
     //When still in menu disable keyboard input
@@ -167,7 +193,7 @@ const App = () => {
   }
 
   const hasEatenFood = (snakeHead) => {
-    return helper.arrayEquals(snakeHead, food)
+    return helper.headAtFood(snakeHead, food)
   }
 
   const playSound = (sound) => {
@@ -184,8 +210,7 @@ const App = () => {
   const handleCloseToFood = (snakeHead, closeToFood, playerId) => {
     let distanceX = Math.abs(food.x - snakeHead.x)
     let distanceY = Math.abs(food.y - snakeHead.y)
-
-    if (distanceX < 12 && distanceY < 12) {
+    if (distanceX < 12 * blockSize && distanceY < 12 * blockSize) {
       if (!closeToFood) {
         playSound('mouth.mp3')
       }
@@ -207,7 +232,6 @@ const App = () => {
       } else {
         socket.emit('randomFood')
       }
-      // setFood(location)
 
       // setSpeed(speed - 10)
       setScore(score => score + 1)
@@ -240,25 +264,89 @@ const App = () => {
       default:
         break
     }
-    outOfBoundsCheck(snakeHead, playerId)
+    // outOfBoundsCheck(snakeHead, playerId)
     // headBodyCollisionCheck(snakeHead)
     foodCheck(snakeHead, updatedCells, closeToFood, playerId)
 
     updateFieldChanged(playerId, 'snakeCells', updatedCells)
+    draw(updatedCells, closeToFood)
+
+  }
+
+  const renderFood = (context) => {
+    context.beginPath();
+    context.arc(food.x * blockSize + 10, food.y * blockSize + 10, 10, 0, 2 * Math.PI);
+    context.fillStyle = "#FF0000";
+    context.fill();
+    context.stroke();
+  }
+
+  const renderGameBoard = (context, canvas) => {
+    var grd = context.createLinearGradient(0, 0, canvas.width, canvas.height)
+    grd.addColorStop(0, "#0e6ef0");
+    grd.addColorStop(1, "#004CB3");
+    context.fillStyle = grd;
+    context.fillRect(0, 0, 1300, 1175)
+  }
+
+  const canvasRef = useRef(null)
+
+  const draw = (snake, closeToFood) => {
+    const canvas = canvasRef.current
+    if (!canvas || !snake)
+      return;
+    const context = canvas.getContext('2d')
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    //game board
+    renderGameBoard(context, canvas)
+
+    //food
+    renderFood(context)
+
+
+    //render snake
+    snake.forEach((cell, index) => {
+      context.fillStyle = "#48df08";
+      context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
+      context.save();
+
+
+      //snake head
+      if (index === snake.length - 1) {
+        var snakeHead = new Image();
+        snakeHead.src = !closeToFood ? 'snake-head.png' : 'snake-head-eat.png';
+        context.translate(cell.x * blockSize, cell.y * blockSize);
+
+        //rotate head
+        if (playerSnakeArrayRef.current[0].direction == "up") {
+          context.rotate(Math.PI);
+          context.drawImage(snakeHead, -28, -3, 35, 40)
+
+        } else if (playerSnakeArrayRef.current[0].direction == "down") {
+          context.rotate(0);
+          context.drawImage(snakeHead, -7, 5, 35, 40)
+        }
+        else if (playerSnakeArrayRef.current[0].direction == "left") {
+          context.rotate(Math.PI / 2);
+          context.drawImage(snakeHead, -7, -2, 35, 40)
+        }
+        else if (playerSnakeArrayRef.current[0].direction == "right") {
+          context.rotate(Math.PI * 3 / 2);
+          context.drawImage(snakeHead, -27, 15, 35, 40)
+        }
+
+        context.restore()
+      }
+    })
   }
 
   return (
     <div>
-      {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
+      {gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
           <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
-          <div className="game-area">
-            {playerSnakeArray.map((player, index) => {
-              return <Snake key={index} playerId={index} snake={player.snakeCells} speed={speed} direction={player.direction} closeToFood={player.closeToFood} isGameOver={isGameOver} colour={player.colour} snakeHeadColour={player.snakeHeadColour} playerId={player.playerId} clientId={playerId} />
-            })}
-            <Food food={food} confettiLocation={confettiLocation} currentAcronym={currentAcronym} showConfetti={showConfetti} acronymStatus={acronymStatus} />
-          </div>
+          <CanvasWrapper food={food} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
         </div>}
     </div>
   )

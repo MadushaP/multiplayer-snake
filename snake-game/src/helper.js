@@ -13,6 +13,15 @@ const arrayEquals = (array1, array2) => {
     else return false
 }
 
+const headAtFood = (snakeHead, food) => {
+     let distanceX = Math.abs(snakeHead.x - food.x)
+     let distanceY = Math.abs(snakeHead.y - food.y)
+    if (distanceX <= 4 && distanceY <= 4) {
+        return true
+    }
+    else return false
+}
+
 const randomItem = (array) => {
     return array[Math.floor(Math.random() * array.length)]
 }
@@ -20,5 +29,6 @@ const randomItem = (array) => {
 module.exports = {
     isArrayInArray: isArrayInArray,
     arrayEquals: arrayEquals,
-    randomItem: randomItem
+    randomItem: randomItem,
+    headAtFood: headAtFood
 }
