@@ -27,7 +27,7 @@ export default (props) => {
             <canvas
                 ref={props.canvasRef}
                 width="1300"
-                height="1200">
+                height="1175">
             </canvas>
             <div style={confStyle}>
                 <Confetti style={confStyle} active={props.showConfetti} config={config} />

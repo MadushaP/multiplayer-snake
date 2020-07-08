@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Food from './Food'
 import ScoreBoard from './ScoreBoard'
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
 import io from 'socket.io-client'
 import GameMenu from './GameMenu'
-import CanvasWrapper from './CanvasWrapper'
+import ConfettiWrapper from './ConfettiWrapper'
 
 const socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
 
@@ -14,8 +13,8 @@ const acronyms = require('./acronyms.js')
 const gamepad = require('./gamepad.js')
 
 const randomLocation = () => {
-  let x = Math.floor(Math.random() * 380)
-  let y = Math.floor(Math.random() * 380)
+  let x = Math.floor(Math.random() * 350)
+  let y = Math.floor(Math.random() * 350)
   return { 'x': x, 'y': y }
 }
 
@@ -100,11 +99,12 @@ const App = () => {
 
 
 
-  const requestRef = React.useRef();
-  const previousTimeRef = React.useRef();
+  const requestRef = React.useRef()
+  const previousTimeRef = React.useRef()
 
   const animate = time => {
-    // if (isGameOver || !gameStart) { return };
+    // if (isGameOver || !gameStart) { cancelAnimationFrame(requestRef.current); return; }
+    if (isGameOver) { cancelAnimationFrame(requestRef.current); return; }
 
     if (previousTimeRef.current != undefined) {
       playerSnakeArrayRef.current.forEach((player) => {
@@ -116,14 +116,14 @@ const App = () => {
       })
     }
     previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(animate);
+    requestRef.current = requestAnimationFrame(animate)
   }
 
 
   React.useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, [speed, food, playerSnakeArray, playerId, isGameOver]);
+    requestRef.current = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(requestRef.current)
+  }, [speed, food, playerSnakeArray, playerId, isGameOver])
 
   const keypress = ({ key }) => {
     //When still in menu disable keyboard input
@@ -273,10 +273,21 @@ const App = () => {
 
   }
 
+  const renderFullWorld = (context) => {
+    context.fillStyle = "white"
+    context.font = "bold 25px Verdana"
+    let acronymWidth = context.measureText(currentAcronym.acronym).width
+    context.fillText(currentAcronym.acronym, food.x * blockSize - (acronymWidth / 2) + 10, food.y * blockSize - 20)
+
+    context.font = "bold 25px Verdana"
+    let fullWordWidth = context.measureText(currentAcronym.fullWord).width
+    context.fillText(currentAcronym.fullWord, food.x * blockSize - (fullWordWidth / 2) + 10, food.y * blockSize + 60)
+  }
+
   const renderFood = (context) => {
     context.beginPath();
-    context.arc(food.x * blockSize + 10, food.y * blockSize + 10, 10, 0, 2 * Math.PI);
-    context.fillStyle = "#FF0000";
+    context.arc(food.x * blockSize + 10, food.y * blockSize + 10, 10, 0, 2 * Math.PI)
+    context.fillStyle = "#FF0000"
     context.fill();
     context.stroke();
   }
@@ -296,19 +307,30 @@ const App = () => {
     if (!canvas || !snake)
       return;
     const context = canvas.getContext('2d')
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
     //game board
     renderGameBoard(context, canvas)
 
     //food
     renderFood(context)
-
+    
+    if (acronymStatus) {
+      renderFullWorld(context)
+    }
 
     //render snake
     snake.forEach((cell, index) => {
       context.fillStyle = "#48df08";
       context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
       context.save();
+
+      //GameOver
+      if (cell.x * 3 > canvas.width || cell.y * 3 > canvas.height) {
+        setGameOver(true)
+      } else if (cell.x < 0 || cell.y < 0) {
+        setGameOver(true)
+      }
 
 
       //snake head
@@ -320,19 +342,18 @@ const App = () => {
         //rotate head
         if (playerSnakeArrayRef.current[0].direction == "up") {
           context.rotate(Math.PI);
-          context.drawImage(snakeHead, -28, -3, 35, 40)
-
+          context.drawImage(snakeHead, -25, -3, 30, 40)
         } else if (playerSnakeArrayRef.current[0].direction == "down") {
           context.rotate(0);
-          context.drawImage(snakeHead, -7, 5, 35, 40)
+          context.drawImage(snakeHead, -5, 5, 30, 40)
         }
         else if (playerSnakeArrayRef.current[0].direction == "left") {
           context.rotate(Math.PI / 2);
-          context.drawImage(snakeHead, -7, -2, 35, 40)
+          context.drawImage(snakeHead, -5, -3, 30, 40)
         }
         else if (playerSnakeArrayRef.current[0].direction == "right") {
           context.rotate(Math.PI * 3 / 2);
-          context.drawImage(snakeHead, -27, 15, 35, 40)
+          context.drawImage(snakeHead, -25, 15, 30, 40)
         }
 
         context.restore()
@@ -346,7 +367,7 @@ const App = () => {
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
           <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
-          <CanvasWrapper food={food} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
+          <ConfettiWrapper food={food} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
         </div>}
     </div>
   )
