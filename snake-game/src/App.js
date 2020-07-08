@@ -182,16 +182,6 @@ const App = () => {
   //   }
   // }
 
-  const outOfBoundsCheck = (snakeHead, currentPlayer) => {
-    if (snakeHead.x > 99 || snakeHead.x < 0
-      || snakeHead.y < 0 || snakeHead.y > 99) {
-      if (currentPlayer == playerId) {
-        gameOver()
-      }
-    } else
-      return false
-  }
-
   const hasEatenFood = (snakeHead) => {
     return helper.headAtFood(snakeHead, food)
   }
@@ -204,7 +194,10 @@ const App = () => {
 
   const increaseSnakeLength = (updatedCells) => {
     let snakeTail = updatedCells[0]
-    updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+
+    for (let i = 0; i < 4; i++) {
+      updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
+    }
   }
 
   const handleCloseToFood = (snakeHead, closeToFood, playerId) => {
@@ -314,7 +307,7 @@ const App = () => {
 
     //food
     renderFood(context)
-    
+
     if (acronymStatus) {
       renderFullWorld(context)
     }
