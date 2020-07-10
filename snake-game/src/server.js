@@ -53,11 +53,6 @@ io.on('connection', (socket) => {
         io.sockets.emit('updateFoodBroadcast', food)
     })
 
-    socket.on('updateDirection', (data) => {
-        snakeCells.find(x => x.playerId == data.playerId).direction = data.direction
-        socket.emit('sendPlayerSnakeArray', snakeCells)
-    })
-
     socket.on('disconnect', () => {
         console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
         snakeColours.push(randomColour)

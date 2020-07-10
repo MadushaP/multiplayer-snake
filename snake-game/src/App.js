@@ -7,7 +7,6 @@ import GameMenu from './GameMenu'
 import ConfettiWrapper from './ConfettiWrapper'
 
 const socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
-
 const helper = require('./helper.js')
 const acronyms = require('./acronyms.js')
 const gamepad = require('./gamepad.js')
@@ -39,18 +38,7 @@ const App = () => {
   const [playerId, setPlayerId] = useState(0)
   const playerRef = useRef(playerId)
 
-  const [playerSnakeArray, setPlayerSnakeArray] = useState([{
-    playerId: 0,
-    snakeCells: [
-      { 'x': 10, 'y': 10 },
-      { 'x': 12, 'y': 10 },
-      { 'x': 14, 'y': 10 },
-      { 'x': 16, 'y': 10 },
-    ],
-    direction: "right",
-    closeToFood: false,
-    aiStatus: false,
-  }])
+  const [playerSnakeArray, setPlayerSnakeArray] = useState([])
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
   let blockSize = 3
@@ -61,11 +49,7 @@ const App = () => {
       newArr[playerId][prop] = value
       setPlayerSnakeArray(newArr)
     } else {
-      if (prop == "direction") {
-        socket.emit('updateDirection', { 'playerId': playerId, 'direction': value })
-      } else {
-        socket.emit('setPlayerSnakeArray', { 'playerId': playerId, 'prop': prop, 'value': value })
-      }
+      socket.emit('setPlayerSnakeArray', { 'playerId': playerId, 'prop': prop, 'value': value })
     }
   }
 
@@ -102,7 +86,7 @@ const App = () => {
         setFood(data)
       })
     }
-  }, [gameMode])
+  }, [gameStart])
 
 
 
@@ -110,9 +94,7 @@ const App = () => {
   const previousTimeRef = React.useRef()
 
   const animate = time => {
-    // if (isGameOver || !gameStart) { cancelAnimationFrame(requestRef.current); return; }
     if (isGameOver) { cancelAnimationFrame(requestRef.current); return; }
-
     if (previousTimeRef.current != undefined) {
       draw(playerSnakeArrayRef.current)
     }
@@ -124,7 +106,7 @@ const App = () => {
   React.useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [isGameOver])
+  }, [])
 
   const keypress = ({ key }) => {
     //When still in menu disable keyboard input
@@ -170,6 +152,7 @@ const App = () => {
   }
 
   const gameOver = () => {
+    playerSnakeArrayRef.current = []
     setGameOver(true)
     socket.disconnect()
     playSound('game-over.mp3')
@@ -280,7 +263,6 @@ const App = () => {
       renderFullWorld(context)
     }
     playerSnakeArrayRef.current.forEach(snake => {
-
       let updatedCells = updateBody(snake.snakeCells)
       let snakeHead = updatedCells.slice(-1)[0]
 
@@ -305,20 +287,21 @@ const App = () => {
         }
       }
 
-
       // headBodyCollisionCheck(snakeHead)
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId)
       updateFieldChanged(snake.playerId, 'snakeCells', updatedCells)
 
       snake.snakeCells.forEach((cell, index) => {
-        context.fillStyle = "#48df08";
+        context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
         context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
 
         //GameOver
-        if (cell.x * 3 > canvas.width || cell.y * 3 > canvas.height) {
-          gameOver()
-        } else if (cell.x < 0 || cell.y < 0) {
-          gameOver()
+        if (snake.playerId == playerRef.current) {
+          if (cell.x * 3 > canvas.width || cell.y * 3 > canvas.height) {
+            gameOver()
+          } else if (cell.x < 0 || cell.y < 0) {
+            gameOver()
+          }
         }
 
         //snake head
