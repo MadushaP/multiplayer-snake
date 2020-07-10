@@ -1,4 +1,4 @@
-const aiGridAlignment = (snakeHead) => {
+const gridAlignment = (snakeHead) => {
     if (snakeHead.x > 400) {
         snakeHead.x -= 2
         snakeHead.y += 2
@@ -19,34 +19,34 @@ const aiGridAlignment = (snakeHead) => {
 const moveToFood = (food, snakeHead, socket, playerId, gameMode, updateFieldChanged) => {
     let distanceX = food.x - snakeHead.x
     let distanceY = food.y - snakeHead.y
-    if (distanceX > 0){
-    
-        if(distanceY > 0){
-          snakeHead.y += 2
-          updateFieldChanged(playerId, 'direction', 'down')
+    if (distanceX > 0) {
+
+        if (distanceY > 0) {
+            snakeHead.y += 2
+            updateFieldChanged(playerId, 'direction', 'down')
         } else {
             snakeHead.x += 2
             updateFieldChanged(playerId, 'direction', 'right')
         }
-         
-    } else if(distanceX < 0){
 
-        if(distanceY < 0){
+    } else if (distanceX < 0) {
+
+        if (distanceY < 0) {
             snakeHead.y -= 2
             updateFieldChanged(playerId, 'direction', 'up')
-          } else {
-              snakeHead.x -= 2
-              updateFieldChanged(playerId, 'direction', 'left')
-          }
-    } 
-     else if (distanceY > 0){
+        } else {
+            snakeHead.x -= 2
+            updateFieldChanged(playerId, 'direction', 'left')
+        }
+    }
+    else if (distanceY > 0) {
         snakeHead.y += 2
-         updateFieldChanged(playerId, 'direction', 'down')
-    } else if(distanceY < 0){
+        updateFieldChanged(playerId, 'direction', 'down')
+    } else if (distanceY < 0) {
         snakeHead.y -= 2
         updateFieldChanged(playerId, 'direction', 'up')
     }
-   
+
 }
 
 const headBodyAlignment = (snakeHead, updatedCells, direction) => {
@@ -70,26 +70,8 @@ const headBodyAlignment = (snakeHead, updatedCells, direction) => {
     }
 }
 
-const tick = (snakeCells, direction, closeToFood, foodCheck, playerId, setSpeed, updateBody, food, socket, gameMode, updateFieldChange, draw) => {
-    let updatedCells = updateBody(snakeCells)
-    let snakeHead = snakeCells.slice(-1)[0]
-
-    moveToFood(food, snakeHead, socket, playerId, gameMode, updateFieldChange)
-    // headBodyAlignment(snakeHead, updatedCells, direction)
-    // aiGridAlignment(snakeHead)
-
-
-    //Turn this on when AI is improved
-    //headBodyCollisionCheck(snakeHead)    
-    // outOfBoundsCheck(snakeHead)
-
-    foodCheck(snakeHead, updatedCells, closeToFood, playerId, socket)
-    updateFieldChange(playerId, 'snakeCells', updatedCells)
-
-    draw(updatedCells, closeToFood)
-}
-
-
 module.exports = {
-    tick
+    moveToFood,
+    headBodyAlignment,
+    gridAlignment
 }

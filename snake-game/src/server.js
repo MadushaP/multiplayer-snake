@@ -3,8 +3,8 @@ var http = require('http').createServer(app)
 var io = require('socket.io')(http)
 
 const randomLocation = () => {
-    let x = Math.floor(Math.random() * 100 / 2) * 2
-    let y = Math.floor(Math.random() * 100 / 2) * 2
+    let x = Math.floor(Math.random() * 350)
+    let y = Math.floor(Math.random() * 350)
     return { 'x': x, 'y': y }
 }
 
@@ -19,12 +19,12 @@ io.on('connection', (socket) => {
     const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
     snakeColours = snakeColours.filter(colour => colour != randomColour)
 
-    socket.on('getPlayerId',  () => {
+    socket.on('getPlayerId', () => {
         socket.emit('getPlayerId', socket.id)
         socket.emit("getFood", food)
     })
 
-    socket.on('startMultiplayer',  () => {
+    socket.on('startMultiplayer', () => {
         console.log("start multiplayer")
         snakeCells.push({
             playerId: socket.id,
@@ -43,17 +43,17 @@ io.on('connection', (socket) => {
         io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     })
 
-    socket.on('setPlayerSnakeArray',  (data) => {
+    socket.on('setPlayerSnakeArray', (data) => {
         snakeCells.find(x => x.playerId == data.playerId)[data.prop] = data.value
         io.sockets.emit("sendPlayerSnakeArray", snakeCells)
     })
 
-    socket.on('randomFood',  () => {
+    socket.on('randomFood', () => {
         food = randomLocation()
         io.sockets.emit('updateFoodBroadcast', food)
     })
 
-    socket.on('updateDirection',  (data) => {
+    socket.on('updateDirection', (data) => {
         snakeCells.find(x => x.playerId == data.playerId).direction = data.direction
         socket.emit('sendPlayerSnakeArray', snakeCells)
     })
@@ -70,7 +70,7 @@ http.listen(3001, () => {
     console.log('listening on *:3001')
 })
 
-process.on('uncaughtException',  (exception) => {
+process.on('uncaughtException', (exception) => {
     console.log(snakeCells)
     console.log(exception)
 })
