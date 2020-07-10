@@ -14,8 +14,8 @@ const arrayEquals = (array1, array2) => {
 }
 
 const headAtFood = (snakeHead, food) => {
-     let distanceX = Math.abs(snakeHead.x - food.x)
-     let distanceY = Math.abs(snakeHead.y - food.y)
+    let distanceX = Math.abs(snakeHead.x - food.x)
+    let distanceY = Math.abs(snakeHead.y - food.y)
     if (distanceX <= 4 && distanceY <= 4) {
         return true
     }

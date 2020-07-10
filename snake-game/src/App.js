@@ -22,6 +22,8 @@ const App = () => {
 
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
+  const foodRef = useRef(food)
+
   const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(0)
   const [isGameOver, setGameOver] = useState(false)
@@ -52,7 +54,6 @@ const App = () => {
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
   let blockSize = 3
-
 
   const updateFieldChanged = (playerId, prop, value) => {
     if (gameModeRef.current == "singlePlayer") {
@@ -87,13 +88,19 @@ const App = () => {
         playerRef.current = data
       })
 
-      socket.on('getFood', (data) => { setFood(data) })
+      socket.on('getFood', (data) => {
+        foodRef.current = data
+        setFood(data)
+      })
       socket.on('sendPlayerSnakeArray', (data) => {
         playerSnakeArrayRef.current = data
         setPlayerSnakeArray(data)
       })
       socket.on('updateBodyBroadcast', (data) => { updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells) })
-      socket.on('updateFoodBroadcast', (data) => { setFood(data) })
+      socket.on('updateFoodBroadcast', (data) => {
+        foodRef.current = data
+        setFood(data)
+      })
     }
   }, [gameMode])
 
@@ -117,7 +124,7 @@ const App = () => {
   React.useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [food, playerSnakeArray, playerId, isGameOver])
+  }, [isGameOver])
 
   const keypress = ({ key }) => {
     //When still in menu disable keyboard input
@@ -177,7 +184,7 @@ const App = () => {
   // }
 
   const hasEatenFood = (snakeHead) => {
-    return helper.headAtFood(snakeHead, food)
+    return helper.headAtFood(snakeHead, foodRef.current)
   }
 
   const playSound = (sound) => {
@@ -195,8 +202,8 @@ const App = () => {
   }
 
   const handleCloseToFood = (snakeHead, closeToFood, playerId) => {
-    let distanceX = Math.abs(food.x - snakeHead.x)
-    let distanceY = Math.abs(food.y - snakeHead.y)
+    let distanceX = Math.abs(foodRef.current.x - snakeHead.x)
+    let distanceY = Math.abs(foodRef.current.y - snakeHead.y)
     if (distanceX < 12 * blockSize && distanceY < 12 * blockSize) {
       if (!closeToFood) {
         playSound('mouth.mp3')
@@ -215,6 +222,7 @@ const App = () => {
       setConfetti(true)
       if (gameMode == "singlePlayer") {
         setFood(randomLocation())
+        foodRef.current = randomLocation()
       } else {
         socket.emit('randomFood')
       }
@@ -233,16 +241,16 @@ const App = () => {
     context.fillStyle = "white"
     context.font = "bold 25px Verdana"
     let acronymWidth = context.measureText(currentAcronym.acronym).width
-    context.fillText(currentAcronym.acronym, food.x * blockSize - (acronymWidth / 2) + 10, food.y * blockSize - 20)
+    context.fillText(currentAcronym.acronym, foodRef.current.x * blockSize - (acronymWidth / 2) + 10, foodRef.current.y * blockSize - 20)
 
     context.font = "bold 25px Verdana"
     let fullWordWidth = context.measureText(currentAcronym.fullWord).width
-    context.fillText(currentAcronym.fullWord, food.x * blockSize - (fullWordWidth / 2) + 10, food.y * blockSize + 60)
+    context.fillText(currentAcronym.fullWord, foodRef.current.x * blockSize - (fullWordWidth / 2) + 10, foodRef.current.y * blockSize + 60)
   }
 
   const renderFood = (context) => {
     context.beginPath();
-    context.arc(food.x * blockSize + 10, food.y * blockSize + 10, 10, 0, 2 * Math.PI)
+    context.arc(foodRef.current.x * blockSize + 10, foodRef.current.y * blockSize + 10, 10, 0, 2 * Math.PI)
     context.fillStyle = "#FF0000"
     context.fill();
     context.stroke();
@@ -265,22 +273,19 @@ const App = () => {
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, canvas.width, canvas.height)
 
-    //game board
     renderGameBoard(context, canvas)
-
-    //food
     renderFood(context)
 
     if (acronymStatus) {
       renderFullWorld(context)
     }
-
     playerSnakeArrayRef.current.forEach(snake => {
 
       let updatedCells = updateBody(snake.snakeCells)
       let snakeHead = updatedCells.slice(-1)[0]
+
       if (snake.aiStatus) {
-        AI.moveToFood(food, snakeHead, socket, snake.playerId, gameMode, updateFieldChanged)
+        AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateFieldChanged)
       } else {
         switch (snake.direction) {
           case "right":
@@ -301,12 +306,9 @@ const App = () => {
       }
 
 
-      // outOfBoundsCheck(snakeHead, playerId)
       // headBodyCollisionCheck(snakeHead)
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId)
-
       updateFieldChanged(snake.playerId, 'snakeCells', updatedCells)
-
 
       snake.snakeCells.forEach((cell, index) => {
         context.fillStyle = "#48df08";
@@ -318,7 +320,6 @@ const App = () => {
         } else if (cell.x < 0 || cell.y < 0) {
           gameOver()
         }
-
 
         //snake head
         if (index === snake.snakeCells.length - 1) {
@@ -355,7 +356,7 @@ const App = () => {
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
           <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
-          <ConfettiWrapper food={food} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
+          <ConfettiWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
         </div>}
     </div>
   )
