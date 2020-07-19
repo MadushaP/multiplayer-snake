@@ -44,13 +44,9 @@ const App = () => {
   let blockSize = 3
 
   const updateFieldChanged = (playerId, prop, value) => {
-    if (gameModeRef.current == "singlePlayer") {
-      let newArr = [...playerSnakeArrayRef.current]
-      newArr[playerId][prop] = value
-      setPlayerSnakeArray(newArr)
-    } else {
-      socket.emit('setPlayerSnakeArray', { 'playerId': playerId, 'prop': prop, 'value': value })
-    }
+    let newArr = [...playerSnakeArrayRef.current]
+    newArr.find(snake => snake.playerId == playerId)[prop] = value
+    setPlayerSnakeArray(newArr)
   }
 
   useEffect(() => {
@@ -62,12 +58,25 @@ const App = () => {
 
   useEffect(() => {
     if (gameMode == 'multiplayer') {
-
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
 
+      socket.on('playerJoined', (data) => {
+        console.log("second player Joined")
+        socket.emit("playerOneSync", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
+      })
+
+      socket.on('clear', (data) => {
+        let x = playerSnakeArrayRef.current.filter(x => x.playerId != data.playerId)
+        playerSnakeArrayRef.current = x
+        setPlayerSnakeArray(x)
+      })
+
+      socket.on('playerKeyEvent', (data) => {
+        updateFieldChanged(data.playerId, 'direction', data.direction)
+      })
+
       socket.on('getPlayerId', (data) => {
-        console.log("player ID:", data)
         setPlayerId(data)
         playerRef.current = data
       })
@@ -98,7 +107,7 @@ const App = () => {
     if (previousTimeRef.current != undefined) {
       draw(playerSnakeArrayRef.current)
     }
-    previousTimeRef.current = time;
+    previousTimeRef.current = time
     requestRef.current = requestAnimationFrame(animate)
   }
 
@@ -112,26 +121,29 @@ const App = () => {
     //When still in menu disable keyboard input
     if (playerSnakeArrayRef.current.length == 0)
       return
-
     let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).direction
     switch (key) {
       case "ArrowRight":
         if (currentDirection !== "left") {
+          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "right" })
           updateFieldChanged(playerRef.current, 'direction', "right")
         }
         break
       case "ArrowLeft":
         if (currentDirection !== "right") {
+          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "left" })
           updateFieldChanged(playerRef.current, 'direction', "left")
         }
         break
       case "ArrowDown":
         if (currentDirection !== "up") {
+          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "down" })
           updateFieldChanged(playerRef.current, 'direction', "down")
         }
         break
       case "ArrowUp":
         if (currentDirection !== "down") {
+          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "up" })
           updateFieldChanged(playerRef.current, 'direction', "up")
         }
         break
@@ -152,7 +164,6 @@ const App = () => {
   }
 
   const gameOver = () => {
-    playerSnakeArrayRef.current = []
     setGameOver(true)
     socket.disconnect()
     playSound('game-over.mp3')
@@ -203,7 +214,8 @@ const App = () => {
     handleCloseToFood(snakeHead, closeToFood, playerId)
     if (hasEatenFood(snakeHead)) {
       setConfetti(true)
-      if (gameMode == "singlePlayer") {
+      if (gameModeRef.current == "singlePlayer") {
+
         setFood(randomLocation())
         foodRef.current = randomLocation()
       } else {
@@ -295,7 +307,7 @@ const App = () => {
         context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
         context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
 
-        //GameOver
+        // GameOver
         if (snake.playerId == playerRef.current) {
           if (cell.x * 3 > canvas.width || cell.y * 3 > canvas.height) {
             gameOver()

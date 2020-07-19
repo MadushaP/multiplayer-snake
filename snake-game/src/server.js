@@ -24,10 +24,12 @@ io.on('connection', (socket) => {
         socket.emit("getFood", food)
     })
 
-    socket.on('startMultiplayer', () => {
-        console.log("start multiplayer")
-        snakeCells.push({
-            playerId: socket.id,
+
+    socket.on('playerOneSync', (data) => {
+        snakeArray = data.snakeArray
+        const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
+        snakeArray.push({
+            playerId: data.newId,
             snakeCells: [
                 { 'x': 10, 'y': 10 },
                 { 'x': 12, 'y': 10 },
@@ -39,13 +41,34 @@ io.on('connection', (socket) => {
             colour: randomColour,
             aiStatus: false,
         })
-
-        io.sockets.emit("sendPlayerSnakeArray", snakeCells)
+        io.sockets.emit("sendPlayerSnakeArray", snakeArray)
     })
 
-    socket.on('setPlayerSnakeArray', (data) => {
-        snakeCells.find(x => x.playerId == data.playerId)[data.prop] = data.value
-        io.sockets.emit("sendPlayerSnakeArray", snakeCells)
+    socket.on('startMultiplayer', () => {
+        console.log("start multiplayer")
+        if (snakeCells.length == 0) {
+            snakeCells.push({
+                playerId: socket.id,
+                snakeCells: [
+                    { 'x': 10, 'y': 10 },
+                    { 'x': 12, 'y': 10 },
+                    { 'x': 14, 'y': 10 },
+                    { 'x': 16, 'y': 10 },
+                ],
+                direction: "right",
+                closeToFood: false,
+                colour: randomColour,
+                aiStatus: false,
+            })
+            socket.emit("sendPlayerSnakeArray", snakeCells)
+        } else {
+            console.log(socket.id, "is broadcasting")
+            socket.broadcast.emit("playerJoined", { 'newId': socket.id })
+        }
+    })
+
+    socket.on('playerKeyEvent', (data) => {
+        socket.broadcast.emit('playerKeyEvent', data);
     })
 
     socket.on('randomFood', () => {
@@ -57,7 +80,7 @@ io.on('connection', (socket) => {
         console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
         snakeColours.push(randomColour)
         snakeCells = snakeCells.filter(x => x.playerId != socket.id)
-        io.sockets.emit("sendPlayerSnakeArray", snakeCells)
+        io.sockets.emit("clear", { playerId: socket.id })
     })
 })
 
