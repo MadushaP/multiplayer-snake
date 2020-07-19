@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
 
     socket.on('startMultiplayer', () => {
         console.log("start multiplayer")
-        if (snakeCells.length == 0) {
+        if (io.engine.clientsCount == 1) {
             snakeCells.push({
                 playerId: socket.id,
                 snakeCells: [

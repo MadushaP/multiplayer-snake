@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import ConfettiWrapper from './ConfettiWrapper'
 
-const socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
+let socket = null
 const helper = require('./helper.js')
 const acronyms = require('./acronyms.js')
 const gamepad = require('./gamepad.js')
@@ -45,6 +45,8 @@ const App = () => {
 
   const updateFieldChanged = (playerId, prop, value) => {
     let newArr = [...playerSnakeArrayRef.current]
+    if (!newArr.find(snake => snake.playerId == playerId))
+      return;
     newArr.find(snake => snake.playerId == playerId)[prop] = value
     setPlayerSnakeArray(newArr)
   }
@@ -58,6 +60,7 @@ const App = () => {
 
   useEffect(() => {
     if (gameMode == 'multiplayer') {
+      socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
 

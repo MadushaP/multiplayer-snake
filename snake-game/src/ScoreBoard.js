@@ -29,6 +29,12 @@ export default (props) => {
       props.setAcronymStatus(true)
   }
 
+  let AIOption = (props.gameMode === "singlePlayer") ?
+    <div style={{ 'width': '37%' }}>AI
+      <Toggle className="spacing" style={{ 'paddingTop': '37%' }} defaultChecked={false} onChange={() => setAiStatus()} />
+    </div> :
+    null
+
   return (
     <div className="parent">
       <div className="child">
@@ -49,9 +55,7 @@ export default (props) => {
       </div>
       <div className="settingContainer">
         <div className="settings">
-          <div style={{ 'width': '37%' }}>AI
-            <Toggle className="spacing" style={{ 'paddingTop': '37%' }} defaultChecked={false} onChange={() => setAiStatus()} />
-          </div>
+          {AIOption}
           <div style={{ 'width': '60%' }}>Sound
             <Toggle className="spacing" defaultChecked={true} onChange={() => setSound()} />
           </div>
