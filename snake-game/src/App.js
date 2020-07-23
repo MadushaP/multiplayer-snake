@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import ScoreBoard from './ScoreBoard'
+import Settings from './Settings'
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
 import io from 'socket.io-client'
 import GameMenu from './GameMenu'
-import ConfettiWrapper from './ConfettiWrapper'
+import CanvasWrapper from './CanvasWrapper'
 
 let socket = null
 const helper = require('./helper.js')
@@ -33,6 +33,7 @@ const App = () => {
 
   const [acronymMap, setAcronymsMap] = useState(acronyms)
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
+
   const [acronymStatus, setAcronymStatus] = useState(false)
 
   const [playerId, setPlayerId] = useState(0)
@@ -100,8 +101,6 @@ const App = () => {
     }
   }, [gameStart])
 
-
-
   const requestRef = React.useRef()
   const previousTimeRef = React.useRef()
 
@@ -119,6 +118,7 @@ const App = () => {
     return () => cancelAnimationFrame(requestRef.current)
   }, [acronymStatus, isGameOver])
 
+  //move these into their own files for single and multiplayer
   const keypress = ({ key }) => {
     //When still in menu disable keyboard input
     if (playerSnakeArrayRef.current.length == 0)
@@ -357,8 +357,8 @@ const App = () => {
       {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-          <ScoreBoard score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
-          <ConfettiWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
+          <Settings score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
         </div>}
     </div>
   )
