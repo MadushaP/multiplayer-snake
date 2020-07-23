@@ -114,11 +114,10 @@ const App = () => {
     requestRef.current = requestAnimationFrame(animate)
   }
 
-
   React.useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [])
+  }, [acronymStatus, isGameOver])
 
   const keypress = ({ key }) => {
     //When still in menu disable keyboard input
@@ -128,25 +127,29 @@ const App = () => {
     switch (key) {
       case "ArrowRight":
         if (currentDirection !== "left") {
-          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "right" })
+          if (gameMode == "multiplayer")
+            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "right" })
           updateFieldChanged(playerRef.current, 'direction', "right")
         }
         break
       case "ArrowLeft":
         if (currentDirection !== "right") {
-          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "left" })
+          if (gameMode == "multiplayer")
+            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "left" })
           updateFieldChanged(playerRef.current, 'direction', "left")
         }
         break
       case "ArrowDown":
         if (currentDirection !== "up") {
-          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "down" })
+          if (gameMode == "multiplayer")
+            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "down" })
           updateFieldChanged(playerRef.current, 'direction', "down")
         }
         break
       case "ArrowUp":
         if (currentDirection !== "down") {
-          socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "up" })
+          if (gameMode == "multiplayer")
+            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "up" })
           updateFieldChanged(playerRef.current, 'direction', "up")
         }
         break
@@ -168,7 +171,8 @@ const App = () => {
 
   const gameOver = () => {
     setGameOver(true)
-    socket.disconnect()
+    if (gameMode == "multiplayer")
+      socket.disconnect()
     playSound('game-over.mp3')
   }
 

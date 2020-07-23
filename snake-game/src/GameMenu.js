@@ -27,8 +27,6 @@ export default (props) => {
   }
 
   const startSinglePlayer = () => {
-    props.socket.disconnect()
-
     // console.log("Started single player")
     props.setGameStart(true)
     props.setGameMode("singlePlayer")
