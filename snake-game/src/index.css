@@ -1,6 +1,7 @@
 @font-face {
   font-family: FredokaOne;
   src: url("fonts/FredokaOne-Regular.ttf");
+  
 }
 
 body,
@@ -74,6 +75,7 @@ h1 {
   width: 500px;
   margin-left: 5%;
   margin-top: 0.5%;
+  
 }
 
 .ai-button {
@@ -107,6 +109,7 @@ h1 {
 }
 
 .parent {
+  -webkit-text-stroke: 1.5px rgb(85, 83, 88);;
   display: flex;
   flex-wrap: wrap;
   width: 1333px;
@@ -119,8 +122,8 @@ h1 {
   width: 200px;
   background-color: #080b13;
   font-family: FredokaOne, cursive;
-  font-size: 26px;
-  letter-spacing: 5px;
+  font-size: 30px;
+  letter-spacing: 2px;
   word-spacing: 2px;
   color: white;
   border-radius: 10px;
@@ -135,8 +138,7 @@ h1 {
   background-color: #080b13;
   font-family: FredokaOne, cursive;
   font-size: 26px;
-  letter-spacing: 5px;
-  word-spacing: 2px;
+
   color: white;
   border-radius: 10px;
   background: rgba(224, 43, 125, 1);
@@ -144,16 +146,16 @@ h1 {
 }
 
 .scoreText {
-  position: absolute;
   text-align: center;
-  margin: 3px;
-  margin-left: 30px;
+  letter-spacing: 3px;
+  width: 100%;
+  height: 100px;
+  margin: 0 auto;
 }
 
 .fullWordText {
   position: relative;
   text-align: center;
-  margin: 3px;
 }
 
 .game-over {
@@ -219,7 +221,7 @@ nav ul li span {
 }
 
 nav ul li:hover {
-  color: black;
+  color: white;
 }
 
 nav ul li:hover span {

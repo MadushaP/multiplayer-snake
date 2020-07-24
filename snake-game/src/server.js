@@ -76,6 +76,10 @@ io.on('connection', (socket) => {
         io.sockets.emit('updateFoodBroadcast', food)
     })
 
+    socket.on('scoreUpdate', (data) => {
+        console.log(data)
+    })
+
     socket.on('disconnect', () => {
         console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
         snakeColours.push(randomColour)

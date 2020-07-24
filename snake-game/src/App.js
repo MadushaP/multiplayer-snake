@@ -5,12 +5,12 @@ import AI from './Ai'
 import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
+import KeyboardInput from './KeyboardInput'
 
 let socket = null
 const helper = require('./helper.js')
 const acronyms = require('./acronyms.js')
 const gamepad = require('./gamepad.js')
-
 
 const App = () => {
   const randomLocation = () => {
@@ -30,7 +30,6 @@ const App = () => {
   const [gameStart, setGameStart] = useState(false)
   const [gameMode, setGameMode] = useState("singlePlayer")
   const gameModeRef = useRef(gameMode)
-
   const [acronymMap, setAcronymsMap] = useState(acronyms)
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
 
@@ -44,20 +43,12 @@ const App = () => {
 
   let blockSize = 3
 
-  const updateFieldChanged = (playerId, prop, value) => {
-    let newArr = [...playerSnakeArrayRef.current]
-    if (!newArr.find(snake => snake.playerId == playerId))
-      return;
-    newArr.find(snake => snake.playerId == playerId)[prop] = value
-    setPlayerSnakeArray(newArr)
-  }
-
   useEffect(() => {
     window.addEventListener('keydown', keypress)
     return () => {
       window.removeEventListener('keydown', keypress)
     }
-  }, [])
+  }, [gameMode])
 
   useEffect(() => {
     if (gameMode == 'multiplayer') {
@@ -101,8 +92,9 @@ const App = () => {
     }
   }, [gameStart])
 
-  const requestRef = React.useRef()
-  const previousTimeRef = React.useRef()
+  
+  const requestRef = useRef()
+  const previousTimeRef = useRef()
 
   const animate = time => {
     if (isGameOver) { cancelAnimationFrame(requestRef.current); return; }
@@ -113,51 +105,33 @@ const App = () => {
     requestRef.current = requestAnimationFrame(animate)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [acronymStatus, isGameOver])
+  }, [acronymStatus, isGameOver, gameMode])
 
-  //move these into their own files for single and multiplayer
+  useEffect(() => {
+    if(gameMode == "multiplayer") {
+      socket.emit('scoreUpdate', { playerId: playerId, score: score })
+    }
+  }, [score])
+
   const keypress = ({ key }) => {
-    //When still in menu disable keyboard input
-    if (playerSnakeArrayRef.current.length == 0)
-      return
-    let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).direction
-    switch (key) {
-      case "ArrowRight":
-        if (currentDirection !== "left") {
-          if (gameMode == "multiplayer")
-            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "right" })
-          updateFieldChanged(playerRef.current, 'direction', "right")
-        }
-        break
-      case "ArrowLeft":
-        if (currentDirection !== "right") {
-          if (gameMode == "multiplayer")
-            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "left" })
-          updateFieldChanged(playerRef.current, 'direction', "left")
-        }
-        break
-      case "ArrowDown":
-        if (currentDirection !== "up") {
-          if (gameMode == "multiplayer")
-            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "down" })
-          updateFieldChanged(playerRef.current, 'direction', "down")
-        }
-        break
-      case "ArrowUp":
-        if (currentDirection !== "down") {
-          if (gameMode == "multiplayer")
-            socket.emit('playerKeyEvent', { 'playerId': playerRef.current, "direction": "up" })
-          updateFieldChanged(playerRef.current, 'direction', "up")
-        }
-        break
-      default:
-        break
+    if (gameMode == "singlePlayer")
+      KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateFieldChanged, key)
+    else {
+      KeyboardInput.multiplayerKeyPress(playerSnakeArrayRef, playerRef, socket, updateFieldChanged, key)
+
     }
   }
 
+  const updateFieldChanged = (playerId, prop, value) => {
+    let newArr = [...playerSnakeArrayRef.current]
+    if (!newArr.find(snake => snake.playerId == playerId))
+      return;
+    newArr.find(snake => snake.playerId == playerId)[prop] = value
+    setPlayerSnakeArray(newArr)
+  }
 
   const updateBody = (snakeCells) => {
     let updatedCells = [...snakeCells]
@@ -170,10 +144,10 @@ const App = () => {
   }
 
   const gameOver = () => {
-    setGameOver(true)
-    if (gameMode == "multiplayer")
-      socket.disconnect()
-    playSound('game-over.mp3')
+    // setGameOver(true)
+    // if (gameMode == "multiplayer")
+    //   socket.disconnect()
+    // playSound('game-over.mp3')
   }
 
   // const headBodyCollisionCheck = (snakeHead) => {
@@ -281,6 +255,7 @@ const App = () => {
     if (acronymStatus) {
       renderFullWorld(context)
     }
+
     playerSnakeArrayRef.current.forEach(snake => {
       let updatedCells = updateBody(snake.snakeCells)
       let snakeHead = updatedCells.slice(-1)[0]
@@ -357,7 +332,15 @@ const App = () => {
       {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-          <Settings score={score} socket={socket} setAcronymStatus={setAcronymStatus} acronymStatus={acronymStatus} setVolume={setVolume} volume={volume} fullWord={currentAcronym.fullWord} playerSnakeArray={playerSnakeArray} playerId={playerId} updateFieldChange={updateFieldChanged} gameMode={gameMode} />
+          <Settings score={score} socket={socket}
+            setAcronymStatus={setAcronymStatus}
+            acronymStatus={acronymStatus}
+            setVolume={setVolume} volume={volume}
+            fullWord={currentAcronym.fullWord}
+            playerSnakeArray={playerSnakeArray}
+            playerId={playerId}
+            updateFieldChange={updateFieldChanged}
+            gameMode={gameMode} />
           <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
         </div>}
     </div>
