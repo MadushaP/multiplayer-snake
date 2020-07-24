@@ -23,7 +23,6 @@ const App = () => {
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
 
-  const [aiStatus, setAi] = useState(false)
   const [volume, setVolume] = useState(0)
   const [isGameOver, setGameOver] = useState(false)
   const [showConfetti, setConfetti] = useState(false)
@@ -32,6 +31,7 @@ const App = () => {
   const gameModeRef = useRef(gameMode)
   const [acronymMap, setAcronymsMap] = useState(acronyms)
   const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
+  const currentAcronymRef = useRef(currentAcronym)
 
   const [acronymStatus, setAcronymStatus] = useState(false)
 
@@ -109,6 +109,7 @@ const App = () => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
   }, [acronymStatus, isGameOver, gameMode])
+
 
   useEffect(() => {
     if(gameMode == "multiplayer") {
@@ -204,7 +205,9 @@ const App = () => {
       }
 
       setScore(score => score + 1)
-      setAcronym(helper.randomItem(acronymMap))
+      let randomAcr = helper.randomItem(acronymMap)
+      setAcronym(randomAcr)
+      currentAcronymRef.current = randomAcr
       playSound('bling.mp3')
       increaseSnakeLength(updatedCells)
     }
@@ -216,12 +219,12 @@ const App = () => {
   const renderFullWorld = (context) => {
     context.fillStyle = "white"
     context.font = "bold 25px Verdana"
-    let acronymWidth = context.measureText(currentAcronym.acronym).width
-    context.fillText(currentAcronym.acronym, foodRef.current.x * blockSize - (acronymWidth / 2) + 10, foodRef.current.y * blockSize - 20)
+    let acronymWidth = context.measureText(currentAcronymRef.current.acronym).width
+    context.fillText(currentAcronymRef.current.acronym, foodRef.current.x * blockSize - (acronymWidth / 2) + 10, foodRef.current.y * blockSize - 20)
 
     context.font = "bold 25px Verdana"
-    let fullWordWidth = context.measureText(currentAcronym.fullWord).width
-    context.fillText(currentAcronym.fullWord, foodRef.current.x * blockSize - (fullWordWidth / 2) + 10, foodRef.current.y * blockSize + 60)
+    let fullWordWidth = context.measureText(currentAcronymRef.current.fullWord).width
+    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x * blockSize - (fullWordWidth / 2) + 10, foodRef.current.y * blockSize + 60)
   }
 
   const renderFood = (context) => {
