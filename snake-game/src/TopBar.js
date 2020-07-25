@@ -104,9 +104,9 @@ export default (props) => {
               transitionEnterTimeout={500}
               transitionLeaveTimeout={1}>
               <div
-                key={props.score}
+                key={snake.score}
                 style={{ display: "inline-block" }}>
-                P{index + 1}: {props.score}
+                P{index + 1}: {snake.score}
               </div>
             </ReactCSSTransitionGroup>
           </div>

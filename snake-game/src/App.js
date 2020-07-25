@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Settings from './Settings'
+import TopBar from './TopBar'
 import GameOverScreen from './GameOverScreen'
 import AI from './Ai'
 import io from 'socket.io-client'
@@ -50,6 +50,16 @@ const App = () => {
     }
   }, [gameMode])
 
+
+  useEffect(() => {
+    if (gameModeRef.current == "multiplayer") {
+      console.log(playerId, playerRef.current)
+      updateFieldChanged(playerId, 'score', score)
+      socket.emit('scoreUpdate', { playerId: playerId, score: score })
+    }
+  }, [score])
+ 
+
   useEffect(() => {
     if (gameMode == 'multiplayer') {
       socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
@@ -58,8 +68,12 @@ const App = () => {
 
       socket.on('playerJoined', (data) => {
         console.log("second player Joined")
-        socket.emit("playerOneSync", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
+        socket.emit("sync", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
       })
+
+      socket.on('scoreUpdate', (data) => {
+        updateFieldChanged(data.playerId, 'score', data.score)
+     })
 
       socket.on('clear', (data) => {
         let x = playerSnakeArrayRef.current.filter(x => x.playerId != data.playerId)
@@ -92,7 +106,7 @@ const App = () => {
     }
   }, [gameStart])
 
-  
+
   const requestRef = useRef()
   const previousTimeRef = useRef()
 
@@ -111,18 +125,17 @@ const App = () => {
   }, [acronymStatus, isGameOver, gameMode])
 
 
-  useEffect(() => {
-    if(gameMode == "multiplayer") {
-      socket.emit('scoreUpdate', { playerId: playerId, score: score })
-    }
-  }, [score])
+  // useEffect(() => {
+  //   if (gameMode == "multiplayer") {
+  //     socket.emit('scoreUpdate', { playerId: playerId, score: score })
+  //   }
+  // }, [score])
 
   const keypress = ({ key }) => {
     if (gameMode == "singlePlayer")
       KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateFieldChanged, key)
     else {
       KeyboardInput.multiplayerKeyPress(playerSnakeArrayRef, playerRef, socket, updateFieldChanged, key)
-
     }
   }
 
@@ -192,19 +205,20 @@ const App = () => {
     }
   }
 
-  const foodCheck = (snakeHead, updatedCells, closeToFood, playerId) => {
-    handleCloseToFood(snakeHead, closeToFood, playerId)
+  const foodCheck = (snakeHead, updatedCells, closeToFood, currentPlayerId) => {
+    handleCloseToFood(snakeHead, closeToFood, currentPlayerId)
     if (hasEatenFood(snakeHead)) {
       setConfetti(true)
       if (gameModeRef.current == "singlePlayer") {
-
         setFood(randomLocation())
         foodRef.current = randomLocation()
       } else {
         socket.emit('randomFood')
       }
 
-      setScore(score => score + 1)
+      if(playerRef.current == currentPlayerId )
+        setScore(score => score + 1)
+
       let randomAcr = helper.randomItem(acronymMap)
       setAcronym(randomAcr)
       currentAcronymRef.current = randomAcr
@@ -335,7 +349,7 @@ const App = () => {
       {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
           <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
-          <Settings score={score} socket={socket}
+          <TopBar score={score} socket={socket}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}
             setVolume={setVolume} volume={volume}
