@@ -79,7 +79,7 @@ const App = () => {
       socket.emit("getPlayerId")
 
       socket.on('playerJoined', (data) => {
-        console.log("second player Joined")
+        console.log("Player Joined")
         socket.emit("sync", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
       })
 
