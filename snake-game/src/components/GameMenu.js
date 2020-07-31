@@ -100,7 +100,7 @@ export default (props) => {
       direction: "right",
       closeToFood: false,
       aiStatus: true,
-      colour: 'DAF7A6',
+      colour: 'C70039',
       score:0
     }])
 
@@ -130,8 +130,8 @@ export default (props) => {
       direction: "right",
       closeToFood: false,
       aiStatus: true,
-      colour: 'DAF7A6',
-      score:0
+      colour: 'C70039',
+      score: 0
     }]
   }
 
