@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import TopBar from './TopBar'
 import GameOverScreen from './GameOverScreen'
-import AI from './Ai'
+import AI from '../lib/Ai'
 import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
-import KeyboardInput from './KeyboardInput'
+import KeyboardInput from '../lib/KeyboardInput'
 
 let socket = null
-const helper = require('./helper.js')
-const acronyms = require('./acronyms.js')
-const gamepad = require('./gamepad.js')
+const {randomItem, headAtFood} = require('../lib/helper.js')
+const acronyms = require('../store/acronyms.js')
+const gamepad = require('../lib/gamepad.js')
 
 const App = () => {
   const randomLocation = () => {
@@ -30,7 +30,7 @@ const App = () => {
   const [gameMode, setGameMode] = useState("singlePlayer")
   const gameModeRef = useRef(gameMode)
   const [acronymMap, setAcronymsMap] = useState(acronyms)
-  const [currentAcronym, setAcronym] = useState(helper.randomItem(acronymMap))
+  const [currentAcronym, setAcronym] = useState(randomItem(acronymMap))
   const currentAcronymRef = useRef(currentAcronym)
 
   const [acronymStatus, setAcronymStatus] = useState(false)
@@ -186,7 +186,7 @@ const App = () => {
   // }
 
   const hasEatenFood = (snakeHead) => {
-    return helper.headAtFood(snakeHead, foodRef.current)
+    return headAtFood(snakeHead, foodRef.current)
   }
 
   const playSound = (sound) => {
@@ -232,7 +232,7 @@ const App = () => {
           setScore(score => score + 1)
       }
 
-      let randomAcr = helper.randomItem(acronymMap)
+      let randomAcr = randomItem(acronymMap)
       setAcronym(randomAcr)
       currentAcronymRef.current = randomAcr
       playSound('bling.mp3')

@@ -26,9 +26,16 @@ const randomItem = (array) => {
     return array[Math.floor(Math.random() * array.length)]
 }
 
+const randomLocation = () => {
+    let x = Math.floor(Math.random() * 350)
+    let y = Math.floor(Math.random() * 350)
+    return { 'x': x, 'y': y }
+  }
+
 module.exports = {
     isArrayInArray: isArrayInArray,
     arrayEquals: arrayEquals,
     randomItem: randomItem,
-    headAtFood: headAtFood
+    headAtFood: headAtFood,
+    randomLocation: randomLocation
 }

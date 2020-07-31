@@ -13,5 +13,4 @@ module.exports =  [
     { 'acronym': 'ITV', 'fullWord': 'Interactive TV'},
     { 'acronym': 'Wipeline', 'fullWord': '💀💀💀'},
     { 'acronym': 'Asimux', 'fullWord': 'You don\'t want to know'}
-
   ]
