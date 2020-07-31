@@ -206,6 +206,19 @@ nav ul li {
   transition: 0.5s;
   margin: 1em;
   background-color: #01183a;
+  animation: 0.5s ease-in 0s 1 bounce;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(-50%);
+  }
+  65% {
+    transform: translateY(10%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
 }
 
 nav ul li span {
@@ -219,6 +232,7 @@ nav ul li span {
   transition: 0.5s;
   transition-delay: calc((var(--n) - 1) * 0.05s);
   z-index: -1;
+  
 }
 
 nav ul li:hover {
@@ -297,7 +311,11 @@ span#answer {
   margin: 0px auto;
   padding-top: 100px;
   padding-bottom: 50px;
+  animation-fill-mode: forwards; 
+  animation: 0.5s ease-in 0s 1 bounce;
+
 }
+
 
 #wrapper {
   width: 1300px;
