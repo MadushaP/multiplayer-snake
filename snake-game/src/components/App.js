@@ -8,7 +8,7 @@ import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
 
 let socket = null
-const {randomItem, headAtFood} = require('../lib/helper.js')
+const { randomItem, headAtFood, isArrayInArray } = require('../lib/helper.js')
 const acronyms = require('../store/acronyms.js')
 const gamepad = require('../lib/gamepad.js')
 
@@ -23,7 +23,7 @@ const App = () => {
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
 
-  const [volume, setVolume] = useState(0)
+  const [volume, setVolume] = useState(1)
   const [isGameOver, setGameOver] = useState(false)
   const [showConfetti, setConfetti] = useState(false)
   const [gameStart, setGameStart] = useState(false)
@@ -64,14 +64,13 @@ const App = () => {
     }
   }, [gameMode])
 
-
-  useEffect(() => {
-    if (gameModeRef.current == "multiplayer") {
-      updateFieldChanged(playerId, 'score', score)
-      socket.emit('scoreUpdate', { playerId: playerId, score: score })
+  const keypress = ({ key }) => {
+    if (gameMode == "singlePlayer" || gameMode == "vsCPU")
+      KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateSnakeArray, key)
+    else {
+      KeyboardInput.multiplayerKeyPress(playerSnakeArrayRef, playerRef, socket, updateSnakeArray, key)
     }
-  }, [score])
-
+  }
 
   useEffect(() => {
     if (gameMode == 'multiplayer') {
@@ -85,7 +84,7 @@ const App = () => {
       })
 
       socket.on('scoreUpdate', (data) => {
-        updateFieldChanged(data.playerId, 'score', data.score)
+        updateSnakeArray(data.playerId, 'score', data.score)
       })
 
       socket.on('clear', (data) => {
@@ -95,7 +94,7 @@ const App = () => {
       })
 
       socket.on('playerKeyEvent', (data) => {
-        updateFieldChanged(data.playerId, 'direction', data.direction)
+        updateSnakeArray(data.playerId, 'direction', data.direction)
       })
 
       socket.on('getPlayerId', (data) => {
@@ -111,13 +110,23 @@ const App = () => {
         playerSnakeArrayRef.current = data
         setPlayerSnakeArray(data)
       })
-      socket.on('updateBodyBroadcast', (data) => { updateFieldChanged(data.playerId, 'snakeCells', data.snakeCells) })
+      socket.on('updateBodyBroadcast', (data) => { updateSnakeArray(data.playerId, 'snakeCells', data.snakeCells) })
       socket.on('updateFoodBroadcast', (data) => {
         foodRef.current = data
         setFood(data)
       })
     }
+
+    if (gameStart)
+      playSound('background-music.mp3', true)
   }, [gameStart])
+
+  useEffect(() => {
+    if (gameModeRef.current == "multiplayer") {
+      updateSnakeArray(playerId, 'score', score)
+      socket.emit('scoreUpdate', { playerId: playerId, score: score })
+    }
+  }, [score])
 
 
   const requestRef = useRef()
@@ -135,24 +144,9 @@ const App = () => {
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [acronymStatus, isGameOver])
+  }, [acronymStatus, isGameOver, volume])
 
-
-  // useEffect(() => {
-  //   if (gameMode == "multiplayer") {
-  //     socket.emit('scoreUpdate', { playerId: playerId, score: score })
-  //   }
-  // }, [score])
-
-  const keypress = ({ key }) => {
-    if (gameMode == "singlePlayer" || gameMode == "vsCPU")
-      KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateFieldChanged, key)
-    else {
-      KeyboardInput.multiplayerKeyPress(playerSnakeArrayRef, playerRef, socket, updateFieldChanged, key)
-    }
-  }
-
-  const updateFieldChanged = (playerId, prop, value) => {
+  const updateSnakeArray = (playerId, prop, value) => {
     let newArr = [...playerSnakeArrayRef.current]
     if (!newArr.find(snake => snake.playerId == playerId))
       return;
@@ -171,28 +165,30 @@ const App = () => {
   }
 
   const gameOver = () => {
-    // setGameOver(true)
-    // if (gameMode == "multiplayer")
-    //   socket.disconnect()
-    // playSound('game-over.mp3')
+    setGameOver(true)
+    if (gameMode == "multiplayer")
+      socket.disconnect()
+    playSound('game-over.mp3')
   }
 
-  // const headBodyCollisionCheck = (snakeHead) => {
-  //   let snakeBody = snakeCells.slice(0, -1)
+  const headBodyCollisionCheck = (snakeHead, snakeCells) => {
+    let snakeBody = snakeCells.slice(0, -1)
 
-  //   if (helper.isArrayInArray(snakeBody, snakeHead)) {
-  //     gameOver()
-  //   }
-  // }
+    if (isArrayInArray(snakeBody, snakeHead)) {
+      gameOver()
+    }
+  }
 
   const hasEatenFood = (snakeHead) => {
     return headAtFood(snakeHead, foodRef.current)
   }
 
-  const playSound = (sound) => {
-    var bloop = new Audio(sound)
-    bloop.volume = volume
-    bloop.play()
+  const playSound = (sound, loop) => {
+    var sound = new Audio(sound)
+    sound.volume = volume
+    if (loop)
+      sound.loop = true
+    sound.play()
   }
 
   const increaseSnakeLength = (updatedCells) => {
@@ -210,11 +206,10 @@ const App = () => {
       if (!closeToFood) {
         playSound('mouth.mp3')
       }
-      updateFieldChanged(playerId, 'closeToFood', true)
-
+      updateSnakeArray(playerId, 'closeToFood', true)
     }
     else {
-      updateFieldChanged(playerId, 'closeToFood', false)
+      updateSnakeArray(playerId, 'closeToFood', false)
     }
   }
 
@@ -225,7 +220,7 @@ const App = () => {
       if (gameModeRef.current == "singlePlayer" || gameModeRef.current == "vsCPU") {
         setFood(randomLocation())
         foodRef.current = randomLocation()
-        updateFieldChanged(currentPlayerId, 'score', score + 1)
+        updateSnakeArray(currentPlayerId, 'score', score + 1)
       } else {
         socket.emit('randomFood')
         if (playerRef.current == currentPlayerId)
@@ -336,7 +331,7 @@ const App = () => {
       let snakeHead = updatedCells.slice(-1)[0]
 
       if (snake.aiStatus) {
-        AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateFieldChanged)
+        AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
       } else {
         switch (snake.direction) {
           case "right":
@@ -354,14 +349,13 @@ const App = () => {
           default:
             break
         }
+        headBodyCollisionCheck(snakeHead, snake.snakeCells)
       }
 
-      // headBodyCollisionCheck(snakeHead)
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
-      updateFieldChanged(snake.playerId, 'snakeCells', updatedCells)
+      updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
 
       snake.snakeCells.forEach((cell, index) => {
-
         // GameOver
         if (snake.playerId == playerRef.current) {
           if (cell.x * 3 > canvas.width || cell.y * 3 > canvas.height) {
@@ -370,8 +364,10 @@ const App = () => {
             gameOver()
           }
         }
+
         renderHead(context, index, snake, cell)
       })
+
       context.restore()
     })
   }
@@ -388,7 +384,7 @@ const App = () => {
             fullWord={currentAcronym.fullWord}
             playerSnakeArray={playerSnakeArray}
             playerId={playerId}
-            updateFieldChange={updateFieldChanged}
+            updateFieldChange={updateSnakeArray}
             gameMode={gameMode} />
           <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
         </div>}

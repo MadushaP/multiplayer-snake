@@ -27,7 +27,6 @@ export default (props) => {
   }
 
   const startSinglePlayer = () => {
-    // console.log("Started single player")
     props.setGameStart(true)
     props.setGameMode("singlePlayer")
     props.gameModeRef.current = "singlePlayer"
@@ -72,7 +71,6 @@ export default (props) => {
   }
 
   const startVsCPU = () => {
-    // console.log("Started single player")
     props.setGameStart(true)
     props.setGameMode("vsCPU")
     props.gameModeRef.current = "vsCPU"

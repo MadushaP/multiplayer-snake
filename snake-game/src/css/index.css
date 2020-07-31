@@ -11,6 +11,7 @@ html {
   background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
   background-image: url("/iPlayerBackground.jpeg");
   background-size: auto 120%;
+  user-select: none;
 }
 
 .game-area {

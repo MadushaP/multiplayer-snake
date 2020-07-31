@@ -5,8 +5,10 @@ import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 export default (props) => {
   const setSound = () => {
-    if (props.volume === 1) props.setVolume(0);
-    else props.setVolume(1);
+    if (props.volume === 1) 
+      props.setVolume(0);
+    else 
+      props.setVolume(1);
   };
 
   const setAiStatus = () => {
@@ -25,7 +27,7 @@ export default (props) => {
     else props.setAcronymStatus(true);
   };
 
-  let AIOption =
+  const AIOption =
     <div style={{ width: "37%" }}>
       AI
       <Toggle
@@ -36,7 +38,7 @@ export default (props) => {
       />
     </div>
 
-  let SoundOption = (
+  const SoundOption = (
     <div style={{ width: "60%" }}>
       Sound
       <Toggle
@@ -47,7 +49,7 @@ export default (props) => {
     </div>
   );
 
-  let AcronymOption =
+  const AcronymOption =
     <div style={{ width: "71%" }}>
       {" "}
       Acronym
@@ -58,7 +60,7 @@ export default (props) => {
       />
     </div>
 
-  let singlePlayerOptions =
+  const singlePlayerOptions =
     <div className="parent">
       <div className="child">
         <div className="scoreText">
@@ -88,7 +90,7 @@ export default (props) => {
       </div>
     </div>
 
-  let multiplayerOptions =
+  const multiplayerOptions =
     <div className="parent">
       <div className="child" style={{ 'width': '18%' }}>
         <div className="scoreText">
@@ -116,12 +118,12 @@ export default (props) => {
 
 
 
-  let vsCpuOptions =
+  const vsCpuOptions =
     <div className="parent">
       <div className="child" style={{ 'width': '18%' }}>
         <div className="scoreText">
           vsCPU
-    </div>
+       </div>
       </div>
       {props.playerSnakeArray.map((snake, index) => (
         <div key={index} className="child" style={{ backgroundColor: '#' + snake.colour, 'width': '30%' }}>
@@ -154,7 +156,7 @@ export default (props) => {
 
 
   let selectGameModeOption = (gameMode) => {
-    switch(gameMode) {
+    switch (gameMode) {
       case "singlePlayer":
         return singlePlayerOptions
       case "vsCPU":
