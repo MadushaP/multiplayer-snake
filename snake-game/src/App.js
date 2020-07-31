@@ -58,7 +58,7 @@ const App = () => {
       socket.emit('scoreUpdate', { playerId: playerId, score: score })
     }
   }, [score])
- 
+
 
   useEffect(() => {
     if (gameMode == 'multiplayer') {
@@ -73,7 +73,7 @@ const App = () => {
 
       socket.on('scoreUpdate', (data) => {
         updateFieldChanged(data.playerId, 'score', data.score)
-     })
+      })
 
       socket.on('clear', (data) => {
         let x = playerSnakeArrayRef.current.filter(x => x.playerId != data.playerId)
@@ -216,7 +216,7 @@ const App = () => {
         socket.emit('randomFood')
       }
 
-      if(playerRef.current == currentPlayerId )
+      if (playerRef.current == currentPlayerId)
         setScore(score => score + 1)
 
       let randomAcr = helper.randomItem(acronymMap)
@@ -255,6 +255,51 @@ const App = () => {
     grd.addColorStop(1, "#004CB3");
     context.fillStyle = grd;
     context.fillRect(0, 0, 1300, 1175)
+  }
+
+  const selectHeadImage = (snake) => {
+    if (!snake.closeToFood) {     
+      if(gameMode == "singlePlayer"){
+        return `snake-head.png`
+      } else {
+        return `snake-head-${snake.colour}.png`
+      }
+    } else {
+      if(gameMode == "singlePlayer"){
+        return `snake-head-eat.png`
+      } else {
+        return `snake-head-eat-${snake.colour}.png`
+      }
+    }
+  }
+
+  const renderHead = (context, index, snake, cell) => {
+    context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
+    context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
+
+    if (index === snake.snakeCells.length - 1) {
+      var snakeHead = new Image();
+      snakeHead.src = selectHeadImage(snake)
+      context.save();
+      context.translate(cell.x * blockSize, cell.y * blockSize);
+
+      //rotate head
+      if (snake.direction == "up") {
+        context.rotate(Math.PI);
+        context.drawImage(snakeHead, -25, -3, 30, 40)
+      } else if (snake.direction == "down") {
+        context.rotate(0);
+        context.drawImage(snakeHead, -5, 5, 30, 40)
+      }
+      else if (snake.direction == "left") {
+        context.rotate(Math.PI / 2);
+        context.drawImage(snakeHead, -5, -3, 30, 40)
+      }
+      else if (snake.direction == "right") {
+        context.rotate(Math.PI * 3 / 2);
+        context.drawImage(snakeHead, -25, 15, 30, 40)
+      }
+    }
   }
 
   const canvasRef = useRef(null)
@@ -303,8 +348,6 @@ const App = () => {
       updateFieldChanged(snake.playerId, 'snakeCells', updatedCells)
 
       snake.snakeCells.forEach((cell, index) => {
-        context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
-        context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
 
         // GameOver
         if (snake.playerId == playerRef.current) {
@@ -314,31 +357,7 @@ const App = () => {
             gameOver()
           }
         }
-
-        //snake head
-        if (index === snake.snakeCells.length - 1) {
-          var snakeHead = new Image();
-          snakeHead.src = !snake.closeToFood ? 'snake-head.png' : 'snake-head-eat.png';
-          context.save();
-          context.translate(cell.x * blockSize, cell.y * blockSize);
-
-          //rotate head
-          if (snake.direction == "up") {
-            context.rotate(Math.PI);
-            context.drawImage(snakeHead, -25, -3, 30, 40)
-          } else if (snake.direction == "down") {
-            context.rotate(0);
-            context.drawImage(snakeHead, -5, 5, 30, 40)
-          }
-          else if (snake.direction == "left") {
-            context.rotate(Math.PI / 2);
-            context.drawImage(snakeHead, -5, -3, 30, 40)
-          }
-          else if (snake.direction == "right") {
-            context.rotate(Math.PI * 3 / 2);
-            context.drawImage(snakeHead, -25, 15, 30, 40)
-          }
-        }
+        renderHead(context, index, snake, cell)
       })
       context.restore()
     })
