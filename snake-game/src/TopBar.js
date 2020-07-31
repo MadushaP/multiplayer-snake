@@ -67,9 +67,9 @@ export default (props) => {
             transitionEnterTimeout={500}
             transitionLeaveTimeout={1}>
             <div
-              key={props.score}
+              key={props.playerSnakeArray[0].score}
               style={{ display: "inline-block", paddingLeft: "5px" }}>
-              Score: {props.score}
+              Score: {props.playerSnakeArray[0].score}
             </div>
           </ReactCSSTransitionGroup>
         </div>
@@ -114,9 +114,59 @@ export default (props) => {
       ))}
     </div>
 
+
+
+  let vsCpuOptions =
+    <div className="parent">
+      <div className="child" style={{ 'width': '18%' }}>
+        <div className="scoreText">
+          vsCPU
+    </div>
+      </div>
+      {props.playerSnakeArray.map((snake, index) => (
+        <div key={index} className="child" style={{ backgroundColor: '#' + snake.colour, 'width': '30%' }}>
+          <div className="scoreText">
+
+            <ReactCSSTransitionGroup
+              transitionName="score"
+              transitionEnterTimeout={500}
+              transitionLeaveTimeout={1}>
+              {(() => {
+                if (snake.playerId == 0) {
+                  return <div
+                    key={snake.score}
+                    style={{ display: "inline-block" }}>
+                    Player Score: {snake.score}
+                  </div>
+                } else {
+                  return <div
+                    key={snake.score}
+                    style={{ display: "inline-block" }}>
+                    CPU Score: {snake.score}
+                  </div>
+                }
+              })()}
+            </ReactCSSTransitionGroup>
+          </div>
+        </div>
+      ))}
+    </div>
+
+
+  let selectGameModeOption = (gameMode) => {
+    switch(gameMode) {
+      case "singlePlayer":
+        return singlePlayerOptions
+      case "vsCPU":
+        return vsCpuOptions
+      case "multiplayer":
+        return multiplayerOptions
+    }
+  }
+
   return (
     <div>
-      {props.gameMode === "singlePlayer" ? singlePlayerOptions : multiplayerOptions}
+      {selectGameModeOption(props.gameMode)}
     </div>
   );
 };

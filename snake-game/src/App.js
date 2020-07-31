@@ -38,7 +38,21 @@ const App = () => {
   const [playerId, setPlayerId] = useState(0)
   const playerRef = useRef(playerId)
 
-  const [playerSnakeArray, setPlayerSnakeArray] = useState([])
+  const [playerSnakeArray, setPlayerSnakeArray] = useState([{
+    playerId: 0,
+    snakeCells: [
+      { 'x': 10, 'y': 10 },
+      { 'x': 12, 'y': 10 },
+      { 'x': 14, 'y': 10 },
+      { 'x': 16, 'y': 10 },
+    ],
+    direction: "right",
+    closeToFood: false,
+    aiStatus: false,
+    colour: '48df08',
+    score: 0
+  }])
+
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
   let blockSize = 3
@@ -53,7 +67,6 @@ const App = () => {
 
   useEffect(() => {
     if (gameModeRef.current == "multiplayer") {
-      console.log(playerId, playerRef.current)
       updateFieldChanged(playerId, 'score', score)
       socket.emit('scoreUpdate', { playerId: playerId, score: score })
     }
@@ -122,7 +135,7 @@ const App = () => {
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [acronymStatus, isGameOver, gameMode])
+  }, [acronymStatus, isGameOver])
 
 
   // useEffect(() => {
@@ -132,7 +145,7 @@ const App = () => {
   // }, [score])
 
   const keypress = ({ key }) => {
-    if (gameMode == "singlePlayer")
+    if (gameMode == "singlePlayer" || gameMode == "vsCPU")
       KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateFieldChanged, key)
     else {
       KeyboardInput.multiplayerKeyPress(playerSnakeArrayRef, playerRef, socket, updateFieldChanged, key)
@@ -205,19 +218,19 @@ const App = () => {
     }
   }
 
-  const foodCheck = (snakeHead, updatedCells, closeToFood, currentPlayerId) => {
+  const foodCheck = (snakeHead, updatedCells, closeToFood, currentPlayerId, score) => {
     handleCloseToFood(snakeHead, closeToFood, currentPlayerId)
     if (hasEatenFood(snakeHead)) {
       setConfetti(true)
-      if (gameModeRef.current == "singlePlayer") {
+      if (gameModeRef.current == "singlePlayer" || gameModeRef.current == "vsCPU") {
         setFood(randomLocation())
         foodRef.current = randomLocation()
+        updateFieldChanged(currentPlayerId, 'score', score + 1)
       } else {
         socket.emit('randomFood')
+        if (playerRef.current == currentPlayerId)
+          setScore(score => score + 1)
       }
-
-      if (playerRef.current == currentPlayerId)
-        setScore(score => score + 1)
 
       let randomAcr = helper.randomItem(acronymMap)
       setAcronym(randomAcr)
@@ -258,14 +271,14 @@ const App = () => {
   }
 
   const selectHeadImage = (snake) => {
-    if (!snake.closeToFood) {     
-      if(gameMode == "singlePlayer"){
+    if (!snake.closeToFood) {
+      if (snake.colour == "48df08") {
         return `snake-head.png`
       } else {
         return `snake-head-${snake.colour}.png`
       }
     } else {
-      if(gameMode == "singlePlayer"){
+      if (snake.colour == "48df08") {
         return `snake-head-eat.png`
       } else {
         return `snake-head-eat-${snake.colour}.png`
@@ -344,7 +357,7 @@ const App = () => {
       }
 
       // headBodyCollisionCheck(snakeHead)
-      foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId)
+      foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
       updateFieldChanged(snake.playerId, 'snakeCells', updatedCells)
 
       snake.snakeCells.forEach((cell, index) => {

@@ -43,6 +43,9 @@ export default (props) => {
       direction: "right",
       closeToFood: false,
       aiStatus: false,
+      colour: '48df08',
+      score:0
+
     }])
     props.playerSnakeArrayRef.current = [{
       playerId: 0,
@@ -55,6 +58,9 @@ export default (props) => {
       direction: "right",
       closeToFood: false,
       aiStatus: false,
+      colour: '48df08',
+      score: 0
+
     }]
   }
 
@@ -64,6 +70,73 @@ export default (props) => {
     props.gameModeRef.current = "multiplayer"
     props.setGameStart(true)
   }
+
+  const startVsCPU = () => {
+    // console.log("Started single player")
+    props.setGameStart(true)
+    props.setGameMode("vsCPU")
+    props.gameModeRef.current = "vsCPU"
+
+    props.setPlayerSnakeArray([{
+      playerId: 0,
+      snakeCells: [
+        { 'x': 10, 'y': 10 },
+        { 'x': 12, 'y': 10 },
+        { 'x': 14, 'y': 10 },
+        { 'x': 16, 'y': 10 },
+      ],
+      direction: "right",
+      closeToFood: false,
+      aiStatus: false,
+      colour: '48df08',
+      score:0
+    },
+    {
+      playerId: 1,
+      snakeCells: [
+        { 'x': 10, 'y': 10 },
+        { 'x': 12, 'y': 10 },
+        { 'x': 14, 'y': 10 },
+        { 'x': 16, 'y': 10 },
+      ],
+      direction: "right",
+      closeToFood: false,
+      aiStatus: true,
+      colour: 'DAF7A6',
+      score:0
+    }])
+
+    props.playerSnakeArrayRef.current = [{
+      playerId: 0,
+      snakeCells: [
+        { 'x': 10, 'y': 10 },
+        { 'x': 12, 'y': 10 },
+        { 'x': 14, 'y': 10 },
+        { 'x': 16, 'y': 10 },
+      ],
+      direction: "right",
+      closeToFood: false,
+      aiStatus: false,
+      colour: '48df08',
+      score:0
+
+    },
+    {
+      playerId: 1,
+      snakeCells: [
+        { 'x': 10, 'y': 10 },
+        { 'x': 12, 'y': 10 },
+        { 'x': 14, 'y': 10 },
+        { 'x': 16, 'y': 10 },
+      ],
+      direction: "right",
+      closeToFood: false,
+      aiStatus: true,
+      colour: 'DAF7A6',
+      score:0
+    }]
+  }
+
 
   return (
     <div >
@@ -77,7 +150,7 @@ export default (props) => {
         <img src="Snake-Menu-Picture.png" className="snake-menu-image"></img>
         <div style={{ "display": "inline-flex" }}>
           <FancyButton text="Single player" buttonClick={startSinglePlayer} />
-          <FancyButton text="vs CPU" />
+          <FancyButton text="vs CPU" buttonClick={startVsCPU} />
           <FancyButton text="Multiplayer" buttonClick={startMultiplayer} />
         </div>
       </Modal>
