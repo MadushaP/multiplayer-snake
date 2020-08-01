@@ -259,8 +259,8 @@ const App = () => {
 
   const renderGameBoard = (context, canvas) => {
     var grd = context.createLinearGradient(0, 0, canvas.width, canvas.height)
-    grd.addColorStop(0, "#0e6ef0");
-    grd.addColorStop(1, "#004CB3");
+    grd.addColorStop(0, "#2680F9");
+    grd.addColorStop(1, "#0150BB");
     context.fillStyle = grd;
     context.fillRect(0, 0, 1300, 1175)
   }

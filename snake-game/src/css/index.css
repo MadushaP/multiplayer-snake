@@ -8,10 +8,10 @@ body,
 html {
   overflow-x: hidden;
   overflow-y: hidden;
-  background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
   background-image: url("/iPlayerBackground.jpeg");
   background-size: auto 120%;
   user-select: none;
+  background-size:cover
 }
 
 .game-area {
@@ -48,7 +48,7 @@ html {
 }
 @media (max-width: 800px), (max-height: 1000px) {
   html {
-    zoom: 0.6;
+    zoom: 0.68;
   }
 }
 
