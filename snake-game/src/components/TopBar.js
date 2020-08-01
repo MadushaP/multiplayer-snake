@@ -5,9 +5,9 @@ import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 export default (props) => {
   const setSound = () => {
-    if (props.volume === 1) 
+    if (props.volume === 1)
       props.setVolume(0);
-    else 
+    else
       props.setVolume(1);
   };
 
@@ -110,10 +110,26 @@ export default (props) => {
                 style={{ display: "inline-block" }}>
                 P{index + 1}: {snake.score}
               </div>
+
             </ReactCSSTransitionGroup>
           </div>
         </div>
       ))}
+      {(() => {
+        if (props.playerSnakeArray.length <= 1) {
+          return (
+            <div className="child" style={{ backgroundColor: 'rgb(185 185 185)', 'width': '50%' }}>
+            <div className="scoreText">
+              <div
+                style={{ display: "inline-block" }}>
+                Waiting for Players to join 
+               </div>
+               <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+
+               </div>
+            </div>)
+        }
+      })()}
     </div>
 
 
