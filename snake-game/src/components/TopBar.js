@@ -118,7 +118,7 @@ export default (props) => {
       {(() => {
         if (props.playerSnakeArray.length <= 1) {
           return (
-            <div className="child" style={{ backgroundColor: 'rgb(185 185 185)', 'width': '50%' }}>
+            <div className="child" style={{ backgroundColor: 'rgb(185 185 185 / 0.13)', 'width': '45%' }}>
             <div className="scoreText">
               <div
                 style={{ display: "inline-block" }}>

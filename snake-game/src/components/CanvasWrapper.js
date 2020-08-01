@@ -28,9 +28,7 @@ export default (props) => {
                 ref={props.canvasRef}
                 width="1300"
                 height="1175"
-                style={{
-                    border: '3px solid rgba(224, 43, 125, 1)',
-                }}>
+                style={{ border: '3px solid rgba(224, 43, 125, 1)'}}>
 
             </canvas>
             <div style={confStyle}>
