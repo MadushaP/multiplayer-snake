@@ -1,18 +1,20 @@
+let speed = 6;
+
 const gridAlignment = (snakeHead) => {
     if (snakeHead.x > 400) {
-        snakeHead.x -= 2
-        snakeHead.y += 2
+        snakeHead.x -= speed
+        snakeHead.y += speed
     } else if (snakeHead.x < 0) {
-        snakeHead.x += 2
-        snakeHead.y += 2
+        snakeHead.x += speed
+        snakeHead.y += speed
     }
     else if (snakeHead.y > 400) {
-        snakeHead.x -= 2
-        snakeHead.y -= 2
+        snakeHead.x -= speed
+        snakeHead.y -= speed
     }
     else if (snakeHead.y < 0) {
-        snakeHead.x += 2
-        snakeHead.y += 2
+        snakeHead.x += speed
+        snakeHead.y += speed
     }
 }
 
@@ -22,28 +24,28 @@ const moveToFood = (food, snakeHead, socket, playerId, gameMode, updateFieldChan
     if (distanceX > 0) {
 
         if (distanceY > 0) {
-            snakeHead.y += 2
+            snakeHead.y += speed
             updateFieldChanged(playerId, 'direction', 'down')
         } else {
-            snakeHead.x += 2
+            snakeHead.x += speed
             updateFieldChanged(playerId, 'direction', 'right')
         }
 
     } else if (distanceX < 0) {
 
         if (distanceY < 0) {
-            snakeHead.y -= 2
+            snakeHead.y -= speed
             updateFieldChanged(playerId, 'direction', 'up')
         } else {
-            snakeHead.x -= 2
+            snakeHead.x -= speed
             updateFieldChanged(playerId, 'direction', 'left')
         }
     }
     else if (distanceY > 0) {
-        snakeHead.y += 2
+        snakeHead.y += speed
         updateFieldChanged(playerId, 'direction', 'down')
     } else if (distanceY < 0) {
-        snakeHead.y -= 2
+        snakeHead.y -= speed
         updateFieldChanged(playerId, 'direction', 'up')
     }
 
@@ -53,17 +55,17 @@ const headBodyAlignment = (snakeHead, updatedCells, direction) => {
     for (let i = 0; i < updatedCells.length - 1; i++) {
         if (snakeHead.x === updatedCells[i].x && snakeHead.y === updatedCells[i].y) {
             if (direction === "left") {
-                snakeHead.x -= 2
-                snakeHead.y -= 2
+                snakeHead.x -= speed
+                snakeHead.y -= speed
             } else if (direction === "right") {
-                snakeHead.x += 2
-                snakeHead.y += 2
+                snakeHead.x += speed
+                snakeHead.y += speed
             } else if (direction === "up") {
-                snakeHead.x -= 2
-                snakeHead.y += 2
+                snakeHead.x -= speed
+                snakeHead.y += speed
             } else if (direction === "down") {
-                snakeHead.x += 2
-                snakeHead.y -= 2
+                snakeHead.x += speed
+                snakeHead.y -= speed
             }
             return
         }

@@ -16,7 +16,7 @@ const arrayEquals = (array1, array2) => {
 const headAtFood = (snakeHead, food) => {
     let distanceX = Math.abs(snakeHead.x - food.x)
     let distanceY = Math.abs(snakeHead.y - food.y)
-    if (distanceX <= 4 && distanceY <= 4) {
+    if (distanceX <= 10 && distanceY <= 10) {
         return true
     }
     else return false
@@ -24,11 +24,11 @@ const headAtFood = (snakeHead, food) => {
 
 const randomItem = (array) => {
     return array[Math.floor(Math.random() * array.length)]
-}
+}     
 
 const randomLocation = () => {
-    let x = Math.floor(Math.random() * 350)
-    let y = Math.floor(Math.random() * 350)
+    let x = Math.floor(Math.random() * 1100)
+    let y = Math.floor(Math.random() * 1100)
     return { 'x': x, 'y': y }
   }
 

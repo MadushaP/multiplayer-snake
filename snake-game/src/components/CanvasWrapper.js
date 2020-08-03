@@ -3,8 +3,8 @@ import Confetti from 'react-dom-confetti'
 
 export default (props) => {
     let confStyle = {
-        left: `${props.food.x * props.blockSize}px`,
-        top: `${props.food.y * props.blockSize}px`,
+        left: `${props.food.x}px`,
+        top: `${props.food.y}px`,
         position: 'absolute',
 
     }
@@ -28,7 +28,7 @@ export default (props) => {
                 ref={props.canvasRef}
                 width="1300"
                 height="1175"
-                style={{ border: '3px solid rgba(224, 43, 125, 1)'}}>
+                style={{ border: '5px solid rgba(224, 43, 125, 1)', borderRadius: '15px' }}>
 
             </canvas>
             <div style={confStyle}>

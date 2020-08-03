@@ -44,10 +44,9 @@ const App = () => {
     colour: '48df08',
     score: 0
   }])
+  let speed = 6;
 
   const playerSnakeArrayRef = useRef(playerSnakeArray)
-
-  let blockSize = 3
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
@@ -195,7 +194,7 @@ const App = () => {
   const handleCloseToFood = (snakeHead, closeToFood, playerId) => {
     let distanceX = Math.abs(foodRef.current.x - snakeHead.x)
     let distanceY = Math.abs(foodRef.current.y - snakeHead.y)
-    if (distanceX < 12 * blockSize && distanceY < 12 * blockSize) {
+    if (distanceX < 75 && distanceY < 75) {
       if (!closeToFood) {
         playSound('mouth.mp3')
       }
@@ -235,16 +234,16 @@ const App = () => {
     context.fillStyle = "white"
     context.font = "bold 25px Verdana"
     let acronymWidth = context.measureText(currentAcronymRef.current.acronym).width
-    context.fillText(currentAcronymRef.current.acronym, foodRef.current.x * blockSize - (acronymWidth / 2) + 10, foodRef.current.y * blockSize - 20)
+    context.fillText(currentAcronymRef.current.acronym, foodRef.current.x * - (acronymWidth / 2) + 10, foodRef.current.y * - 20)
 
     context.font = "bold 25px Verdana"
     let fullWordWidth = context.measureText(currentAcronymRef.current.fullWord).width
-    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x * blockSize - (fullWordWidth / 2) + 10, foodRef.current.y * blockSize + 60)
+    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x * - (fullWordWidth / 2) + 10, foodRef.current.y * + 60)
   }
 
   const renderFood = (context) => {
     context.beginPath();
-    context.arc(foodRef.current.x * blockSize + 10, foodRef.current.y * blockSize + 10, 10, 0, 2 * Math.PI)
+    context.arc(foodRef.current.x + 10, foodRef.current.y + 10, 10, 0, 2 * Math.PI)
     context.fillStyle = "#FF0000"
     context.fill();
     context.stroke();
@@ -276,13 +275,13 @@ const App = () => {
 
   const renderSnake = (context, index, snake, cell) => {
     context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
-    context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
+    context.fillRect(cell.x, cell.y, 20, 20)
 
     if (index === snake.snakeCells.length - 1) {
       var snakeHead = new Image();
       snakeHead.src = selectHeadImage(snake)
       context.save();
-      context.translate(cell.x * blockSize, cell.y * blockSize);
+      context.translate(cell.x, cell.y);
 
       //rotate head
       if (snake.direction == "up") {
@@ -325,18 +324,19 @@ const App = () => {
       if (snake.aiStatus) {
         AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
       } else {
+
         switch (snake.direction) {
           case "right":
-            snakeHead.x += 2
+            snakeHead.x += speed
             break
           case "left":
-            snakeHead.x -= 2
+            snakeHead.x -= speed
             break
           case "down":
-            snakeHead.y += 2
+            snakeHead.y += speed
             break
           case "up":
-            snakeHead.y -= 2
+            snakeHead.y -= speed
             break
           default:
             break
@@ -350,7 +350,7 @@ const App = () => {
       snake.snakeCells.forEach((cell, index) => {
         // GameOver
         if (snake.playerId == playerRef.current) {
-          if (cell.x * blockSize > canvas.width || cell.y * blockSize > canvas.height) {
+          if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
             gameOver()
           } else if (cell.x < 0 || cell.y < 0) {
             gameOver()
@@ -378,7 +378,7 @@ const App = () => {
             playerId={playerId}
             updateFieldChange={updateSnakeArray}
             gameMode={gameMode} />
-          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} blockSize={blockSize} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} />
         </div>}
     </div>
   )
