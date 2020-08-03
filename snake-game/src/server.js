@@ -1,12 +1,7 @@
 var app = require('express')()
 var http = require('http').createServer(app)
 var io = require('socket.io')(http)
-
-const randomLocation = () => {
-    let x = Math.floor(Math.random() * 350)
-    let y = Math.floor(Math.random() * 350)
-    return { 'x': x, 'y': y }
-}
+const { randomLocation } = require('./lib/helper')
 
 let snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
 let snakeCells = []

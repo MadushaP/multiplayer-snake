@@ -8,16 +8,11 @@ import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
 
 let socket = null
-const { randomItem, headAtFood, isArrayInArray } = require('../lib/helper.js')
+const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
 const acronyms = require('../store/acronyms.js')
 const gamepad = require('../lib/gamepad.js')
 
 const App = () => {
-  const randomLocation = () => {
-    let x = Math.floor(Math.random() * 350)
-    let y = Math.floor(Math.random() * 350)
-    return { 'x': x, 'y': y }
-  }
 
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
@@ -32,12 +27,9 @@ const App = () => {
   const [acronymMap, setAcronymsMap] = useState(acronyms)
   const [currentAcronym, setAcronym] = useState(randomItem(acronymMap))
   const currentAcronymRef = useRef(currentAcronym)
-
   const [acronymStatus, setAcronymStatus] = useState(false)
-
   const [playerId, setPlayerId] = useState(0)
   const playerRef = useRef(playerId)
-
   const [playerSnakeArray, setPlayerSnakeArray] = useState([{
     playerId: 0,
     snakeCells: [
@@ -63,6 +55,11 @@ const App = () => {
       window.removeEventListener('keydown', keypress)
     }
   }, [gameMode])
+
+  useEffect(() => {
+    if (gameMode == "multiplayer" && isGameOver)
+      socket.disconnect()
+  }, [isGameOver])
 
   const keypress = ({ key }) => {
     if (gameMode == "singlePlayer" || gameMode == "vsCPU")
@@ -117,8 +114,8 @@ const App = () => {
       })
     }
 
-    if (gameStart)
-      playSound('background-music.mp3', true)
+    // if (gameStart)
+    //   playSound('background-music.mp3', true)
   }, [gameStart])
 
   useEffect(() => {
@@ -166,14 +163,11 @@ const App = () => {
 
   const gameOver = () => {
     setGameOver(true)
-    if (gameMode == "multiplayer")
-      socket.disconnect()
     playSound('game-over.mp3')
   }
 
   const headBodyCollisionCheck = (snakeHead, snakeCells) => {
     let snakeBody = snakeCells.slice(0, -1)
-
     if (isArrayInArray(snakeBody, snakeHead)) {
       gameOver()
     }
@@ -193,7 +187,6 @@ const App = () => {
 
   const increaseSnakeLength = (updatedCells) => {
     let snakeTail = updatedCells[0]
-
     for (let i = 0; i < 4; i++) {
       updatedCells.unshift({ 'x': snakeTail.x, 'y': snakeTail.y })
     }
@@ -281,7 +274,7 @@ const App = () => {
     }
   }
 
-  const renderHead = (context, index, snake, cell) => {
+  const renderSnake = (context, index, snake, cell) => {
     context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
     context.fillRect(cell.x * blockSize, cell.y * blockSize, 20, 20)
 
@@ -318,7 +311,6 @@ const App = () => {
       return;
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, canvas.width, canvas.height)
-
     renderGameBoard(context, canvas)
     renderFood(context)
 
@@ -358,14 +350,14 @@ const App = () => {
       snake.snakeCells.forEach((cell, index) => {
         // GameOver
         if (snake.playerId == playerRef.current) {
-          if (cell.x * 3 > canvas.width || cell.y * 3 > canvas.height) {
+          if (cell.x * blockSize > canvas.width || cell.y * blockSize > canvas.height) {
             gameOver()
           } else if (cell.x < 0 || cell.y < 0) {
             gameOver()
           }
         }
 
-        renderHead(context, index, snake, cell)
+        renderSnake(context, index, snake, cell)
       })
 
       context.restore()
