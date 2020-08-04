@@ -368,7 +368,7 @@ const App = () => {
     <div>
       {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} setGameOver={setGameOver} />
+          <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver}/>
           <TopBar score={score} socket={socket}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}

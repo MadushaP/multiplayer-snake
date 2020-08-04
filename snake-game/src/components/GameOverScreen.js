@@ -7,12 +7,14 @@ const customStyles = {
     left: '50%',
     right: 'auto',
     bottom: 'auto',
-    marginRight: '-50%',
     height: '200px',
     width: '300px',
     boxShadow: '0 3px 7px rgba(0, 0, 0, 0.3)',
     borderRadius: '20px',
     transform: 'translate(-50%, -50%)',
+    paddingBottom: '39px',
+    paddingTop: '10px',
+    overflow: 'hidden'
   }
 }
 
@@ -27,6 +29,12 @@ export default (props) => {
     window.location.reload()
   }
 
+  const getPlayerScore = () => {
+    if(props.playerSnakeArrayRef.current.find(snake => snake.playerId == props.playerId)) {
+      return props.playerSnakeArrayRef.current.find(snake => snake.playerId == props.playerId).score
+    }
+  }
+  
   return (
     <div className="modal">
       <Modal
@@ -36,7 +44,8 @@ export default (props) => {
         style={customStyles}
         shouldCloseOnOverlayClick={false} >
         <div className="game-over">
-          <div>Game Over</div>
+          <div style={{'font-weight':'bold', 'margin-bottom': '10px' }}>Game Over</div>
+          <div>Score: {getPlayerScore()}</div>
         </div>
         <FancyButton text="restart" buttonClick={closeModal} />
       </Modal>
