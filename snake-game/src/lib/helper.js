@@ -27,8 +27,8 @@ const randomItem = (array) => {
 }     
 
 const randomLocation = () => {
-    let x = Math.floor(Math.random() * 1100)
-    let y = Math.floor(Math.random() * 1100)
+    let x = Math.floor(Math.random() * 1000)
+    let y = Math.floor(Math.random() * 1000)
     return { 'x': x, 'y': y }
   }
 

@@ -72,8 +72,13 @@ const headBodyAlignment = (snakeHead, updatedCells, direction) => {
     }
 }
 
+const setSpeed = (newSpeed) => {
+    speed = newSpeed
+}
+
 module.exports = {
     moveToFood,
     headBodyAlignment,
-    gridAlignment
+    gridAlignment,
+    setSpeed
 }

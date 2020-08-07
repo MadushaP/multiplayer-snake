@@ -30,7 +30,7 @@ export default (props) => {
     props.setGameStart(true)
     props.setGameMode("singlePlayer")
     props.gameModeRef.current = "singlePlayer"
-
+    props.setAiSpeed(8)
     props.setPlayerSnakeArray([{
       playerId: 0,
       snakeCells: [
@@ -74,6 +74,7 @@ export default (props) => {
     props.setGameStart(true)
     props.setGameMode("vsCPU")
     props.gameModeRef.current = "vsCPU"
+    props.setAiSpeed(4)
 
     props.setPlayerSnakeArray([{
       playerId: 0,

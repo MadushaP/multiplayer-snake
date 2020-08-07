@@ -366,3 +366,36 @@ span#answer {
 canvas {
   animation: fade 0.2s ease-in;
 }
+
+
+.level-up {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: FredokaOne, cursive;
+  font-size: 30px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  opacity: 0;
+  height: 170px;
+  width: 250px
+  
+}
+
+.blink {
+  animation: blink 1s;
+  animation-iteration-count: 3;
+}
+
+@keyframes blink {
+  0% {
+      opacity: 0;
+  }
+  50% {
+      opacity: 0.8;
+  }
+  100% {
+      opacity: 0;
+  }
+}

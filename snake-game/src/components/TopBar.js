@@ -5,10 +5,10 @@ import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 export default (props) => {
   const setSound = () => {
-    if (props.volume === 1)
+    if (props.volume === 0.8)
       props.setVolume(0);
     else
-      props.setVolume(1);
+      props.setVolume(0.8);
   };
 
   const setAiStatus = () => {

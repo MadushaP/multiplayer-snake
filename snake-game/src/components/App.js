@@ -13,12 +13,11 @@ const acronyms = require('../store/acronyms.js')
 const gamepad = require('../lib/gamepad.js')
 
 const App = () => {
-
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
 
-  const [volume, setVolume] = useState(1)
+  const [volume, setVolume] = useState(0.8)
   const [isGameOver, setGameOver] = useState(false)
   const [showConfetti, setConfetti] = useState(false)
   const [gameStart, setGameStart] = useState(false)
@@ -44,7 +43,9 @@ const App = () => {
     colour: '48df08',
     score: 0
   }])
-  let speed = 6;
+  const [speed, setSpeed] = useState(5)
+  const speedRef = useRef(speed)
+  const [isNewLevel, setIsNewLevel] = useState(false)
 
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
@@ -113,18 +114,55 @@ const App = () => {
       })
     }
 
-    // if (gameStart)
-    //   playSound('background-music.mp3', true)
+    if (gameStart)
+      playSound('background-music.mp3', true)
   }, [gameStart])
 
   useEffect(() => {
     if (gameModeRef.current == "multiplayer") {
       updateSnakeArray(playerId, 'score', score)
       socket.emit('scoreUpdate', { playerId: playerId, score: score })
+    } else if (gameModeRef.current == "singlePlayer") {
+      levelUpCheck(score)
     }
   }, [score])
 
+  const levelUpCheck = (score) => {
+    switch (score) {
+      case 1:
+        speedRef.current = 6
+        playSound('level-up.mp3', false, 0.5)
+        setIsNewLevel(true)
+        break;
+      case 10:
+        speedRef.current = 8
+        playSound('level-up.mp3', false, 0.5)
+        setIsNewLevel(true)
 
+        break;
+      case 15:
+        speedRef.current = 10
+        playSound('level-up.mp3', false, 0.5)
+        setIsNewLevel(true)
+        break;
+      case 25:
+        speedRef.current = 12
+        playSound('level-up.mp3', false, 0.5)
+        setIsNewLevel(true)
+        break;
+      case 30:
+        speedRef.current = 15
+        playSound('level-up.mp3', false, 0.5)
+        setIsNewLevel(true)
+        break;
+      case 40:
+        speedRef.current = 20
+        playSound('level-up.mp3', false, 0.5)
+        setIsNewLevel(true)
+        break;
+    }
+  }
+  
   const requestRef = useRef()
   const previousTimeRef = useRef()
 
@@ -176,11 +214,14 @@ const App = () => {
     return headAtFood(snakeHead, foodRef.current)
   }
 
-  const playSound = (sound, loop) => {
+  const playSound = (sound, loop, volumeOverride) => {
     var sound = new Audio(sound)
-    sound.volume = volume
+
+    sound.volume = volumeOverride ? volumeOverride :  volume
+    
     if (loop)
       sound.loop = true
+
     sound.play()
   }
 
@@ -194,7 +235,7 @@ const App = () => {
   const handleCloseToFood = (snakeHead, closeToFood, playerId) => {
     let distanceX = Math.abs(foodRef.current.x - snakeHead.x)
     let distanceY = Math.abs(foodRef.current.y - snakeHead.y)
-    if (distanceX < 75 && distanceY < 75) {
+    if (distanceX < 100 && distanceY < 100) {
       if (!closeToFood) {
         playSound('mouth.mp3')
       }
@@ -213,8 +254,10 @@ const App = () => {
         setFood(randomLocation())
         foodRef.current = randomLocation()
         updateSnakeArray(currentPlayerId, 'score', score + 1)
-      } else {
+        setScore(score => score + 1)
+      } else if (gameModeRef.current == "multiplayer") {
         socket.emit('randomFood')
+        //Ensure that if a snake eats food it's the active player in control
         if (playerRef.current == currentPlayerId)
           setScore(score => score + 1)
       }
@@ -231,14 +274,15 @@ const App = () => {
   }
 
   const renderFullWorld = (context) => {
+    console.log(currentAcronymRef.current.acronym)
     context.fillStyle = "white"
     context.font = "bold 25px Verdana"
     let acronymWidth = context.measureText(currentAcronymRef.current.acronym).width
-    context.fillText(currentAcronymRef.current.acronym, foodRef.current.x * - (acronymWidth / 2) + 10, foodRef.current.y * - 20)
+    context.fillText(currentAcronymRef.current.acronym, foodRef.current.x - (acronymWidth / 2) + 10, foodRef.current.y - 20)
 
     context.font = "bold 25px Verdana"
     let fullWordWidth = context.measureText(currentAcronymRef.current.fullWord).width
-    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x * - (fullWordWidth / 2) + 10, foodRef.current.y * + 60)
+    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x  - (fullWordWidth / 2) + 10, foodRef.current.y + 60)
   }
 
   const renderFood = (context) => {
@@ -324,19 +368,18 @@ const App = () => {
       if (snake.aiStatus) {
         AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
       } else {
-
         switch (snake.direction) {
           case "right":
-            snakeHead.x += speed
+            snakeHead.x += speedRef.current
             break
           case "left":
-            snakeHead.x -= speed
+            snakeHead.x -= speedRef.current
             break
           case "down":
-            snakeHead.y += speed
+            snakeHead.y += speedRef.current
             break
           case "up":
-            snakeHead.y -= speed
+            snakeHead.y -= speedRef.current
             break
           default:
             break
@@ -366,9 +409,9 @@ const App = () => {
 
   return (
     <div>
-      {!gameStart ? <GameMenu gameStart={gameStart} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
+      {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver}/>
+          <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} />
           <TopBar score={score} socket={socket}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}
@@ -378,7 +421,7 @@ const App = () => {
             playerId={playerId}
             updateFieldChange={updateSnakeArray}
             gameMode={gameMode} />
-          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel}/>
         </div>}
     </div>
   )

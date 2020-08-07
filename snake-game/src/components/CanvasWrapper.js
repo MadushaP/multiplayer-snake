@@ -22,6 +22,22 @@ export default (props) => {
         colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
     }
 
+    const resetIsNewLevel = () => {
+        setTimeout(() => {
+            props.setIsNewLevel(false)
+        }, 3000)
+    }
+
+    const blinkCss = () => {
+      if (props.isNewLevel) {
+        resetIsNewLevel()
+        return "level-up blink"
+      } else {
+        return "level-up"
+      }
+    }
+
+
     return (
         <div id='wrapper'>
             <canvas
@@ -29,11 +45,11 @@ export default (props) => {
                 width="1300"
                 height="1175"
                 style={{ border: '5px solid rgba(224, 43, 125, 1)', borderRadius: '15px' }}>
-
             </canvas>
             <div style={confStyle}>
                 <Confetti style={confStyle} active={props.showConfetti} config={config} />
             </div>
+            <img key={props.isNewLevel} src="level-up.png" className={blinkCss()}></img>
         </div>
     )
 }
