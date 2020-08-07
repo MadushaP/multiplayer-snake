@@ -25,7 +25,7 @@ export default (props) => {
     const resetIsNewLevel = () => {
         setTimeout(() => {
             props.setIsNewLevel(false)
-        }, 3000)
+        }, 2000)
     }
 
     const blinkCss = () => {
@@ -33,7 +33,7 @@ export default (props) => {
         resetIsNewLevel()
         return "level-up blink"
       } else {
-        return "level-up"
+        return "level-up "
       }
     }
 

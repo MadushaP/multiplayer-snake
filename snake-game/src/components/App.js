@@ -127,38 +127,31 @@ const App = () => {
     }
   }, [score])
 
+  const levelUp = (speed) => {
+    speedRef.current = speed
+    playSound('level-up.mp3', false, 0.5)
+    setIsNewLevel(true)
+  }
+  
   const levelUpCheck = (score) => {
     switch (score) {
-      case 1:
-        speedRef.current = 6
-        playSound('level-up.mp3', false, 0.5)
-        setIsNewLevel(true)
+      case 5:
+        levelUp(7)       
         break;
       case 10:
-        speedRef.current = 8
-        playSound('level-up.mp3', false, 0.5)
-        setIsNewLevel(true)
-
+        levelUp(10)  
         break;
       case 15:
-        speedRef.current = 10
-        playSound('level-up.mp3', false, 0.5)
-        setIsNewLevel(true)
+        levelUp(12)  
         break;
       case 25:
-        speedRef.current = 12
-        playSound('level-up.mp3', false, 0.5)
-        setIsNewLevel(true)
+        levelUp(14)  
         break;
       case 30:
-        speedRef.current = 15
-        playSound('level-up.mp3', false, 0.5)
-        setIsNewLevel(true)
+        levelUp(16)  
         break;
       case 40:
-        speedRef.current = 20
-        playSound('level-up.mp3', false, 0.5)
-        setIsNewLevel(true)
+        levelUp(20)  
         break;
     }
   }

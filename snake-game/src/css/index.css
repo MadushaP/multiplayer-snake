@@ -371,7 +371,7 @@ canvas {
 .level-up {
   position: fixed;
   top: 15%;
-  left: 50%;
+  left: 42%;
   transform: translate(-50%, -50%);
   font-family: FredokaOne, cursive;
   font-size: 30px;
@@ -384,18 +384,21 @@ canvas {
 }
 
 .blink {
-  animation: blink 1s;
-  animation-iteration-count: 3;
+  animation: blink 2s;
+  animation-iteration-count: 1;
 }
 
 @keyframes blink {
   0% {
       opacity: 0;
+      transform: translateY(40%);
   }
-  50% {
+30% {
       opacity: 0.8;
+      transform: translateY(-40%);
   }
   100% {
       opacity: 0;
+      transform: translateY(0%);
   }
 }
