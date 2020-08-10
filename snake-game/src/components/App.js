@@ -71,7 +71,7 @@ const App = () => {
 
   useEffect(() => {
     if (gameMode == 'multiplayer') {
-      socket = io.connect('http://192.168.1.11:3001/', { transports: ['websocket'], upgrade: false })
+      socket = io.connect('http://localhost:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
 
