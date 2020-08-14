@@ -1,7 +1,7 @@
 import React from 'react'
 import Modal from 'react-modal'
 import FancyButton from './FancyButton'
-
+const snakeMenuImage = require('../assets/images/snake-menu-picture.png')
 const customStyles = {
   content: {
     top: '50%',
@@ -146,7 +146,7 @@ export default (props) => {
         shouldCloseOnOverlayClick={false}
         overlayClassName="menu-overlay"
         ariaHideApp={false}>
-        <img src="Snake-Menu-Picture.png" className="snake-menu-image"></img>
+        <img src={snakeMenuImage} className="snake-menu-image"></img>
         <div style={{ "display": "inline-flex" }}>
           <FancyButton text="Single player" buttonClick={startSinglePlayer} />
           <FancyButton text="vs CPU" buttonClick={startVsCPU} />

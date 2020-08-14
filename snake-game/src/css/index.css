@@ -8,7 +8,7 @@ body,
 html {
   overflow-x: hidden;
   overflow-y: hidden;
-  background-image: url("/iPlayerBackground.jpeg");
+  background-image: url("../assets/images/iPlayerBackground.jpeg");
   background-size: auto 120%;
   user-select: none;
   background-size:cover

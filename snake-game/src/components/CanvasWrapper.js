@@ -1,5 +1,6 @@
 import React from 'react'
 import Confetti from 'react-dom-confetti'
+const levelUpImage = require('../assets/images/level-up.png')
 
 export default (props) => {
     let confStyle = {
@@ -49,7 +50,7 @@ export default (props) => {
             <div style={confStyle}>
                 <Confetti style={confStyle} active={props.showConfetti} config={config} />
             </div>
-            <img key={props.isNewLevel} src="level-up.png" className={blinkCss()}></img>
+            <img key={props.isNewLevel} src={levelUpImage} className={blinkCss()}></img>
         </div>
     )
 }

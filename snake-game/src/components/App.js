@@ -6,6 +6,7 @@ import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
+import Sound from '../lib/Sound'
 import {SnakeImage} from '../assets/images/'
 
 let socket = null
@@ -116,7 +117,7 @@ const App = () => {
     }
 
     if (gameStart)
-      playSound('background-music.mp3', true)
+      Sound.playSound('background-music.mp3', true, 0.3)
   }, [gameStart])
 
   useEffect(() => {
@@ -130,7 +131,7 @@ const App = () => {
 
   const levelUp = (speed) => {
     speedRef.current = speed
-    playSound('level-up.mp3', false, 0.5)
+    Sound.playSound('level-up.mp3', false, 0.5)
     setIsNewLevel(true)
   }
 
@@ -194,7 +195,7 @@ const App = () => {
 
   const gameOver = () => {
     setGameOver(true)
-    playSound('game-over.mp3')
+    Sound.playSound('game-over.mp3')
   }
 
   const headBodyCollisionCheck = (snakeHead, snakeCells) => {
@@ -206,25 +207,6 @@ const App = () => {
 
   const hasEatenFood = (snakeHead) => {
     return headAtFood(snakeHead, foodRef.current)
-  }
-
-  const playSound = (sound, loop, volumeOverride) => {
-    var sound = new Audio(sound)
-
-    sound.volume = volumeOverride ? volumeOverride : volume
-
-    if (loop)
-      sound.loop = true
-
-    const playedPromise = sound.play()
-    if (playedPromise) {
-      playedPromise.catch((e) => {
-        if (e.name === 'NotAllowedError' ||
-          e.name === 'NotSupportedError') {
-          console.log('Audio play not supported')
-        }
-      });
-    }
   }
 
   const increaseSnakeLength = (updatedCells) => {
@@ -239,7 +221,7 @@ const App = () => {
     let distanceY = Math.abs(foodRef.current.y - snakeHead.y)
     if (distanceX < 100 && distanceY < 100) {
       if (!closeToFood) {
-        playSound('mouth.mp3')
+        Sound.playSound('mouth.mp3')
       }
       updateSnakeArray(playerId, 'closeToFood', true)
     }
@@ -267,7 +249,7 @@ const App = () => {
       let randomAcr = randomItem(acronymMap)
       setAcronym(randomAcr)
       currentAcronymRef.current = randomAcr
-      playSound('bling.mp3')
+      Sound.playSound('bling.mp3')
       increaseSnakeLength(updatedCells)
     }
     else {

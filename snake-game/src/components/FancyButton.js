@@ -1,21 +1,7 @@
 import React from 'react'
+import {playSound} from '../lib/Sound'
 
 export default (props) => {
-  const playSound = (mp3, loop) => {
-    var sound = new Audio(mp3)
-    sound.volume = 0.8
-
-    const playedPromise = sound.play()
-    if (playedPromise) {
-      playedPromise.catch((e) => {
-        if (e.name === 'NotAllowedError' ||
-          e.name === 'NotSupportedError') {
-          console.log('Audio play not supported')
-        }
-      });
-    }
-  }
-
   return (
     <div >
       <nav>

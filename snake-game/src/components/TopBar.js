@@ -2,13 +2,14 @@ import React from "react";
 import Toggle from "react-toggle";
 import "react-toggle/style.css";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import Sound from '../lib/Sound'
 
 export default (props) => {
-  const setSound = () => {
-    if (props.volume === 0.8)
-      props.setVolume(0);
+  const toggleSound = () => {
+    if (Sound.getVolume() === 0.8)
+      Sound.setVolume(0)
     else
-      props.setVolume(0.8);
+      Sound.setVolume(0.8)
   };
 
   const setAiStatus = () => {
@@ -44,7 +45,7 @@ export default (props) => {
       <Toggle
         className="spacing"
         defaultChecked={true}
-        onChange={() => setSound()}
+        onChange={() => toggleSound()}
       />
     </div>
   );
@@ -119,14 +120,13 @@ export default (props) => {
         if (props.playerSnakeArray.length <= 1) {
           return (
             <div className="child" style={{ backgroundColor: 'rgb(185 185 185 / 0.13)', 'width': '45%' }}>
-            <div className="scoreText">
-              <div
-                style={{ display: "inline-block" }}>
-                Waiting for Players to join 
+              <div className="scoreText">
+                <div
+                  style={{ display: "inline-block" }}>
+                  Waiting for Players to join
                </div>
-               <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
-
-               </div>
+                <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+              </div>
             </div>)
         }
       })()}
