@@ -6,6 +6,7 @@ import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
+import {SnakeImage} from '../assets/images/'
 
 let socket = null
 const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
@@ -132,30 +133,30 @@ const App = () => {
     playSound('level-up.mp3', false, 0.5)
     setIsNewLevel(true)
   }
-  
+
   const levelUpCheck = (score) => {
     switch (score) {
       case 5:
-        levelUp(7)       
+        levelUp(7)
         break;
       case 10:
-        levelUp(10)  
+        levelUp(10)
         break;
       case 15:
-        levelUp(12)  
+        levelUp(12)
         break;
       case 25:
-        levelUp(14)  
+        levelUp(14)
         break;
       case 30:
-        levelUp(16)  
+        levelUp(16)
         break;
       case 40:
-        levelUp(20)  
+        levelUp(20)
         break;
     }
   }
-  
+
   const requestRef = useRef()
   const previousTimeRef = useRef()
 
@@ -210,12 +211,20 @@ const App = () => {
   const playSound = (sound, loop, volumeOverride) => {
     var sound = new Audio(sound)
 
-    sound.volume = volumeOverride ? volumeOverride :  volume
-    
+    sound.volume = volumeOverride ? volumeOverride : volume
+
     if (loop)
       sound.loop = true
 
-    sound.play()
+    const playedPromise = sound.play()
+    if (playedPromise) {
+      playedPromise.catch((e) => {
+        if (e.name === 'NotAllowedError' ||
+          e.name === 'NotSupportedError') {
+          console.log('Audio play not supported')
+        }
+      });
+    }
   }
 
   const increaseSnakeLength = (updatedCells) => {
@@ -275,7 +284,7 @@ const App = () => {
 
     context.font = "bold 25px Verdana"
     let fullWordWidth = context.measureText(currentAcronymRef.current.fullWord).width
-    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x  - (fullWordWidth / 2) + 10, foodRef.current.y + 60)
+    context.fillText(currentAcronymRef.current.fullWord, foodRef.current.x - (fullWordWidth / 2) + 10, foodRef.current.y + 60)
   }
 
   const renderFood = (context) => {
@@ -295,129 +304,147 @@ const App = () => {
   }
 
   const selectHeadImage = (snake) => {
-    if (!snake.closeToFood) {
-      if (snake.colour == "48df08") {
-        return `snake-head.png`
-      } else {
-        return `snake-head-${snake.colour}.png`
-      }
-    } else {
-      if (snake.colour == "48df08") {
-        return `snake-head-eat.png`
-      } else {
-        return `snake-head-eat-${snake.colour}.png`
-      }
-    }
-  }
-
-  const renderSnake = (context, index, snake, cell) => {
-    context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
-    context.fillRect(cell.x, cell.y, 20, 20)
-
-    if (index === snake.snakeCells.length - 1) {
-      var snakeHead = new Image();
-      snakeHead.src = selectHeadImage(snake)
-      context.save();
-      context.translate(cell.x, cell.y);
-
-      //rotate head
-      if (snake.direction == "up") {
-        context.rotate(Math.PI);
-        context.drawImage(snakeHead, -25, -3, 30, 40)
-      } else if (snake.direction == "down") {
-        context.rotate(0);
-        context.drawImage(snakeHead, -5, 5, 30, 40)
-      }
-      else if (snake.direction == "left") {
-        context.rotate(Math.PI / 2);
-        context.drawImage(snakeHead, -5, -3, 30, 40)
-      }
-      else if (snake.direction == "right") {
-        context.rotate(Math.PI * 3 / 2);
-        context.drawImage(snakeHead, -25, 15, 30, 40)
-      }
-    }
-  }
-
-  const canvasRef = useRef(null)
-
-  const draw = (playerSnakeArray) => {
-    const canvas = canvasRef.current
-    if (!canvas || !playerSnakeArray)
-      return;
-    const context = canvas.getContext('2d')
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    renderGameBoard(context, canvas)
-    renderFood(context)
-
-    if (acronymStatus) {
-      renderFullWorld(context)
-    }
-
-    playerSnakeArrayRef.current.forEach(snake => {
-      let updatedCells = updateBody(snake.snakeCells)
-      let snakeHead = updatedCells.slice(-1)[0]
-
-      if (snake.aiStatus) {
-        AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
-      } else {
-        switch (snake.direction) {
-          case "right":
-            snakeHead.x += speedRef.current
-            break
-          case "left":
-            snakeHead.x -= speedRef.current
-            break
-          case "down":
-            snakeHead.y += speedRef.current
-            break
-          case "up":
-            snakeHead.y -= speedRef.current
-            break
-          default:
-            break
+    if (!snake.closeToFood) {    
+        switch (snake.colour) {
+          case "48df08":
+            return SnakeImage.closedMouthColour.green
+          case "5CFFE7":
+            return SnakeImage.closedMouthColour.blue
+          case "C70039":
+            return SnakeImage.closedMouthColour.red
+          case "DAF7A6":
+            return SnakeImage.closedMouthColour.cream
+          case "DEDEDE":
+            return SnakeImage.closedMouthColour.grey
+          case "FFC300":
+            return SnakeImage.closedMouthColour.yellow
         }
-        headBodyCollisionCheck(snakeHead, snake.snakeCells)
+      } else {
+        switch (snake.colour) {
+          case "48df08":
+            return SnakeImage.openMouthColour.green
+          case "5CFFE7":
+            return SnakeImage.openMouthColour.blue
+          case "C70039":
+            return SnakeImage.openMouthColour.red
+          case "DAF7A6":
+            return SnakeImage.openMouthColour.cream
+          case "DEDEDE":
+            return SnakeImage.openMouthColour.grey
+          case "FFC300":
+            return SnakeImage.openMouthColour.yellow
+        }
+      }
+    }
+
+    const renderSnake = (context, index, snake, cell) => {
+      context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
+      context.fillRect(cell.x, cell.y, 20, 20)
+
+      if (index === snake.snakeCells.length - 1) {
+        var snakeHead = new Image();
+        snakeHead.src = selectHeadImage(snake)
+        context.save();
+        context.translate(cell.x, cell.y);
+
+        //rotate head
+        if (snake.direction == "up") {
+          context.rotate(Math.PI);
+          context.drawImage(snakeHead, -25, -3, 30, 40)
+        } else if (snake.direction == "down") {
+          context.rotate(0);
+          context.drawImage(snakeHead, -5, 5, 30, 40)
+        }
+        else if (snake.direction == "left") {
+          context.rotate(Math.PI / 2);
+          context.drawImage(snakeHead, -5, -3, 30, 40)
+        }
+        else if (snake.direction == "right") {
+          context.rotate(Math.PI * 3 / 2);
+          context.drawImage(snakeHead, -25, 15, 30, 40)
+        }
+      }
+    }
+
+    const canvasRef = useRef(null)
+
+    const draw = (playerSnakeArray) => {
+      const canvas = canvasRef.current
+      if (!canvas || !playerSnakeArray)
+        return;
+      const context = canvas.getContext('2d')
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      renderGameBoard(context, canvas)
+      renderFood(context)
+
+      if (acronymStatus) {
+        renderFullWorld(context)
       }
 
-      foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
-      updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
+      playerSnakeArrayRef.current.forEach(snake => {
+        let updatedCells = updateBody(snake.snakeCells)
+        let snakeHead = updatedCells.slice(-1)[0]
 
-      snake.snakeCells.forEach((cell, index) => {
-        // GameOver
-        if (snake.playerId == playerRef.current) {
-          if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
-            gameOver()
-          } else if (cell.x < 0 || cell.y < 0) {
-            gameOver()
+        if (snake.aiStatus) {
+          AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
+        } else {
+          switch (snake.direction) {
+            case "right":
+              snakeHead.x += speedRef.current
+              break
+            case "left":
+              snakeHead.x -= speedRef.current
+              break
+            case "down":
+              snakeHead.y += speedRef.current
+              break
+            case "up":
+              snakeHead.y -= speedRef.current
+              break
+            default:
+              break
           }
+          headBodyCollisionCheck(snakeHead, snake.snakeCells)
         }
 
-        renderSnake(context, index, snake, cell)
-      })
+        foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
+        updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
 
-      context.restore()
-    })
+        snake.snakeCells.forEach((cell, index) => {
+          // GameOver
+          if (snake.playerId == playerRef.current) {
+            if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
+              gameOver()
+            } else if (cell.x < 0 || cell.y < 0) {
+              gameOver()
+            }
+          }
+
+          renderSnake(context, index, snake, cell)
+        })
+
+        context.restore()
+      })
+    }
+
+    return (
+      <div>
+        {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
+          <div>
+            <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} />
+            <TopBar score={score} socket={socket}
+              setAcronymStatus={setAcronymStatus}
+              acronymStatus={acronymStatus}
+              setVolume={setVolume} volume={volume}
+              fullWord={currentAcronym.fullWord}
+              playerSnakeArray={playerSnakeArray}
+              playerId={playerId}
+              updateFieldChange={updateSnakeArray}
+              gameMode={gameMode} />
+            <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} />
+          </div>}
+      </div>
+    )
   }
 
-  return (
-    <div>
-      {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
-        <div>
-          <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} />
-          <TopBar score={score} socket={socket}
-            setAcronymStatus={setAcronymStatus}
-            acronymStatus={acronymStatus}
-            setVolume={setVolume} volume={volume}
-            fullWord={currentAcronym.fullWord}
-            playerSnakeArray={playerSnakeArray}
-            playerId={playerId}
-            updateFieldChange={updateSnakeArray}
-            gameMode={gameMode} />
-          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel}/>
-        </div>}
-    </div>
-  )
-}
-
-export default App
+  export default App
