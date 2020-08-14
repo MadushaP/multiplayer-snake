@@ -388,7 +388,6 @@ const App = () => {
           }
           headBodyCollisionCheck(snakeHead, snake.snakeCells)
         }
-
         foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
         updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
 

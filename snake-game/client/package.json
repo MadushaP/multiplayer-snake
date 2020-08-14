@@ -27,7 +27,7 @@
     "deploy": "gh-pages -d build",
     "eject": "react-scripts eject",
     "server": "node src/server.js",
-    "start2": "concurrently \"npm start\" \"node src/server.js\"" 
+    "start2": "concurrently \"npm start\" \"node src/server.js\""
   },
   "proxy": "http://localhost:3001/",
   "eslintConfig": {
