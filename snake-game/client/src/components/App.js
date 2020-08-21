@@ -241,9 +241,8 @@ const App = () => {
         setScore(score => score + 1)
       } else if (gameModeRef.current == "multiplayer") {
         socket.emit('randomFood')
-        //Ensure that if a snake eats food it's the active player in control
-        if (playerRef.current == currentPlayerId)
-          setScore(score => score + 1)
+        updateSnakeArray(currentPlayerId, 'score', score + 1)
+        socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score +1 })
       }
 
       let randomAcr = randomItem(acronymMap)

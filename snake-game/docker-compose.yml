@@ -8,8 +8,6 @@ services:
      - 3001  
     ports:  
      - 3001:3001
-    # volumes:
-    #  - ./server:server
     command: npm start
 
   client: 
@@ -18,9 +16,6 @@ services:
      - 3000  
    ports:  
      - 3000:3000
-  #  volumes:
-  #    - ./client:client
-
    links:
      - server
    command: npm start
