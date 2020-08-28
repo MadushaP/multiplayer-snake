@@ -61,10 +61,10 @@ export default (props) => {
 
   const PauseOption =
     <div style={{ width: "20%", paddingTop: "1px" }}>
-      <div class="wrapper" onClick={() => togglePause()}>
-        <div class={props.pause ? "play" : "pause"}></div>
+      <div className="wrapper" onClick={() => togglePause()}>
+        <div className={props.pause ? "play" : "pause"}></div>
       </div>
-      <div class={props.pause ? "pauseText pulsate" : "pauseText hide"}>
+      <div className={props.pause ? "pauseText pulsate" : "pauseText hide"}>
         PAUSED
       </div>
     </div>

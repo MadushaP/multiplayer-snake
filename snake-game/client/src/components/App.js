@@ -76,10 +76,18 @@ const App = () => {
       socket = io.connect('http://localhost:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
-
       socket.on('playerJoined', (data) => {
         console.log("Player Joined")
-        socket.emit("sync", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
+
+        //Only when second player joins we invoke sync loop on first player
+        //If first player leaves will have to find new player for source of truth
+        if(data.playerCount == 2) {
+          setInterval(() => {
+            socket.emit("syncAll", { snakeArray: playerSnakeArrayRef.current })   
+          }, 1000)
+        }
+  
+        socket.emit("syncNewPlayer", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
       })
 
       socket.on('scoreUpdate', (data) => {

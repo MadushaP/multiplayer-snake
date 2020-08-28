@@ -19,7 +19,11 @@ io.on('connection', (socket) => {
         socket.emit("getFood", food)
     })
 
-    socket.on('sync', (data) => {
+    socket.on('syncAll', (data) => {
+        io.sockets.emit("sendPlayerSnakeArray", data.snakeArray)
+    })
+
+    socket.on('syncNewPlayer', (data) => {
         snakeArray = data.snakeArray
         const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
         snakeArray.push({
@@ -58,7 +62,7 @@ io.on('connection', (socket) => {
             })
             socket.emit("sendPlayerSnakeArray", snakeCells)
         } else {
-            socket.broadcast.emit("playerJoined", { 'newId': socket.id })
+            socket.broadcast.emit("playerJoined", { 'newId': socket.id,  'playerCount': io.engine.clientsCount })
         }
     })
 
