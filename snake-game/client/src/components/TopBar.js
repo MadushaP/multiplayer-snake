@@ -3,6 +3,7 @@ import Toggle from "react-toggle";
 import "react-toggle/style.css";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import Sound from '../lib/Sound'
+import '../css/playPause.css'
 
 export default (props) => {
   const toggleSound = () => {
@@ -10,6 +11,13 @@ export default (props) => {
       Sound.setVolume(0)
     else
       Sound.setVolume(0.8)
+  };
+
+  const togglePause = () => {
+    if (props.pause)
+      props.setPause(false)
+    else
+      props.setPause(true)
   };
 
   const setAiStatus = () => {
@@ -50,9 +58,20 @@ export default (props) => {
     </div>
   );
 
+
+  const PauseOption =
+    <div style={{ width: "20%", paddingTop: "1px" }}>
+      <div class="wrapper" onClick={() => togglePause()}>
+        <div class={props.pause ? "play" : "pause"}></div>
+      </div>
+      <div class={props.pause ? "pauseText pulsate" : "pauseText hide"}>
+        PAUSED
+      </div>
+    </div>
+
+
   const AcronymOption =
     <div style={{ width: "71%" }}>
-      {" "}
       Acronym
       <Toggle
         className="spacing"
@@ -84,6 +103,7 @@ export default (props) => {
       </div>
       <div className="settingContainer">
         <div className="settings">
+          {PauseOption}
           {AIOption}
           {SoundOption}
           {AcronymOption}
@@ -142,7 +162,7 @@ export default (props) => {
        </div>
       </div>
       {props.playerSnakeArray.map((snake, index) => (
-        <div key={index} className="child" style={{ backgroundColor: '#' + snake.colour, 'width': '30%' }}>
+        <div key={index} className="child" style={{ backgroundColor: '#' + snake.colour, 'width': '25%' }}>
           <div className="scoreText">
 
             <ReactCSSTransitionGroup
@@ -168,6 +188,14 @@ export default (props) => {
           </div>
         </div>
       ))}
+      <div className="child" style={{ 'width': '23%', paddingLeft: '5px' }}>
+        <div className="vsCPUsettings">
+          <div style={{ paddingTop: '2px', paddingRight: '42px' }}>
+            {PauseOption}
+          </div>
+          {SoundOption}
+        </div>
+      </div>
     </div>
 
 

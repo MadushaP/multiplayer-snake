@@ -48,7 +48,7 @@ const App = () => {
   const [speed, setSpeed] = useState(5)
   const speedRef = useRef(speed)
   const [isNewLevel, setIsNewLevel] = useState(false)
-
+  const [pause, setPause] = useState(false)
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
   useEffect(() => {
@@ -162,7 +162,7 @@ const App = () => {
   const previousTimeRef = useRef()
 
   const animate = time => {
-    if (isGameOver) { cancelAnimationFrame(requestRef.current); return; }
+    if (isGameOver || pause) { cancelAnimationFrame(requestRef.current); return; }
     if (previousTimeRef.current != undefined) {
       draw(playerSnakeArrayRef.current)
     }
@@ -173,7 +173,7 @@ const App = () => {
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(requestRef.current)
-  }, [acronymStatus, isGameOver, volume])
+  }, [acronymStatus, isGameOver, volume, pause])
 
   const updateSnakeArray = (playerId, prop, value) => {
     let newArr = [...playerSnakeArrayRef.current]
@@ -420,7 +420,9 @@ const App = () => {
               playerSnakeArray={playerSnakeArray}
               playerId={playerId}
               updateFieldChange={updateSnakeArray}
-              gameMode={gameMode} />
+              gameMode={gameMode}
+              pause={pause}
+              setPause={setPause} />
             <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} />
           </div>}
       </div>
