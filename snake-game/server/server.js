@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('increaseSnakeLength', (data) => {
-        io.sockets.emit('increaseSnakeLength', data);
+        socket.broadcast.emit('increaseSnakeLength', data);
     })
 
     socket.on('disconnect', () => {

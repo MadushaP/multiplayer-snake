@@ -253,6 +253,7 @@ const App = () => {
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score + 1 })
         socket.emit('increaseSnakeLength', { playerId: currentPlayerId, updatedCells: updatedCells})
+        increaseSnakeLength(updatedCells)
       }
 
       let randomAcr = randomItem(acronymMap)
