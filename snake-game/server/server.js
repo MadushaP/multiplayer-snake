@@ -86,6 +86,10 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('scoreUpdate', data);
     })
 
+    socket.on('increaseSnakeLength', (data) => {
+        io.sockets.emit('increaseSnakeLength', data);
+    })
+
     socket.on('disconnect', () => {
         console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
         snakeColours.push(randomColour)

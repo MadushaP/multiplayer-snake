@@ -115,6 +115,12 @@ const App = () => {
         foodRef.current = data
         setFood(data)
       })
+
+      socket.on('increaseSnakeLength', (data) => {
+        increaseSnakeLength(data.updatedCells)
+        updateSnakeArray(data.playerId, 'snakeCells', data.updatedCells)
+      })
+
     }
 
     if (gameStart)
@@ -241,17 +247,18 @@ const App = () => {
         foodRef.current = foodLocation
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         setScore(score => score + 1)
+        increaseSnakeLength(updatedCells)
       } else if (gameModeRef.current == "multiplayer") {
         socket.emit('randomFood')
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score + 1 })
+        socket.emit('increaseSnakeLength', { playerId: currentPlayerId, updatedCells: updatedCells})
       }
 
       let randomAcr = randomItem(acronymMap)
       setAcronym(randomAcr)
       currentAcronymRef.current = randomAcr
       Sound.playSound('bling.mp3')
-      increaseSnakeLength(updatedCells)
     }
     else {
       setConfetti(false)
@@ -259,7 +266,6 @@ const App = () => {
   }
 
   const renderFullWorld = (context) => {
-    console.log(currentAcronymRef.current.acronym)
     context.fillStyle = "white"
     context.font = "bold 25px Verdana"
     let acronymWidth = context.measureText(currentAcronymRef.current.acronym).width
@@ -363,7 +369,6 @@ const App = () => {
     if (acronymStatus) {
       renderFullWorld(context)
     }
-
     playerSnakeArrayRef.current.forEach(snake => {
       let updatedCells = updateBody(snake.snakeCells)
       let snakeHead = updatedCells.slice(-1)[0]
