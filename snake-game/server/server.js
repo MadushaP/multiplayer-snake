@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
             })
             socket.emit("sendPlayerSnakeArray", snakeCells)
         } else {
-            socket.broadcast.emit("playerJoined", { 'newId': socket.id,  'playerCount': io.engine.clientsCount })
+            socket.broadcast.emit("playerJoined", { 'newId': socket.id, 'playerCount': io.engine.clientsCount })
         }
     })
 
@@ -70,9 +70,16 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('playerKeyEvent', data);
     })
 
+    let foodBackOff = false
     socket.on('randomFood', () => {
-        food = randomLocation()
-        io.sockets.emit('updateFoodBroadcast', food)
+        if (!foodBackOff) {
+            food = randomLocation()
+            io.sockets.emit('updateFoodBroadcast', food)
+            foodBackOff = true
+            setTimeout(() => foodBackOff = false, 200)
+        } else {
+            console.log("back off")
+        }
     })
 
     socket.on('scoreUpdate', (data) => {

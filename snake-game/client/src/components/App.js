@@ -7,7 +7,7 @@ import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
 import Sound from '../lib/Sound'
-import {SnakeImage} from '../assets/images/'
+import { SnakeImage } from '../assets/images/'
 
 let socket = null
 const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
@@ -72,21 +72,13 @@ const App = () => {
   }
 
   useEffect(() => {
+  
     if (gameMode == 'multiplayer') {
       socket = io.connect('http://localhost:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
       socket.on('playerJoined', (data) => {
         console.log("Player Joined")
-
-        //Only when second player joins we invoke sync loop on first player
-        //If first player leaves will have to find new player for source of truth
-        if(data.playerCount == 2) {
-          setInterval(() => {
-            socket.emit("syncAll", { snakeArray: playerSnakeArrayRef.current })   
-          }, 1000)
-        }
-  
         socket.emit("syncNewPlayer", { snakeArray: playerSnakeArrayRef.current, newId: data.newId })
       })
 
@@ -117,6 +109,7 @@ const App = () => {
         playerSnakeArrayRef.current = data
         setPlayerSnakeArray(data)
       })
+
       socket.on('updateBodyBroadcast', (data) => { updateSnakeArray(data.playerId, 'snakeCells', data.snakeCells) })
       socket.on('updateFoodBroadcast', (data) => {
         foodRef.current = data
@@ -243,14 +236,15 @@ const App = () => {
     if (hasEatenFood(snakeHead)) {
       setConfetti(true)
       if (gameModeRef.current == "singlePlayer" || gameModeRef.current == "vsCPU") {
-        setFood(randomLocation())
-        foodRef.current = randomLocation()
+       let foodLocation = randomLocation()
+        setFood(foodLocation)
+        foodRef.current = foodLocation
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         setScore(score => score + 1)
       } else if (gameModeRef.current == "multiplayer") {
         socket.emit('randomFood')
         updateSnakeArray(currentPlayerId, 'score', score + 1)
-        socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score +1 })
+        socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score + 1 })
       }
 
       let randomAcr = randomItem(acronymMap)
@@ -293,148 +287,148 @@ const App = () => {
   }
 
   const selectHeadImage = (snake) => {
-    if (!snake.closeToFood) {    
-        switch (snake.colour) {
-          case "48df08":
-            return SnakeImage.closedMouthColour.green
-          case "5CFFE7":
-            return SnakeImage.closedMouthColour.blue
-          case "C70039":
-            return SnakeImage.closedMouthColour.red
-          case "DAF7A6":
-            return SnakeImage.closedMouthColour.cream
-          case "DEDEDE":
-            return SnakeImage.closedMouthColour.grey
-          case "FFC300":
-            return SnakeImage.closedMouthColour.yellow
-        }
-      } else {
-        switch (snake.colour) {
-          case "48df08":
-            return SnakeImage.openMouthColour.green
-          case "5CFFE7":
-            return SnakeImage.openMouthColour.blue
-          case "C70039":
-            return SnakeImage.openMouthColour.red
-          case "DAF7A6":
-            return SnakeImage.openMouthColour.cream
-          case "DEDEDE":
-            return SnakeImage.openMouthColour.grey
-          case "FFC300":
-            return SnakeImage.openMouthColour.yellow
-        }
+    if (!snake.closeToFood) {
+      switch (snake.colour) {
+        case "48df08":
+          return SnakeImage.closedMouthColour.green
+        case "5CFFE7":
+          return SnakeImage.closedMouthColour.blue
+        case "C70039":
+          return SnakeImage.closedMouthColour.red
+        case "DAF7A6":
+          return SnakeImage.closedMouthColour.cream
+        case "DEDEDE":
+          return SnakeImage.closedMouthColour.grey
+        case "FFC300":
+          return SnakeImage.closedMouthColour.yellow
+      }
+    } else {
+      switch (snake.colour) {
+        case "48df08":
+          return SnakeImage.openMouthColour.green
+        case "5CFFE7":
+          return SnakeImage.openMouthColour.blue
+        case "C70039":
+          return SnakeImage.openMouthColour.red
+        case "DAF7A6":
+          return SnakeImage.openMouthColour.cream
+        case "DEDEDE":
+          return SnakeImage.openMouthColour.grey
+        case "FFC300":
+          return SnakeImage.openMouthColour.yellow
       }
     }
-
-    const renderSnake = (context, index, snake, cell) => {
-      context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
-      context.fillRect(cell.x, cell.y, 20, 20)
-
-      if (index === snake.snakeCells.length - 1) {
-        var snakeHead = new Image();
-        snakeHead.src = selectHeadImage(snake)
-        context.save();
-        context.translate(cell.x, cell.y);
-
-        //rotate head
-        if (snake.direction == "up") {
-          context.rotate(Math.PI);
-          context.drawImage(snakeHead, -25, -3, 30, 40)
-        } else if (snake.direction == "down") {
-          context.rotate(0);
-          context.drawImage(snakeHead, -5, 5, 30, 40)
-        }
-        else if (snake.direction == "left") {
-          context.rotate(Math.PI / 2);
-          context.drawImage(snakeHead, -5, -3, 30, 40)
-        }
-        else if (snake.direction == "right") {
-          context.rotate(Math.PI * 3 / 2);
-          context.drawImage(snakeHead, -25, 15, 30, 40)
-        }
-      }
-    }
-
-    const canvasRef = useRef(null)
-
-    const draw = (playerSnakeArray) => {
-      const canvas = canvasRef.current
-      if (!canvas || !playerSnakeArray)
-        return;
-      const context = canvas.getContext('2d')
-      context.clearRect(0, 0, canvas.width, canvas.height)
-      renderGameBoard(context, canvas)
-      renderFood(context)
-
-      if (acronymStatus) {
-        renderFullWorld(context)
-      }
-
-      playerSnakeArrayRef.current.forEach(snake => {
-        let updatedCells = updateBody(snake.snakeCells)
-        let snakeHead = updatedCells.slice(-1)[0]
-
-        if (snake.aiStatus) {
-          AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
-        } else {
-          switch (snake.direction) {
-            case "right":
-              snakeHead.x += speedRef.current
-              break
-            case "left":
-              snakeHead.x -= speedRef.current
-              break
-            case "down":
-              snakeHead.y += speedRef.current
-              break
-            case "up":
-              snakeHead.y -= speedRef.current
-              break
-            default:
-              break
-          }
-          headBodyCollisionCheck(snakeHead, snake.snakeCells)
-        }
-        foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
-        updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
-
-        snake.snakeCells.forEach((cell, index) => {
-          // GameOver
-          if (snake.playerId == playerRef.current) {
-            if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
-              gameOver()
-            } else if (cell.x < 0 || cell.y < 0) {
-              gameOver()
-            }
-          }
-
-          renderSnake(context, index, snake, cell)
-        })
-
-        context.restore()
-      })
-    }
-
-    return (
-      <div>
-        {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
-          <div>
-            <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} />
-            <TopBar score={score} socket={socket}
-              setAcronymStatus={setAcronymStatus}
-              acronymStatus={acronymStatus}
-              setVolume={setVolume} volume={volume}
-              fullWord={currentAcronym.fullWord}
-              playerSnakeArray={playerSnakeArray}
-              playerId={playerId}
-              updateFieldChange={updateSnakeArray}
-              gameMode={gameMode}
-              pause={pause}
-              setPause={setPause} />
-            <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} />
-          </div>}
-      </div>
-    )
   }
 
-  export default App
+  const renderSnake = (context, index, snake, cell) => {
+    context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
+    context.fillRect(cell.x, cell.y, 20, 20)
+
+    if (index === snake.snakeCells.length - 1) {
+      var snakeHead = new Image();
+      snakeHead.src = selectHeadImage(snake)
+      context.save();
+      context.translate(cell.x, cell.y);
+
+      //rotate head
+      if (snake.direction == "up") {
+        context.rotate(Math.PI);
+        context.drawImage(snakeHead, -25, -3, 30, 40)
+      } else if (snake.direction == "down") {
+        context.rotate(0);
+        context.drawImage(snakeHead, -5, 5, 30, 40)
+      }
+      else if (snake.direction == "left") {
+        context.rotate(Math.PI / 2);
+        context.drawImage(snakeHead, -5, -3, 30, 40)
+      }
+      else if (snake.direction == "right") {
+        context.rotate(Math.PI * 3 / 2);
+        context.drawImage(snakeHead, -25, 15, 30, 40)
+      }
+    }
+  }
+
+  const canvasRef = useRef(null)
+
+  const draw = (playerSnakeArray) => {
+    const canvas = canvasRef.current
+    if (!canvas || !playerSnakeArray)
+      return;
+    const context = canvas.getContext('2d')
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    renderGameBoard(context, canvas)
+    renderFood(context)
+
+    if (acronymStatus) {
+      renderFullWorld(context)
+    }
+
+    playerSnakeArrayRef.current.forEach(snake => {
+      let updatedCells = updateBody(snake.snakeCells)
+      let snakeHead = updatedCells.slice(-1)[0]
+
+      if (snake.aiStatus) {
+        AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
+      } else {
+        switch (snake.direction) {
+          case "right":
+            snakeHead.x += speedRef.current
+            break
+          case "left":
+            snakeHead.x -= speedRef.current
+            break
+          case "down":
+            snakeHead.y += speedRef.current
+            break
+          case "up":
+            snakeHead.y -= speedRef.current
+            break
+          default:
+            break
+        }
+        headBodyCollisionCheck(snakeHead, snake.snakeCells)
+      }
+      foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
+      updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
+
+      snake.snakeCells.forEach((cell, index) => {
+        // GameOver
+        // if (snake.playerId == playerRef.current) {
+        //   if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
+        //     gameOver()
+        //   } else if (cell.x < 0 || cell.y < 0) {
+        //     gameOver()
+        //   }
+        // }
+
+        renderSnake(context, index, snake, cell)
+      })
+
+      context.restore()
+    })
+  }
+
+  return (
+    <div>
+      {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
+        <div>
+          <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} />
+          <TopBar score={score} socket={socket}
+            setAcronymStatus={setAcronymStatus}
+            acronymStatus={acronymStatus}
+            setVolume={setVolume} volume={volume}
+            fullWord={currentAcronym.fullWord}
+            playerSnakeArray={playerSnakeArray}
+            playerId={playerId}
+            updateFieldChange={updateSnakeArray}
+            gameMode={gameMode}
+            pause={pause}
+            setPause={setPause} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} />
+        </div>}
+    </div>
+  )
+}
+
+export default App
