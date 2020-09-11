@@ -282,6 +282,8 @@ const App = () => {
     context.arc(foodRef.current.x + 10, foodRef.current.y + 10, 10, 0, 2 * Math.PI)
     context.fillStyle = "#FF0000"
     context.fill();
+    context.strokeStyle = "black";
+    context.lineWidth = 1
     context.stroke();
   }
 
@@ -327,6 +329,23 @@ const App = () => {
     }
   }
 
+  const renderAiGuide = (context, snakeHead, direction) => {
+    context.beginPath();
+    if(direction == "right" || direction == "left") {
+      context.moveTo(snakeHead.x + 10 , snakeHead.y + 10 )
+      context.lineTo(foodRef.current.x + 10,  snakeHead.y + 10)
+      context.lineTo(foodRef.current.x + 10,  foodRef.current.y + 10)
+    } else {
+      context.beginPath();
+      context.moveTo(snakeHead.x + 10 , snakeHead.y + 10 )
+      context.lineTo(snakeHead.x + 10, foodRef.current.y + 10,)
+      context.lineTo(foodRef.current.x + 10,  foodRef.current.y + 10)
+    }
+    context.strokeStyle = "#E02B7D"
+    context.lineWidth = 4
+    context.stroke();
+  }
+
   const renderSnake = (context, index, snake, cell) => {
     context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
     context.fillRect(cell.x, cell.y, 20, 20)
@@ -365,7 +384,6 @@ const App = () => {
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, canvas.width, canvas.height)
     renderGameBoard(context, canvas)
-    renderFood(context)
 
     if (acronymStatus) {
       renderFullWorld(context)
@@ -376,6 +394,8 @@ const App = () => {
 
       if (snake.aiStatus) {
         AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
+       if(gameModeRef.current == "singlePlayer")
+         renderAiGuide(context, snakeHead, snake.direction)
       } else {
         switch (snake.direction) {
           case "right":
@@ -395,6 +415,7 @@ const App = () => {
         }
         headBodyCollisionCheck(snakeHead, snake.snakeCells)
       }
+      renderFood(context)
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
       updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
 
@@ -410,7 +431,6 @@ const App = () => {
 
         renderSnake(context, index, snake, cell)
       })
-
       context.restore()
     })
   }
