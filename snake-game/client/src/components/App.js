@@ -72,7 +72,7 @@ const App = () => {
   }
 
   useEffect(() => {
-  
+
     if (gameMode == 'multiplayer') {
       socket = io.connect('http://localhost:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
@@ -242,7 +242,7 @@ const App = () => {
     if (hasEatenFood(snakeHead)) {
       setConfetti(true)
       if (gameModeRef.current == "singlePlayer" || gameModeRef.current == "vsCPU") {
-       let foodLocation = randomLocation()
+        let foodLocation = randomLocation()
         setFood(foodLocation)
         foodRef.current = foodLocation
         updateSnakeArray(currentPlayerId, 'score', score + 1)
@@ -252,7 +252,7 @@ const App = () => {
         socket.emit('randomFood')
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score + 1 })
-        socket.emit('increaseSnakeLength', { playerId: currentPlayerId, updatedCells: updatedCells})
+        socket.emit('increaseSnakeLength', { playerId: currentPlayerId, updatedCells: updatedCells })
         increaseSnakeLength(updatedCells)
       }
 
@@ -279,6 +279,7 @@ const App = () => {
 
   const renderFood = (context) => {
     context.beginPath();
+
     context.arc(foodRef.current.x + 10, foodRef.current.y + 10, 10, 0, 2 * Math.PI)
     context.fillStyle = "#FF0000"
     context.fill();
@@ -290,7 +291,7 @@ const App = () => {
   const renderGameBoard = (context, canvas) => {
     var grd = context.createLinearGradient(0, 0, canvas.width, canvas.height)
     grd.addColorStop(0, "#2680F9");
-    grd.addColorStop(1, "#0150BB");
+    grd.addColorStop(1, "#00285D");
     context.fillStyle = grd;
     context.fillRect(0, 0, 1300, 1175)
   }
@@ -331,25 +332,35 @@ const App = () => {
 
   const renderAiGuide = (context, snakeHead, direction) => {
     context.beginPath();
-    if(direction == "right" || direction == "left") {
-      context.moveTo(snakeHead.x + 10 , snakeHead.y + 10 )
-      context.lineTo(foodRef.current.x + 10,  snakeHead.y + 10)
-      context.lineTo(foodRef.current.x + 10,  foodRef.current.y + 10)
+    context.setLineDash([32, 32, 32, 32]);
+    let grad = context.createLinearGradient(snakeHead.x, snakeHead.y, 500, 550);
+    grad.addColorStop(0, "#45ec3f");
+    grad.addColorStop(1, "#FF4500");
+    context.strokeStyle = grad;
+
+    context.lineWidth = 5
+    if (direction == "right" || direction == "left") {
+      context.moveTo(snakeHead.x + 10, snakeHead.y + 10)
+      context.lineTo(foodRef.current.x + 10, snakeHead.y + 10)
+      context.lineTo(foodRef.current.x + 10, foodRef.current.y + 10)
     } else {
-      context.beginPath();
-      context.moveTo(snakeHead.x + 10 , snakeHead.y + 10 )
+      if (direction == "down") {
+        context.moveTo(snakeHead.x + 10, snakeHead.y + 25)
+      } else if (direction == "up") {
+        context.moveTo(snakeHead.x + 10, snakeHead.y - 25)
+      }
       context.lineTo(snakeHead.x + 10, foodRef.current.y + 10,)
-      context.lineTo(foodRef.current.x + 10,  foodRef.current.y + 10)
+      context.lineTo(foodRef.current.x + 10, foodRef.current.y + 10)
     }
-    context.strokeStyle = "#E02B7D"
-    context.lineWidth = 4
+
     context.stroke();
+    context.setLineDash([]);
   }
 
   const renderSnake = (context, index, snake, cell) => {
-    context.fillStyle = gameModeRef.current == "singlePlayer" ? '#48df08' : `#${snake.colour}`
+    context.fillStyle = gameModeRef.current == "singlePlayer" ? `rgb(72,223,8)` : `#${snake.colour}`
     context.fillRect(cell.x, cell.y, 20, 20)
-
+    // context.filter = "brightness(150%)";
     if (index === snake.snakeCells.length - 1) {
       var snakeHead = new Image();
       snakeHead.src = selectHeadImage(snake)
@@ -394,8 +405,8 @@ const App = () => {
 
       if (snake.aiStatus) {
         AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
-       if(gameModeRef.current == "singlePlayer")
-         renderAiGuide(context, snakeHead, snake.direction)
+        if (gameModeRef.current == "singlePlayer")
+          renderAiGuide(context, snakeHead, snake.direction)
       } else {
         switch (snake.direction) {
           case "right":
