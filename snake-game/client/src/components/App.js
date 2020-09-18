@@ -51,6 +51,12 @@ const App = () => {
   const [pause, setPause] = useState(false)
   const playerSnakeArrayRef = useRef(playerSnakeArray)
 
+  const [shade, setShade] = useState(0)
+  const shadeRef = useRef(shade)
+
+  // const [cellSize, setCellSize] = useState(20)
+  // const cellSizeRef = useRef(cellSize)
+
   useEffect(() => {
     window.addEventListener('keydown', keypress)
     return () => {
@@ -357,11 +363,64 @@ const App = () => {
     context.setLineDash([]);
   }
 
+  function shadeColor(color, percent) {
+    var R = parseInt(color.substring(1, 3), 16);
+    var G = parseInt(color.substring(3, 5), 16);
+    var B = parseInt(color.substring(5, 7), 16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R < 255) ? R : 255;
+    G = (G < 255) ? G : 255;
+    B = (B < 255) ? B : 255;
+
+    var RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+    var GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+    var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+
+    return "#" + RR + GG + BB;
+  }
+
+  const renderTail = (context, snake, cell, shadeCol) => {
+    console.log(snake.direction)
+    context.beginPath()
+    switch (snake.direction) {
+      case "left":
+        context.arc(cell.x + 15, cell.y + 10, 10, 0, 2 * Math.PI)
+        break
+      case "right":
+        context.arc(cell.x + 5 , cell.y + 10, 10, 0, 2 * Math.PI)
+        break
+      case "up":
+        context.arc(cell.x + 10, cell.y + 15, 10, 0, 2 * Math.PI)
+        break
+      case "down":
+        context.arc(cell.x + 10, cell.y, 10, 0, 2 * Math.PI)
+        break
+    }
+
+    context.fillStyle = shadeCol
+    context.fill()
+  }
+
   const renderSnake = (context, index, snake, cell) => {
-    context.fillStyle = gameModeRef.current == "singlePlayer" ? `rgb(72,223,8)` : `#${snake.colour}`
+    let shadeCol = shadeColor('#48df08', shadeRef.current)
+    // if (index == 0) {
+    //   renderTail(context, snake, cell, shadeCol)
+    // }
+
+    if (shadeRef.current < 0 && index > (snake.snakeCells.length * 0.8)) {
+      shadeRef.current++
+    }
+
+
+
+    context.fillStyle = gameModeRef.current == "singlePlayer" ? shadeCol : `#${snake.colour}`
     context.fillRect(cell.x, cell.y, 20, 20)
-    // context.filter = "brightness(150%)";
     if (index === snake.snakeCells.length - 1) {
+      shadeRef.current = -10
       var snakeHead = new Image();
       snakeHead.src = selectHeadImage(snake)
       context.save();
