@@ -98,7 +98,7 @@ export default (props) => {
       </div>
       <div className="child" style={{ width: "500px" }}>
         <div className="fullWordText">
-          {props.fullWord}
+         {props.acronymStatus ? props.fullWord : <div className="scoreText"> Single Player</div>} 
         </div>
       </div>
       <div className="settingContainer">

@@ -286,12 +286,12 @@ const App = () => {
   const renderFood = (context) => {
     context.beginPath();
 
+    context.shadowBlur = 10;
+    context.shadowColor = "red";
     context.arc(foodRef.current.x + 10, foodRef.current.y + 10, 10, 0, 2 * Math.PI)
     context.fillStyle = "#FF0000"
     context.fill();
-    context.strokeStyle = "black";
-    context.lineWidth = 1
-    context.stroke();
+    context.shadowBlur = 0;
   }
 
   const renderGameBoard = (context, canvas) => {
@@ -339,11 +339,12 @@ const App = () => {
   const renderAiGuide = (context, snakeHead, direction) => {
     context.beginPath();
     context.setLineDash([32, 32, 32, 32]);
+    context.shadowBlur = 8;
+    context.shadowColor = "white";
     let grad = context.createLinearGradient(snakeHead.x, snakeHead.y, 500, 550);
     grad.addColorStop(0, "#45ec3f");
     grad.addColorStop(1, "#FF4500");
     context.strokeStyle = grad;
-
     context.lineWidth = 5
     if (direction == "right" || direction == "left") {
       context.moveTo(snakeHead.x + 10, snakeHead.y + 10)
@@ -361,6 +362,7 @@ const App = () => {
 
     context.stroke();
     context.setLineDash([]);
+    context.shadowBlur = 0;
   }
 
   function shadeColor(color, percent) {
@@ -391,7 +393,7 @@ const App = () => {
         context.arc(cell.x + 15, cell.y + 10, 10, 0, 2 * Math.PI)
         break
       case "right":
-        context.arc(cell.x + 5 , cell.y + 10, 10, 0, 2 * Math.PI)
+        context.arc(cell.x + 5, cell.y + 10, 10, 0, 2 * Math.PI)
         break
       case "up":
         context.arc(cell.x + 10, cell.y + 15, 10, 0, 2 * Math.PI)
@@ -411,8 +413,8 @@ const App = () => {
     //   renderTail(context, snake, cell, shadeCol)
     // }
 
-    if (shadeRef.current < 0 && index > (snake.snakeCells.length * 0.8)) {
-      shadeRef.current++
+    if (shadeRef.current < 0 && index > (snake.snakeCells.length * 0.2)) {
+      shadeRef.current += 0.8
     }
 
 
