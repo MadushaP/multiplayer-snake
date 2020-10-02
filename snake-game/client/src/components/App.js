@@ -40,6 +40,7 @@ const App = () => {
       { 'x': 16, 'y': 10 },
     ],
     direction: "right",
+    headAngle: -90,
     closeToFood: false,
     aiStatus: false,
     colour: '48df08',
@@ -428,22 +429,116 @@ const App = () => {
       context.save();
       context.translate(cell.x, cell.y);
 
-      //rotate head
+      let newSnakeAngle = snake.headAngle
+
+
+      const rotateHead = (currentAngle, targetAngle, degreeStep) => {
+        if (newSnakeAngle == currentAngle) {
+          let interval = setInterval(() => {
+            if (newSnakeAngle == targetAngle) {
+              clearInterval(interval)
+              return
+            }
+            //change direction
+            newSnakeAngle += degreeStep
+            updateSnakeArray(snake.playerId, 'headAngle', newSnakeAngle)
+          }, 30)
+        }
+      }
+
+
+      if (snake.direction == "right") {
+        console.log(snake.headAngle)
+
+        if (snake.headAngle == 0) {
+          rotateHead(0, -90, -18)
+        } else if (snake.headAngle == 180) {
+          rotateHead(180, 270, 18)
+        }
+        if (snake.headAngle == 270) {
+          newSnakeAngle = -90
+        }
+
+        context.rotate(snake.headAngle * Math.PI / 180);
+        context.drawImage(snakeHead, -25, -1, 30, 40)
+        updateSnakeArray(snake.playerId, 'headAngle', newSnakeAngle)
+      }
+
+
+      if (snake.direction == "down") {
+        console.log(snake.headAngle)
+
+        if (snake.headAngle === -90) {
+          rotateHead(-90, 0, 18)
+        }
+        else if (snake.headAngle === 90) {
+          rotateHead(90, 0, -18)
+
+        }
+        context.rotate(snake.headAngle * Math.PI / 180);
+        context.drawImage(snakeHead, -5, 1, 30, 40)
+      }
+
+
+      if (snake.direction == "left") {
+        console.log(snake.headAngle)
+
+
+        if (snake.headAngle == 0) {
+          rotateHead(0, 90, 18)
+        } else if (snake.headAngle == 180) {
+          rotateHead(180, 90, -18)
+
+        }
+
+        context.rotate(snake.headAngle * Math.PI / 180);
+        context.drawImage(snakeHead, -5, -10, 30, 40)
+
+      }
+
       if (snake.direction == "up") {
-        context.rotate(Math.PI);
-        context.drawImage(snakeHead, -25, -3, 30, 40)
-      } else if (snake.direction == "down") {
-        context.rotate(0);
-        context.drawImage(snakeHead, -5, 5, 30, 40)
+        console.log(snake.headAngle)
+
+
+        if (snake.headAngle == -90) {
+          rotateHead(-90, -180, -18)
+        } else if (snake.headAngle == 90) {
+          rotateHead(90, 180, 18)
+        } else if (snake.headAngle == -180) {
+          newSnakeAngle = 180
+        }
+
+
+        context.rotate(snake.headAngle * Math.PI / 180);
+        context.drawImage(snakeHead, -25, -20, 30, 40)
+
       }
-      else if (snake.direction == "left") {
-        context.rotate(Math.PI / 2);
-        context.drawImage(snakeHead, -5, -3, 30, 40)
-      }
-      else if (snake.direction == "right") {
-        context.rotate(Math.PI * 3 / 2);
-        context.drawImage(snakeHead, -25, 15, 30, 40)
-      }
+      updateSnakeArray(snake.playerId, 'headAngle', newSnakeAngle)
+
+
+      // setInterval(() => { 
+      //   angle++
+      //   // updateSnakeArray(snake.playerId, 'headAngle', angle)  
+      // }, 500)
+
+      // context.rotate(180 * Math.PI / 180);
+      // context.drawImage(snakeHead, -25, -3, 30, 40)
+      //rotate head
+      // if (snake.direction == "up") {
+      //   context.rotate(180 * Math.PI / 180);
+      //   context.drawImage(snakeHead, -25, -3, 30, 40)
+      // } else if (snake.direction == "down") {
+      //   context.rotate(0 * Math.PI / 180);
+      //   context.drawImage(snakeHead, -5, 5, 30, 40)
+      // }
+      // else if (snake.direction == "left") {
+      //   context.rotate(90 * Math.PI / 180);
+      //   context.drawImage(snakeHead, -5, -3, 30, 40)
+      // }
+      // else if (snake.direction == "right") {
+      //   context.rotate(270 * Math.PI / 180);
+      //   context.drawImage(snakeHead, -25, 15, 30, 40)
+      // }
     }
   }
 

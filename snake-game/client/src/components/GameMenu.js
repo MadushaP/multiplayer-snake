@@ -31,21 +31,21 @@ export default (props) => {
     props.setGameMode("singlePlayer")
     props.gameModeRef.current = "singlePlayer"
     props.setAiSpeed(8)
-    props.setPlayerSnakeArray([{
-      playerId: 0,
-      snakeCells: [
-        { 'x': 10, 'y': 10 },
-        { 'x': 12, 'y': 10 },
-        { 'x': 14, 'y': 10 },
-        { 'x': 16, 'y': 10 },
-      ],
-      direction: "right",
-      closeToFood: false,
-      aiStatus: false,
-      colour: '48df08',
-      score:0
+    // props.setPlayerSnakeArray([{
+    //   playerId: 0,
+    //   snakeCells: [
+    //     { 'x': 10, 'y': 10 },
+    //     { 'x': 12, 'y': 10 },
+    //     { 'x': 14, 'y': 10 },
+    //     { 'x': 16, 'y': 10 },
+    //   ],
+    //   direction: "right",
+    //   closeToFood: false,
+    //   aiStatus: false,
+    //   colour: '48df08',
+    //   score:0
 
-    }])
+    // }])
     props.playerSnakeArrayRef.current = [{
       playerId: 0,
       snakeCells: [
@@ -55,6 +55,7 @@ export default (props) => {
         { 'x': 16, 'y': 10 },
       ],
       direction: "right",
+      headAngle: 0,
       closeToFood: false,
       aiStatus: false,
       colour: '48df08',
