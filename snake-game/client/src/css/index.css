@@ -380,14 +380,32 @@ canvas {
   top: 15%;
   left: 42%;
   transform: translate(-50%, -50%);
-  font-family: FredokaOne, cursive;
-  font-size: 30px;
-  letter-spacing: 2px;
-  word-spacing: 2px;
   opacity: 0;
   height: 170px;
   width: 250px
   
+}
+
+.frozenText {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  height: 180px;
+  width: 450px;
+}
+
+
+.fadeIn {
+  animation: fadeInAndOut 5s ease-out;
+}
+
+@keyframes fadeInAndOut {
+  0%,100% { opacity: 0 }
+  5% { opacity: 1 }
+  25% { opacity: 1 }
+
 }
 
 .blink {

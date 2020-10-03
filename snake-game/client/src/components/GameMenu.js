@@ -43,7 +43,9 @@ export default (props) => {
       closeToFood: false,
       aiStatus: false,
       colour: '48df08',
-      score:0
+      score:0,
+      status: 'none'
+
 
     }])
     props.playerSnakeArrayRef.current = [{
@@ -58,7 +60,8 @@ export default (props) => {
       closeToFood: false,
       aiStatus: false,
       colour: '48df08',
-      score: 0
+      score: 0,
+      status: 'none'
 
     }]
   }

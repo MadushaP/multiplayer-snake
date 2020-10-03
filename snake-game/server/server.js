@@ -6,6 +6,13 @@ const { randomLocation } = require('./lib/helper')
 let snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
 let snakeCells = []
 let food = randomLocation()
+let powerUp = randomLocation()
+
+
+setInterval(() => {
+    powerUp = randomLocation()
+    io.sockets.emit("powerUpChange", powerUp)
+}, 15000)
 
 io.on('connection', (socket) => {
     console.log(`Player ${io.engine.clientsCount}: ${socket.id}, connected`)
@@ -17,6 +24,7 @@ io.on('connection', (socket) => {
     socket.on('getPlayerId', () => {
         socket.emit('getPlayerId', socket.id)
         socket.emit("getFood", food)
+        socket.emit("powerUpChange", powerUp)
     })
 
     socket.on('syncAll', (data) => {
@@ -38,7 +46,8 @@ io.on('connection', (socket) => {
             closeToFood: false,
             colour: randomColour,
             aiStatus: false,
-            score: 0
+            score: 0,
+            status: 'none'
         })
         io.sockets.emit("sendPlayerSnakeArray", snakeArray)
     })
@@ -58,7 +67,8 @@ io.on('connection', (socket) => {
                 closeToFood: false,
                 colour: randomColour,
                 aiStatus: false,
-                score: 0
+                score: 0,
+                status: 'none'
             })
             socket.emit("sendPlayerSnakeArray", snakeCells)
         } else {
@@ -88,6 +98,12 @@ io.on('connection', (socket) => {
 
     socket.on('increaseSnakeLength', (data) => {
         socket.broadcast.emit('increaseSnakeLength', data);
+    })
+
+    socket.on('powerExecute', (data) => {
+        socket.broadcast.emit('freeze',data)
+        // powerUp =  {x:0, x:0}
+        socket.emit("powerUpChange", {x:0, x:0})
     })
 
     socket.on('disconnect', () => {

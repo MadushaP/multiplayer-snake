@@ -29,3 +29,12 @@ export const SnakeImage = {
         "yellow": SnakeHeadEatYellow
     }
 }
+
+const Freeze = require('./freeze.png')
+const Gun = require('./gun.png')
+
+export const Powers = {
+    "freeze": Freeze,
+    "gun": Gun
+}
+

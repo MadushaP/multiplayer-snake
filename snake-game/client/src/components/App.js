@@ -6,8 +6,8 @@ import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
-import Sound from '../lib/Sound'
-import { SnakeImage } from '../assets/images/'
+import Sound, { playSound } from '../lib/Sound'
+import { SnakeImage, Powers } from '../assets/images/'
 
 let socket = null
 const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
@@ -18,6 +18,11 @@ const App = () => {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
+
+  const [powerUp, setPowerUp] = useState()
+  const powerUpRef = useRef(powerUp)
+  const [frozen, setFrozen] = useState(false)
+
 
   const [volume, setVolume] = useState(0.8)
   const [isGameOver, setGameOver] = useState(false)
@@ -43,7 +48,8 @@ const App = () => {
     closeToFood: false,
     aiStatus: false,
     colour: '48df08',
-    score: 0
+    score: 0,
+    status: 'none'
   }])
   const [speed, setSpeed] = useState(5)
   const speedRef = useRef(speed)
@@ -53,9 +59,6 @@ const App = () => {
 
   const [shade, setShade] = useState(0)
   const shadeRef = useRef(shade)
-
-  // const [cellSize, setCellSize] = useState(20)
-  // const cellSizeRef = useRef(cellSize)
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
@@ -127,10 +130,29 @@ const App = () => {
         updateSnakeArray(data.playerId, 'snakeCells', data.updatedCells)
       })
 
+      socket.on('powerUpChange', (data) => {
+        powerUpRef.current = data
+      })
+
+      socket.on('freeze', (data) => {
+        console.log("FREEZE")
+        
+        if(playerRef.current != data.playerId) {
+          setFrozen(true)
+          Sound.playSound('holy-shit.mp3', false, 0.8)
+        }
+
+        playerSnakeArrayRef.current.forEach(snake => {
+          if(snake.playerId != data.playerId) {
+            updateSnakeArray(snake.playerId , 'status', 'frozen')
+            setInterval(() => { updateSnakeArray(snake.playerId , 'status', 'none') }, 7000)
+          }
+        })
+      })
     }
 
-    if (gameStart)
-      Sound.playSound('background-music.mp3', true, 0.3)
+    // if (gameStart)
+    //   Sound.playSound('background-music.mp3', true, 0.3)
   }, [gameStart])
 
   useEffect(() => {
@@ -272,6 +294,19 @@ const App = () => {
     }
   }
 
+  const powerUpCheck = (snakeHead, playerId) => {
+    if(powerUpRef.current && gameModeRef.current == "multiplayer") {
+      let distanceX = Math.abs(snakeHead.x - powerUpRef.current.x)
+      let distanceY = Math.abs(snakeHead.y - powerUpRef.current.y)
+      // console.log(snakeHead, powerUpRef.current, distanceX, distanceY)
+  
+      if (distanceX <= 39 && distanceY <= 39) {
+        Sound.playSound('freeze-sound.mp3', false, 0.7)
+        socket.emit('powerExecute', {playerId: playerId, status: 'freeze'})
+      }
+    }
+  }
+
   const renderFullWorld = (context) => {
     context.fillStyle = "white"
     context.font = "bold 25px Verdana"
@@ -292,6 +327,17 @@ const App = () => {
     context.fillStyle = "#FF0000"
     context.fill();
     context.shadowBlur = 0;
+  }
+
+  const renderPowerUp = (context) => {
+    var powerUpImage = new Image();
+    powerUpImage.src = Powers.freeze
+    if(powerUpRef.current) {
+      context.shadowBlur = 10;
+      context.shadowColor = "white";
+      context.drawImage(powerUpImage, powerUpRef.current.x, powerUpRef.current.y, 60, 60)
+      context.shadowBlur = 0;
+    }
   }
 
   const renderGameBoard = (context, canvas) => {
@@ -421,7 +467,14 @@ const App = () => {
 
     context.fillStyle = gameModeRef.current == "singlePlayer" ? shadeCol : `#${snake.colour}`
     context.fillRect(cell.x, cell.y, 20, 20)
+
+    if(snake.status == "frozen") {
+      context.shadowBlur = 20;
+      context.shadowColor = "blue";
+    }
+  
     if (index === snake.snakeCells.length - 1) {
+  
       shadeRef.current = -10
       var snakeHead = new Image();
       snakeHead.src = selectHeadImage(snake)
@@ -469,28 +522,39 @@ const App = () => {
         if (gameModeRef.current == "singlePlayer")
           renderAiGuide(context, snakeHead, snake.direction)
       } else {
-        switch (snake.direction) {
-          case "right":
-            snakeHead.x += speedRef.current
-            break
-          case "left":
-            snakeHead.x -= speedRef.current
-            break
-          case "down":
-            snakeHead.y += speedRef.current
-            break
-          case "up":
-            snakeHead.y -= speedRef.current
-            break
-          default:
-            break
-        }
+          let a = snake.status != "frozen" ?  speedRef.current : 0.5
+
+          switch (snake.direction) {
+            case "right":
+              snakeHead.x += a
+              break
+            case "left":
+              snakeHead.x -= a
+              break
+            case "down":
+              snakeHead.y += a
+              break
+            case "up":
+              snakeHead.y -= a
+              break
+            default:
+              break
+          }
+        
+    
         headBodyCollisionCheck(snakeHead, snake.snakeCells)
       }
       renderFood(context)
+    
+      renderPowerUp(context)
+      
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
-      updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
-
+      powerUpCheck(snakeHead, snake.playerId)
+      
+  
+      // updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
+      
+      // console.log(snake.playerId,snake.status)
       snake.snakeCells.forEach((cell, index) => {
         // GameOver
         // if (snake.playerId == playerRef.current) {
@@ -523,7 +587,7 @@ const App = () => {
             gameMode={gameMode}
             pause={pause}
             setPause={setPause} />
-          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} frozen={frozen} />
         </div>}
     </div>
   )
