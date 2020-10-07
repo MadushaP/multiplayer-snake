@@ -32,9 +32,11 @@ export const SnakeImage = {
 
 const Freeze = require('./freeze.png')
 const Gun = require('./gun.png')
+const Bullet = require('./bullet-head.png')
 
 export const Powers = {
     "freeze": Freeze,
-    "gun": Gun
+    "gun": Gun,
+    "bullet": Bullet
 }
 

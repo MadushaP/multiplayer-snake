@@ -19,10 +19,19 @@ const App = () => {
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
 
+  const [powerUpText, setPowerText] = useState()
+
   const [powerUp, setPowerUp] = useState()
   const powerUpRef = useRef(powerUp)
-  const [frozen, setFrozen] = useState(false)
 
+  const [bullet, setBullet] = useState({
+    playerId: null,
+    direction: false,
+    location: { x: 0, y: 0 },
+    moving: false,
+    bulletFired: false
+  })
+  const bulletRef = useRef(bullet)
 
   const [volume, setVolume] = useState(0.8)
   const [isGameOver, setGameOver] = useState(false)
@@ -131,23 +140,35 @@ const App = () => {
       })
 
       socket.on('powerUpChange', (data) => {
-        powerUpRef.current = data
+          powerUpRef.current = data
       })
 
       socket.on('freeze', (data) => {
-        console.log("FREEZE")
-        
-        if(playerRef.current != data.playerId) {
-          setFrozen(true)
+
+        if (playerRef.current != data.playerId) {
+          setPowerText("frozen")
           Sound.playSound('holy-shit.mp3', false, 0.8)
         }
 
         playerSnakeArrayRef.current.forEach(snake => {
-          if(snake.playerId != data.playerId) {
-            updateSnakeArray(snake.playerId , 'status', 'frozen')
-            setInterval(() => { updateSnakeArray(snake.playerId , 'status', 'none') }, 7000)
+          if (snake.playerId != data.playerId) {
+            updateSnakeArray(snake.playerId, 'status', 'frozen')
+            setInterval(() => { updateSnakeArray(snake.playerId, 'status', 'none') }, 7000)
           }
         })
+      })
+
+      socket.on('loadGun', (data) => {
+        if (playerRef.current == data.playerId)
+          setPowerText("gun")
+        updateSnakeArray(data.playerId, 'status', 'gun')
+      })
+
+      socket.on('fireBullet', (data) => {
+        updateSnakeArray(data.playerId, 'status', 'none')
+        bulletRef.current.status = true
+        bulletRef.current.playerId = data.playerId
+
       })
     }
 
@@ -174,22 +195,22 @@ const App = () => {
     switch (score) {
       case 5:
         levelUp(7)
-        break;
+        break
       case 10:
         levelUp(10)
-        break;
+        break
       case 15:
         levelUp(12)
-        break;
+        break
       case 25:
         levelUp(14)
-        break;
+        break
       case 30:
         levelUp(16)
-        break;
+        break
       case 40:
         levelUp(20)
-        break;
+        break
     }
   }
 
@@ -295,14 +316,21 @@ const App = () => {
   }
 
   const powerUpCheck = (snakeHead, playerId) => {
-    if(powerUpRef.current && gameModeRef.current == "multiplayer") {
-      let distanceX = Math.abs(snakeHead.x - powerUpRef.current.x)
-      let distanceY = Math.abs(snakeHead.y - powerUpRef.current.y)
+    if (powerUpRef.current && gameModeRef.current == "multiplayer") {
+      let distanceX = Math.abs(snakeHead.x - powerUpRef.current.location.x)
+      let distanceY = Math.abs(snakeHead.y - powerUpRef.current.location.y)
       // console.log(snakeHead, powerUpRef.current, distanceX, distanceY)
-  
+
       if (distanceX <= 39 && distanceY <= 39) {
-        Sound.playSound('freeze-sound.mp3', false, 0.7)
-        socket.emit('powerExecute', {playerId: playerId, status: 'freeze'})
+        console.log(powerUpRef.current)
+        if (powerUpRef.current.power == "freeze") {
+          Sound.playSound('freeze-sound.mp3', false, 0.7)
+          socket.emit('powerExecute', { playerId: playerId, status: 'freeze' })
+        } else if (powerUpRef.current.power == "gun") {
+          Sound.playSound('gun.mp3', false, 0.7)
+          socket.emit('powerExecute', { playerId: playerId, status: 'gun' })
+        }
+
       }
     }
   }
@@ -330,12 +358,18 @@ const App = () => {
   }
 
   const renderPowerUp = (context) => {
-    var powerUpImage = new Image();
-    powerUpImage.src = Powers.freeze
-    if(powerUpRef.current) {
+    if (powerUpRef.current) {
+      var powerUpImage = new Image();
+      if (powerUpRef.current.power == "gun") {
+        powerUpImage.src = Powers.gun
+      } else {
+        var powerUpImage = new Image();
+        powerUpImage.src = Powers.freeze
+      }
+
       context.shadowBlur = 10;
       context.shadowColor = "white";
-      context.drawImage(powerUpImage, powerUpRef.current.x, powerUpRef.current.y, 60, 60)
+      context.drawImage(powerUpImage, powerUpRef.current.location.x, powerUpRef.current.location.y, 60, 60)
       context.shadowBlur = 0;
     }
   }
@@ -453,6 +487,88 @@ const App = () => {
     context.fill()
   }
 
+  const renderBullet = (context, snake, snakeHead) => {
+    context.save()
+    if (bulletRef.current.status == true && bulletRef.current.playerId == snake.playerId) {
+
+      //Initialise bullet location
+      if (bulletRef.current.moving == false) {
+        bulletRef.current.location.x = snakeHead.x
+        bulletRef.current.location.y = snakeHead.y
+        bulletRef.current.direction = snake.direction
+
+        Sound.playSound('gunshot.mp3', false, 0.2)
+        bulletRef.current.shootNoise = true
+
+        //reset state
+        updateSnakeArray(snake.playerId, 'status', 'none')
+
+        setTimeout(() => {
+          bulletRef.current.status = false
+          bulletRef.current.moving = false
+
+        }, 2000)
+
+      }
+      context.translate(bulletRef.current.location.x, bulletRef.current.location.y)
+
+      var bulletImage = new Image()
+      bulletImage.src = Powers.bullet
+      context.shadowBlur = 5
+      context.shadowColor = "white"
+
+      switch (bulletRef.current.direction) {
+        case "up":
+          context.rotate(Math.PI)
+          context.drawImage(bulletImage, -35, -3, 50, 50)
+          break
+        case "down":
+          context.rotate(0)
+          context.drawImage(bulletImage, -15, 5, 50, 50)
+          break
+        case "left":
+          context.rotate(Math.PI / 2)
+          context.drawImage(bulletImage, -15, -3, 50, 50)
+          break
+        case "right":
+          context.scale(1, -1)
+          context.rotate(Math.PI * 3 / 2)
+          context.drawImage(bulletImage, -20, 15, 50, 50)
+          break
+      }
+
+      //Move bullet
+      if (bulletRef.current.moving == false) {
+        var timesRun = 0
+
+
+        let interval = setInterval(() => {
+          timesRun += 1
+          if (timesRun == 150)
+            clearInterval(interval)
+
+          switch (bulletRef.current.direction) {
+            case "up":
+              bulletRef.current.location.y -= 10
+              break
+            case "down":
+              bulletRef.current.location.y += 10
+              break
+            case "left":
+              bulletRef.current.location.x -= 10
+              break
+            case "right":
+              bulletRef.current.location.x += 10
+              break
+          }
+
+          bulletRef.current.moving = true
+        }, 10)
+      }
+    }
+    context.restore()
+  }
+
   const renderSnake = (context, index, snake, cell) => {
     let shadeCol = shadeColor('#48df08', shadeRef.current)
     // if (index == 0) {
@@ -463,40 +579,61 @@ const App = () => {
       shadeRef.current += 0.8
     }
 
-
-
     context.fillStyle = gameModeRef.current == "singlePlayer" ? shadeCol : `#${snake.colour}`
     context.fillRect(cell.x, cell.y, 20, 20)
 
-    if(snake.status == "frozen") {
-      context.shadowBlur = 20;
-      context.shadowColor = "blue";
+    if (snake.status == "frozen") {
+      context.shadowBlur = 20
+      context.shadowColor = "blue"
     }
-  
-    if (index === snake.snakeCells.length - 1) {
-  
-      shadeRef.current = -10
-      var snakeHead = new Image();
-      snakeHead.src = selectHeadImage(snake)
-      context.save();
-      context.translate(cell.x, cell.y);
 
-      //rotate head
-      if (snake.direction == "up") {
-        context.rotate(Math.PI);
-        context.drawImage(snakeHead, -25, -3, 30, 40)
-      } else if (snake.direction == "down") {
-        context.rotate(0);
-        context.drawImage(snakeHead, -5, 5, 30, 40)
+    if (index === snake.snakeCells.length - 1) {
+      shadeRef.current = -10
+      var snakeHead = new Image()
+
+      context.save()
+      context.translate(cell.x, cell.y)
+
+      if (snake.status != "gun") {
+        snakeHead.src = selectHeadImage(snake)
+        if (snake.direction == "up") {
+          context.rotate(Math.PI)
+          context.drawImage(snakeHead, -25, -3, 30, 40)
+        } else if (snake.direction == "down") {
+          context.rotate(0)
+          context.drawImage(snakeHead, -5, 5, 30, 40)
+        }
+        else if (snake.direction == "left") {
+          context.rotate(Math.PI / 2)
+          context.drawImage(snakeHead, -5, -3, 30, 40)
+        }
+        else if (snake.direction == "right") {
+          context.rotate(Math.PI * 3 / 2)
+          context.drawImage(snakeHead, -25, 15, 30, 40)
+        }
+      } else {
+        context.shadowBlur = 8
+        context.shadowColor = "white"
+        snakeHead.src = Powers.bullet
+        if (snake.direction == "up") {
+          context.rotate(Math.PI)
+          context.drawImage(snakeHead, -35, -3, 50, 50)
+        } else if (snake.direction == "down") {
+          context.rotate(0)
+          context.drawImage(snakeHead, -15, 5, 50, 50)
+        }
+        else if (snake.direction == "left") {
+          context.rotate(Math.PI / 2)
+          context.drawImage(snakeHead, -15, -3, 50, 50)
+        }
+        else if (snake.direction == "right") {
+          context.scale(1, -1)
+          context.rotate(Math.PI * 3 / 2)
+          context.drawImage(snakeHead, -15, 15, 50, 50)
+        }
       }
-      else if (snake.direction == "left") {
-        context.rotate(Math.PI / 2);
-        context.drawImage(snakeHead, -5, -3, 30, 40)
-      }
-      else if (snake.direction == "right") {
-        context.rotate(Math.PI * 3 / 2);
-        context.drawImage(snakeHead, -25, 15, 30, 40)
-      }
+      context.restore()
+
     }
   }
 
@@ -522,39 +659,36 @@ const App = () => {
         if (gameModeRef.current == "singlePlayer")
           renderAiGuide(context, snakeHead, snake.direction)
       } else {
-          let a = snake.status != "frozen" ?  speedRef.current : 0.5
+        let speed = snake.status != "frozen" ? speedRef.current : 0.5
 
-          switch (snake.direction) {
-            case "right":
-              snakeHead.x += a
-              break
-            case "left":
-              snakeHead.x -= a
-              break
-            case "down":
-              snakeHead.y += a
-              break
-            case "up":
-              snakeHead.y -= a
-              break
-            default:
-              break
-          }
-        
-    
+        switch (snake.direction) {
+          case "right":
+            snakeHead.x += speed
+            break
+          case "left":
+            snakeHead.x -= speed
+            break
+          case "down":
+            snakeHead.y += speed
+            break
+          case "up":
+            snakeHead.y -= speed
+            break
+          default:
+            break
+        }
+
         headBodyCollisionCheck(snakeHead, snake.snakeCells)
       }
       renderFood(context)
-    
       renderPowerUp(context)
-      
+
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
       powerUpCheck(snakeHead, snake.playerId)
-      
-  
+      renderBullet(context, snake, snakeHead)
+
+
       // updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
-      
-      // console.log(snake.playerId,snake.status)
       snake.snakeCells.forEach((cell, index) => {
         // GameOver
         // if (snake.playerId == playerRef.current) {
@@ -567,7 +701,6 @@ const App = () => {
 
         renderSnake(context, index, snake, cell)
       })
-      context.restore()
     })
   }
 
@@ -587,7 +720,7 @@ const App = () => {
             gameMode={gameMode}
             pause={pause}
             setPause={setPause} />
-          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} frozen={frozen} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} powerUpText={powerUpText} />
         </div>}
     </div>
   )

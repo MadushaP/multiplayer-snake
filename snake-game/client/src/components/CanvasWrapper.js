@@ -2,6 +2,7 @@ import React from 'react'
 import Confetti from 'react-dom-confetti'
 const levelUpImage = require('../assets/images/level-up.png')
 const frozenTextImage = require('../assets/images/frozen-text.png')
+const gunTextImage = require('../assets/images/gun-text.png')
 
 export default (props) => {
     let confStyle = {
@@ -41,13 +42,20 @@ export default (props) => {
     }
 
     const frozenCss = () => {
-        if (props.frozen) {
+        if (props.powerUpText) {
           return "frozenText fadeIn"
         } else {
           return "frozenText"
         }
       }
   
+    const powerUpText = () => {
+      if (props.powerUpText == "frozen") {
+       return frozenTextImage
+      } else if(props.powerUpText == "gun") {
+        return gunTextImage
+      }
+    }
 
 
     return (
@@ -62,7 +70,7 @@ export default (props) => {
                 <Confetti style={confStyle} active={props.showConfetti} config={config} />
             </div>
             <img key={props.isNewLevel} src={levelUpImage} className={blinkCss()}></img>
-            <img key={props.frozen} src={frozenTextImage} className={frozenCss()}></img>
+            <img key={props.powerUpText} src={powerUpText()} className={frozenCss()}></img>
 
         </div>
     )
