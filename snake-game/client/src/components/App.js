@@ -29,7 +29,8 @@ const App = () => {
     direction: false,
     location: { x: 0, y: 0 },
     moving: false,
-    bulletFired: false
+    bulletFired: false,
+    muzzleFlare: false
   })
   const bulletRef = useRef(bullet)
 
@@ -487,6 +488,16 @@ const App = () => {
     context.fill()
   }
 
+
+  const renderFlash = (context) => {
+    if(bulletRef.current.muzzleFlare) {
+      context.shadowBlur = 40
+      context.shadowColor = "orange"
+      var flare = new Image()
+      flare.src = Powers.flare
+      context.drawImage(flare, -65, 0, 150, 175)
+    }
+  }
   const renderBullet = (context, snake, snakeHead) => {
     context.save()
     if (bulletRef.current.status == true && bulletRef.current.playerId == snake.playerId) {
@@ -499,13 +510,18 @@ const App = () => {
 
         Sound.playSound('gunshot.mp3', false, 0.2)
         bulletRef.current.shootNoise = true
+        bulletRef.current.muzzleFlare =  true
+        setTimeout(() => {
+          bulletRef.current.muzzleFlare =  false
 
+        }, 60)
         //reset state
         updateSnakeArray(snake.playerId, 'status', 'none')
 
         setTimeout(() => {
           bulletRef.current.status = false
           bulletRef.current.moving = false
+          bulletRef.current.muzzleFlare =  false
 
         }, 2000)
 
@@ -521,19 +537,26 @@ const App = () => {
         case "up":
           context.rotate(Math.PI)
           context.drawImage(bulletImage, -35, -3, 50, 50)
+          renderFlash(context)
+
           break
         case "down":
           context.rotate(0)
           context.drawImage(bulletImage, -15, 5, 50, 50)
+          renderFlash(context)
+
           break
         case "left":
           context.rotate(Math.PI / 2)
           context.drawImage(bulletImage, -15, -3, 50, 50)
+          renderFlash(context)
+
           break
         case "right":
           context.scale(1, -1)
           context.rotate(Math.PI * 3 / 2)
-          context.drawImage(bulletImage, -20, 15, 50, 50)
+          context.drawImage(bulletImage, -20, 15, 50, 50)  
+          renderFlash(context)    
           break
       }
 
