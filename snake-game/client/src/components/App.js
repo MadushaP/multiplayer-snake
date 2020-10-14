@@ -141,7 +141,7 @@ const App = () => {
       })
 
       socket.on('powerUpChange', (data) => {
-          powerUpRef.current = data
+        powerUpRef.current = data
       })
 
       socket.on('freeze', (data) => {
@@ -490,7 +490,7 @@ const App = () => {
 
 
   const renderFlash = (context) => {
-    if(bulletRef.current.muzzleFlare) {
+    if (bulletRef.current.muzzleFlare) {
       context.shadowBlur = 40
       context.shadowColor = "orange"
       var flare = new Image()
@@ -499,6 +499,7 @@ const App = () => {
     }
   }
   const renderBullet = (context, snake, snakeHead) => {
+
     context.save()
     if (bulletRef.current.status == true && bulletRef.current.playerId == snake.playerId) {
 
@@ -510,10 +511,9 @@ const App = () => {
 
         Sound.playSound('gunshot.mp3', false, 0.2)
         bulletRef.current.shootNoise = true
-        bulletRef.current.muzzleFlare =  true
+        bulletRef.current.muzzleFlare = true
         setTimeout(() => {
-          bulletRef.current.muzzleFlare =  false
-
+          bulletRef.current.muzzleFlare = false
         }, 60)
         //reset state
         updateSnakeArray(snake.playerId, 'status', 'none')
@@ -521,8 +521,7 @@ const App = () => {
         setTimeout(() => {
           bulletRef.current.status = false
           bulletRef.current.moving = false
-          bulletRef.current.muzzleFlare =  false
-
+          bulletRef.current.muzzleFlare = false
         }, 2000)
 
       }
@@ -537,33 +536,27 @@ const App = () => {
         case "up":
           context.rotate(Math.PI)
           context.drawImage(bulletImage, -35, -3, 50, 50)
-          renderFlash(context)
-
           break
         case "down":
           context.rotate(0)
           context.drawImage(bulletImage, -15, 5, 50, 50)
-          renderFlash(context)
-
           break
         case "left":
           context.rotate(Math.PI / 2)
           context.drawImage(bulletImage, -15, -3, 50, 50)
-          renderFlash(context)
-
           break
         case "right":
           context.scale(1, -1)
           context.rotate(Math.PI * 3 / 2)
-          context.drawImage(bulletImage, -20, 15, 50, 50)  
-          renderFlash(context)    
+          context.drawImage(bulletImage, -20, 15, 50, 50)
           break
       }
+
+      renderFlash(context)
 
       //Move bullet
       if (bulletRef.current.moving == false) {
         var timesRun = 0
-
 
         let interval = setInterval(() => {
           timesRun += 1
@@ -590,6 +583,37 @@ const App = () => {
       }
     }
     context.restore()
+  }
+
+  const renderLaser = (context, snake, snakeHead) => {
+    context.shadowBlur = 15
+    context.shadowColor = "red"
+    context.strokeStyle = "#FF1919";
+    context.lineWidth = 2;
+
+    if (snake.direction == "up") {
+      context.beginPath();
+      context.moveTo(snakeHead.x - 8, snakeHead.y + 53);
+      context.lineTo(snakeHead.x - 8, snakeHead.y + 2000);
+      context.stroke();
+    } else if (snake.direction == "down") {
+      context.beginPath();
+      context.moveTo(snakeHead.x + 10, snakeHead.y + 57);
+      context.lineTo(snakeHead.x + 10, snakeHead.y + 2000);
+      context.stroke();
+    }
+    else if (snake.direction == "left") {
+      context.beginPath();
+      context.moveTo(snakeHead.x + 10, snakeHead.y + 50);
+      context.lineTo(snakeHead.x + 10, snakeHead.y + 2000);
+      context.stroke();
+    }
+    else if (snake.direction == "right") {
+      context.beginPath();
+      context.moveTo(snakeHead.x + 10, snakeHead.y + 65);
+      context.lineTo(snakeHead.x + 10, snakeHead.y + 2000);
+      context.stroke();
+    }
   }
 
   const renderSnake = (context, index, snake, cell) => {
@@ -619,41 +643,50 @@ const App = () => {
 
       if (snake.status != "gun") {
         snakeHead.src = selectHeadImage(snake)
-        if (snake.direction == "up") {
-          context.rotate(Math.PI)
-          context.drawImage(snakeHead, -25, -3, 30, 40)
-        } else if (snake.direction == "down") {
-          context.rotate(0)
-          context.drawImage(snakeHead, -5, 5, 30, 40)
-        }
-        else if (snake.direction == "left") {
-          context.rotate(Math.PI / 2)
-          context.drawImage(snakeHead, -5, -3, 30, 40)
-        }
-        else if (snake.direction == "right") {
-          context.rotate(Math.PI * 3 / 2)
-          context.drawImage(snakeHead, -25, 15, 30, 40)
+        switch (snake.direction) {
+          case "right":
+            context.rotate(Math.PI * 3 / 2)
+            context.drawImage(snakeHead, -25, 15, 30, 40)
+            break
+          case "left":
+            context.rotate(Math.PI / 2)
+            context.drawImage(snakeHead, -5, -3, 30, 40)
+            break
+          case "down":
+            context.rotate(0)
+            context.drawImage(snakeHead, -5, 5, 30, 40)
+            break
+          case "up":
+            context.rotate(Math.PI)
+            context.drawImage(snakeHead, -25, -3, 30, 40)
+            break
         }
       } else {
         context.shadowBlur = 8
         context.shadowColor = "white"
         snakeHead.src = Powers.bullet
-        if (snake.direction == "up") {
-          context.rotate(Math.PI)
-          context.drawImage(snakeHead, -35, -3, 50, 50)
-        } else if (snake.direction == "down") {
-          context.rotate(0)
-          context.drawImage(snakeHead, -15, 5, 50, 50)
+
+        switch (snake.direction) {
+          case "right":
+            context.scale(1, -1)
+            context.rotate(Math.PI * 3 / 2)
+            context.drawImage(snakeHead, -15, 15, 50, 50)
+            break
+          case "left":
+            context.rotate(Math.PI / 2)
+            context.drawImage(snakeHead, -15, -3, 50, 50)
+            break
+          case "down":
+            context.rotate(0)
+            context.drawImage(snakeHead, -15, 5, 50, 50)
+            break
+          case "up":
+            context.rotate(Math.PI)
+            context.drawImage(snakeHead, -35, -3, 50, 50)
+            break
         }
-        else if (snake.direction == "left") {
-          context.rotate(Math.PI / 2)
-          context.drawImage(snakeHead, -15, -3, 50, 50)
-        }
-        else if (snake.direction == "right") {
-          context.scale(1, -1)
-          context.rotate(Math.PI * 3 / 2)
-          context.drawImage(snakeHead, -15, 15, 50, 50)
-        }
+
+        renderLaser(context, snake, snakeHead)
       }
       context.restore()
 
