@@ -30,7 +30,9 @@ const App = () => {
     location: { x: 0, y: 0 },
     moving: false,
     bulletFired: false,
-    muzzleFlare: false
+    muzzleFlare: false,
+    blood: false,
+    hitSound: false
   })
   const bulletRef = useRef(bullet)
 
@@ -145,10 +147,9 @@ const App = () => {
       })
 
       socket.on('freeze', (data) => {
-
         if (playerRef.current != data.playerId) {
           setPowerText("frozen")
-          Sound.playSound('holy-shit.mp3', false, 0.8)
+          Sound.playSound('holy-shit.mp3', false, 0.4)
         }
 
         playerSnakeArrayRef.current.forEach(snake => {
@@ -252,7 +253,7 @@ const App = () => {
 
   const gameOver = () => {
     setGameOver(true)
-    Sound.playSound('game-over.mp3')
+    Sound.playSound('game-over.mp3', false, 0.2)
   }
 
   const headBodyCollisionCheck = (snakeHead, snakeCells) => {
@@ -309,7 +310,7 @@ const App = () => {
       let randomAcr = randomItem(acronymMap)
       setAcronym(randomAcr)
       currentAcronymRef.current = randomAcr
-      Sound.playSound('bling.mp3')
+      Sound.playSound('bling.mp3', false, 0.3)
     }
     else {
       setConfetti(false)
@@ -328,7 +329,7 @@ const App = () => {
           Sound.playSound('freeze-sound.mp3', false, 0.7)
           socket.emit('powerExecute', { playerId: playerId, status: 'freeze' })
         } else if (powerUpRef.current.power == "gun") {
-          Sound.playSound('gun.mp3', false, 0.7)
+          Sound.playSound('gun.mp3', false, 0.6)
           socket.emit('powerExecute', { playerId: playerId, status: 'gun' })
         }
 
@@ -488,6 +489,18 @@ const App = () => {
     context.fill()
   }
 
+  const renderBlood = (context, x, y, size) => {
+    if (bulletRef.current.blood) {
+      if (!bulletRef.current.hitSound) {
+        Sound.playSound('bullet-hit.m4a', false, 0.5)
+        setTimeout(() => { bulletRef.current.hitSound = true }, 10)
+      }
+
+      var bloodImage = new Image()
+      bloodImage.src = Powers.blood
+      context.drawImage(bloodImage, x, y, size, size)
+    }
+  }
 
   const renderFlash = (context) => {
     if (bulletRef.current.muzzleFlare) {
@@ -509,12 +522,21 @@ const App = () => {
         bulletRef.current.location.y = snakeHead.y
         bulletRef.current.direction = snake.direction
 
-        Sound.playSound('gunshot.mp3', false, 0.2)
-        bulletRef.current.shootNoise = true
+        if (bulletRef.current.direction == "left")
+          bulletRef.current.location.x -= 20
+        else if (bulletRef.current.direction == "right")
+          bulletRef.current.location.x += 20
+        else if (bulletRef.current.direction == "down")
+          bulletRef.current.location.y += 20
+        else
+          bulletRef.current.location.y -= 20
+
+        Sound.playSound('gunshot.mp3', false, 0.1)
         bulletRef.current.muzzleFlare = true
         setTimeout(() => {
           bulletRef.current.muzzleFlare = false
         }, 60)
+
         //reset state
         updateSnakeArray(snake.playerId, 'status', 'none')
 
@@ -525,6 +547,7 @@ const App = () => {
         }, 2000)
 
       }
+
       context.translate(bulletRef.current.location.x, bulletRef.current.location.y)
 
       var bulletImage = new Image()
@@ -534,21 +557,25 @@ const App = () => {
 
       switch (bulletRef.current.direction) {
         case "up":
+          renderBlood(context, -50, -75, 170)
           context.rotate(Math.PI)
           context.drawImage(bulletImage, -35, -3, 50, 50)
           break
         case "down":
+          renderBlood(context, -70, -75, 170)
           context.rotate(0)
           context.drawImage(bulletImage, -15, 5, 50, 50)
           break
         case "left":
+          renderBlood(context, -100, -75, 170)
           context.rotate(Math.PI / 2)
           context.drawImage(bulletImage, -15, -3, 50, 50)
           break
         case "right":
+          renderBlood(context, -20, -75, 170)
           context.scale(1, -1)
           context.rotate(Math.PI * 3 / 2)
-          context.drawImage(bulletImage, -20, 15, 50, 50)
+          context.drawImage(bulletImage, -15, 15, 50, 50)
           break
       }
 
@@ -579,6 +606,30 @@ const App = () => {
           }
 
           bulletRef.current.moving = true
+
+          //Bullet collision detection
+          playerSnakeArrayRef.current.forEach(snake => {
+            snake.snakeCells.forEach(cell => {
+              let distanceX = Math.abs(cell.x - bulletRef.current.location.x)
+              let distanceY = Math.abs(cell.y - bulletRef.current.location.y)
+
+              if (distanceX < 30 && distanceY < 30) {
+                bulletRef.current.blood = true
+
+                if (snake.playerId == playerRef.current) {
+                  gameOver()
+                }
+
+                setTimeout(() => {
+                  bulletRef.current.status = false
+                  bulletRef.current.blood = false
+                }, 200)
+
+                clearInterval(interval)
+              }
+            })
+          })
+
         }, 10)
       }
     }
@@ -738,7 +789,6 @@ const App = () => {
       }
       renderFood(context)
       renderPowerUp(context)
-
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
       powerUpCheck(snakeHead, snake.playerId)
       renderBullet(context, snake, snakeHead)
