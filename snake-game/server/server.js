@@ -7,13 +7,13 @@ let snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
 let snakeCells = []
 let food = randomLocation()
 let currentPower
-// let powers = [
-//   { power: "freeze", location: randomLocation() },
-//   { power: "gun", location: randomLocation() },
-// ]
 let powers = [
+  { power: "freeze", location: randomLocation() },
   { power: "gun", location: randomLocation() },
 ]
+// let powers = [
+//   { power: "gun", location: randomLocation() },
+// ]
 // let powers = [
 //   { power: "freeze", location: randomLocation() },
 // ]
@@ -107,18 +107,19 @@ io.on('connection', (socket) => {
   })
 
   socket.on('increaseSnakeLength', (data) => {
-    socket.broadcast.emit('increaseSnakeLength', data);
+    io.sockets.emit('increaseSnakeLength', data);
   })
 
   socket.on('powerExecute', (data) => {
     if (data.status == "freeze") {
       io.sockets.emit('freeze', data)
+      io.sockets.emit("powerUpChange", null)
     } else if (data.status == "gun") {
       io.sockets.emit('loadGun', data)
-    }else if (data.status == "fireBullet") {
+      io.sockets.emit("powerUpChange", null)
+    } else if (data.status == "fireBullet") {
       io.sockets.emit('fireBullet', data)
     }
-    io.sockets.emit("powerUpChange", null)
   })
 
   socket.on('disconnect', () => {
