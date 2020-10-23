@@ -149,7 +149,7 @@ const App = () => {
       socket.on('freeze', (data) => {
         if (playerRef.current != data.playerId) {
           setPowerText("frozen")
-          Sound.playSound('holy-shit.mp3', false, 0.4)
+          Sound.playSound('holy-shit.mp3', false, 0.2)
         }
 
         playerSnakeArrayRef.current.forEach(snake => {
@@ -325,10 +325,10 @@ const App = () => {
       if (distanceX <= 39 && distanceY <= 39) {
         console.log(powerUpRef.current)
         if (powerUpRef.current.power == "freeze") {
-          Sound.playSound('freeze-sound.mp3', false, 0.7)
+          Sound.playSound('freeze-sound.mp3', false, 0.3)
           socket.emit('powerExecute', { playerId: playerId, status: 'freeze' })
         } else if (powerUpRef.current.power == "gun") {
-          Sound.playSound('gun.mp3', false, 0.6)
+          Sound.playSound('gun.mp3', false, 0.5)
           socket.emit('powerExecute', { playerId: playerId, status: 'gun' })
         }
 
@@ -582,7 +582,7 @@ const App = () => {
       //Move bullet
       if (bulletRef.current.moving == false) {
         bulletRef.current.moving = true
-        
+
         var timesRun = 0
         let interval = setInterval(() => {
           timesRun += 1
@@ -612,15 +612,14 @@ const App = () => {
               let distanceY = Math.abs(cell.y - bulletRef.current.location.y)
 
               if (distanceX < 30 && distanceY < 30) {
-                bulletRef.current.blood = true
-
-                if (snake.playerId == playerRef.current) {
-                  gameOver()
-                }
+                bulletRef.current.blood = true               
 
                 setTimeout(() => {
                   bulletRef.current.status = false
                   bulletRef.current.blood = false
+                  if (snake.playerId == playerRef.current) {
+                    gameOver()
+                  }
                 }, 200)
 
                 clearInterval(interval)
