@@ -612,16 +612,18 @@ const App = () => {
               let distanceY = Math.abs(cell.y - bulletRef.current.location.y)
 
               if (distanceX < 30 && distanceY < 30) {
-                bulletRef.current.blood = true               
+                bulletRef.current.blood = true
 
                 setTimeout(() => {
                   bulletRef.current.status = false
                   bulletRef.current.blood = false
+                }, 350)
+
+                setTimeout(() => {
                   if (snake.playerId == playerRef.current) {
                     gameOver()
                   }
-                }, 200)
-
+                }, 100)
                 clearInterval(interval)
               }
             })
@@ -749,7 +751,7 @@ const App = () => {
           gameOver()
         }
       }
-    } else 
+    } else
       if (cell.x >= (canvas.width - 15)) {
         snakeHead.x = 0
       } else if (cell.y >= canvas.height - 15) {
