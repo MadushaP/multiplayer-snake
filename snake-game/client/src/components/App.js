@@ -522,13 +522,13 @@ const App = () => {
         bulletRef.current.direction = snake.direction
 
         if (bulletRef.current.direction == "left")
-          bulletRef.current.location.x -= 20
+          bulletRef.current.location.x -= 50
         else if (bulletRef.current.direction == "right")
-          bulletRef.current.location.x += 20
+          bulletRef.current.location.x += 50
         else if (bulletRef.current.direction == "down")
-          bulletRef.current.location.y += 20
+          bulletRef.current.location.y += 50
         else
-          bulletRef.current.location.y -= 20
+          bulletRef.current.location.y -= 50
 
         Sound.playSound('gunshot.mp3', false, 0.1)
         bulletRef.current.muzzleFlare = true
@@ -579,11 +579,11 @@ const App = () => {
       }
 
       renderFlash(context)
-
       //Move bullet
       if (bulletRef.current.moving == false) {
+        bulletRef.current.moving = true
+        
         var timesRun = 0
-
         let interval = setInterval(() => {
           timesRun += 1
           if (timesRun == 150)
@@ -604,7 +604,6 @@ const App = () => {
               break
           }
 
-          bulletRef.current.moving = true
 
           //Bullet collision detection
           playerSnakeArrayRef.current.forEach(snake => {
