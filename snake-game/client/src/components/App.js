@@ -170,7 +170,6 @@ const App = () => {
         updateSnakeArray(data.playerId, 'status', 'none')
         bulletRef.current.status = true
         bulletRef.current.playerId = data.playerId
-
       })
     }
 
@@ -740,8 +739,29 @@ const App = () => {
         renderLaser(context, snake, snakeHead)
       }
       context.restore()
-
     }
+  }
+
+  const handleOutOfBounds = (canvas, snake, snakeHead, cell) => {
+    if (gameModeRef.current == "singlePlayer") {
+      if (snake.playerId == playerRef.current) {
+        if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
+          gameOver()
+        } else if (cell.x < 0 || cell.y < 0) {
+          gameOver()
+        }
+      }
+    } else 
+      if (cell.x >= (canvas.width - 15)) {
+        snakeHead.x = 0
+      } else if (cell.y >= canvas.height - 15) {
+        snakeHead.y = 0
+      }
+      else if (cell.x < 0) {
+        snakeHead.x = canvas.width - 16
+      } else if (cell.y < 0) {
+        snakeHead.y = canvas.height - 16
+      }
   }
 
   const canvasRef = useRef(null)
@@ -793,18 +813,8 @@ const App = () => {
       powerUpCheck(snakeHead, snake.playerId)
       renderBullet(context, snake, snakeHead)
 
-
-      // updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
       snake.snakeCells.forEach((cell, index) => {
-        // GameOver
-        // if (snake.playerId == playerRef.current) {
-        //   if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
-        //     gameOver()
-        //   } else if (cell.x < 0 || cell.y < 0) {
-        //     gameOver()
-        //   }
-        // }
-
+        handleOutOfBounds(canvas, snake, snakeHead, cell)
         renderSnake(context, index, snake, cell)
       })
     })
