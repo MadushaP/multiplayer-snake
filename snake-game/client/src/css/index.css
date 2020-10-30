@@ -1,7 +1,6 @@
 @font-face {
   font-family: FredokaOne;
   src: url("../fonts/FredokaOne-Regular.ttf");
-  
 }
 
 body,
@@ -11,7 +10,8 @@ html {
   background-image: url("../assets/images/iPlayerBackground.jpeg");
   background-size: auto 120%;
   user-select: none;
-  background-size:cover
+  background-size: cover;
+  user-select: none;
 }
 
 .game-area {
@@ -150,7 +150,6 @@ h1 {
   background: rgba(224, 43, 125, 1);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
   animation: bounce 0.5s ease-in-out;
-
 }
 
 .scoreText {
@@ -242,7 +241,6 @@ nav ul li span {
   transition: 0.5s;
   transition-delay: calc((var(--n) - 1) * 0.05s);
   z-index: -1;
-  
 }
 
 nav ul li:hover {
@@ -310,9 +308,8 @@ span#answer {
   margin: 0px auto;
   padding-top: 100px;
   padding-bottom: 50px;
-  animation-fill-mode: forwards; 
+  animation-fill-mode: forwards;
   animation: 0.5s ease-in 0s 1 bounce;
-
 }
 
 #wrapper {
@@ -374,7 +371,6 @@ canvas {
   animation: fade 0.2s ease-in;
 }
 
-
 .level-up {
   position: fixed;
   top: 15%;
@@ -382,8 +378,7 @@ canvas {
   transform: translate(-50%, -50%);
   opacity: 0;
   height: 170px;
-  width: 250px
-  
+  width: 250px;
 }
 
 .frozenText {
@@ -396,16 +391,59 @@ canvas {
   width: 450px;
 }
 
-
 .fadeIn {
   animation: fadeInAndOut 5s ease-out;
 }
 
 @keyframes fadeInAndOut {
-  0%,100% { opacity: 0 }
-  5% { opacity: 1 }
-  25% { opacity: 1 }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+}
 
+.gameOverContainer {
+  display: grid;
+  grid-template-rows: 100px;
+  grid-template-columns: 157px 114px;
+  margin: 0 auto;
+}
+
+.iconWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.backIcon {
+  width: 100%;
+  height: 150%;
+  display:block;
+  margin: auto;
+}
+
+.restartIcon {
+  width: 57%;
+  height:150%;
+  display:block;
+  transform: rotate(180deg);
+  margin: auto;
+  object-fit: contain
+}
+
+.iconWrapper:hover {
+  opacity: 0.5;
+}
+
+.iconText {
+  text-align: center;
+  font: 20px arial, sans-serif;
+  font-weight: bold;
 }
 
 .blink {
@@ -415,15 +453,15 @@ canvas {
 
 @keyframes blink {
   0% {
-      opacity: 0;
-      transform: translateY(40%);
+    opacity: 0;
+    transform: translateY(40%);
   }
-30% {
-      opacity: 0.8;
-      transform: translateY(-40%);
+  30% {
+    opacity: 0.8;
+    transform: translateY(-40%);
   }
   100% {
-      opacity: 0;
-      transform: translateY(0%);
+    opacity: 0;
+    transform: translateY(0%);
   }
 }

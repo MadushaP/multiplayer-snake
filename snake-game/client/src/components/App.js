@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 import GameMenu from './GameMenu'
 import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
-import Sound, { playSound } from '../lib/Sound'
+import Sound from '../lib/Sound'
 import { SnakeImage, Powers } from '../assets/images/'
 
 let socket = null
@@ -38,6 +38,8 @@ const App = () => {
 
   const [volume, setVolume] = useState(0.8)
   const [isGameOver, setGameOver] = useState(false)
+  const isGameOverRef = useRef(isGameOver)
+  const [gameOverScore, setGameOverScore] = useState(false)
   const [showConfetti, setConfetti] = useState(false)
   const [gameStart, setGameStart] = useState(false)
   const [gameMode, setGameMode] = useState("singlePlayer")
@@ -85,6 +87,8 @@ const App = () => {
   }, [isGameOver])
 
   const keypress = ({ key }) => {
+    if (isGameOverRef.current)
+      return
     if (gameMode == "singlePlayer" || gameMode == "vsCPU")
       KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateSnakeArray, key)
     else {
@@ -824,8 +828,8 @@ const App = () => {
     <div>
       {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} />
-          <TopBar score={score} socket={socket}
+          <GameOverScreen isGameOver={isGameOver} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} />
+          <TopBar score={score}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}
             setVolume={setVolume} volume={volume}

@@ -91,7 +91,7 @@ export default (props) => {
             <div
               key={props.playerSnakeArray[0].score}
               style={{ display: "inline-block", paddingLeft: "5px" }}>
-              Score: {props.playerSnakeArray[0].score}
+              Score: {props.playerSnakeArray[0] ? props.playerSnakeArray[0].score : null}
             </div>
           </ReactCSSTransitionGroup>
         </div>

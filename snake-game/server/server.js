@@ -122,12 +122,25 @@ io.on('connection', (socket) => {
     }
   })
 
+
+  socket.on('restart', () => {
+    socket.broadcast.emit("playerJoined", { 'newId': socket.id, 'playerCount': io.engine.clientsCount })
+  })
+
   socket.on('disconnect', () => {
     console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
     snakeColours.push(randomColour)
     snakeCells = snakeCells.filter(x => x.playerId != socket.id)
     io.sockets.emit("clear", { playerId: socket.id })
   })
+
+  socket.on('multiGameOver', () => {
+    snakeColours.push(randomColour)
+    snakeCells = snakeCells.filter(x => x.playerId != socket.id)
+    io.sockets.emit("clear", { playerId: socket.id })
+  })
+
+
 })
 
 http.listen(3001, () => {
