@@ -82,8 +82,12 @@ const App = () => {
   }, [gameMode])
 
   useEffect(() => {
-    if (gameMode == "multiplayer" && isGameOver)
-      socket.disconnect()
+    if (gameMode == "multiplayer" && isGameOver) {
+      socket.emit('multiGameOver')
+      isGameOverRef.current = true
+    }
+    if (playerSnakeArrayRef.current.find(snake => snake.playerId == playerId))
+      setGameOverScore(playerSnakeArrayRef.current.find(snake => snake.playerId == playerId).score)
   }, [isGameOver])
 
   const keypress = ({ key }) => {
