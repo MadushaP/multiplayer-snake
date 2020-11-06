@@ -1,4 +1,4 @@
-let speed = 6;
+let speed = 15;
 
 const gridAlignment = (snakeHead) => {
     if (snakeHead.x > 400) {

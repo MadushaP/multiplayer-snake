@@ -13,7 +13,6 @@ let socket = null
 const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
 const acronyms = require('../store/acronyms.js')
 const gamepad = require('../lib/gamepad.js')
-
 const App = () => {
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
@@ -73,6 +72,11 @@ const App = () => {
 
   const [shade, setShade] = useState(0)
   const shadeRef = useRef(shade)
+
+
+  useEffect(() => {
+    gamepad.load( updateSnakeArray, playerSnakeArrayRef, playerRef, socket)
+  }, [socket])
 
   useEffect(() => {
     window.addEventListener('keydown', keypress)
@@ -178,7 +182,7 @@ const App = () => {
         updateSnakeArray(data.playerId, 'status', 'none')
         bulletRef.current.status = true
         bulletRef.current.playerId = data.playerId
-      })
+      })    
     }
 
     // if (gameStart)

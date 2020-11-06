@@ -89,7 +89,7 @@ export default (props) => {
             transitionEnterTimeout={500}
             transitionLeaveTimeout={1}>
             <div
-              key={props.playerSnakeArray[0].score}
+              key={props.playerSnakeArray[0] ? props.playerSnakeArray[0].score : null}
               style={{ display: "inline-block", paddingLeft: "5px" }}>
               Score: {props.playerSnakeArray[0] ? props.playerSnakeArray[0].score : null}
             </div>

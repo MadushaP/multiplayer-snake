@@ -53,12 +53,6 @@ export default (props) => {
 
   }
 
-  const getPlayerScore = () => {
-    if (props.playerSnakeArrayRef.current.find(snake => snake.playerId == props.playerId)) {
-      return props.playerSnakeArrayRef.current.find(snake => snake.playerId == props.playerId).score
-    }
-  }
-
   return (
     <div className="modal">
       <Modal
