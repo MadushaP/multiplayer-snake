@@ -30,6 +30,10 @@ io.on('connection', (socket) => {
 
   const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
   snakeColours = snakeColours.filter(colour => colour != randomColour)
+ 
+  if(snakeColours.length == 0) {
+    snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
+  }
 
   socket.on('getPlayerId', () => {
     socket.emit('getPlayerId', socket.id)
