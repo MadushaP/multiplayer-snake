@@ -8,7 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
-
+import SettingsToolTip from '../components/SettingsTooltip'
 
 const snakeMenuImage = require('../assets/images/snake-menu-picture.png')
 const settingImage = require('../assets/images/settings.png')
@@ -38,20 +38,20 @@ export default (props) => {
   const [subSettingsFlags, setSubSettingsFlags] = useState(localStorage.getItem('visualiserType'));
 
   useEffect(() => {
-    if(subSettingsFlags == 'web') {
+    if (subSettingsFlags == 'web') {
       localStorage.setItem('visualiserType', 'web')
       props.setMenuSettings(setting => {
         const newObject = { ...setting }
         newObject.waveSettings = {
-            stroke: 1,
-            type: "web",
-            colors: ["white", "white", "white"]
+          stroke: 1,
+          type: "web",
+          colors: ["white", "white", "white"]
         }
         newObject.song = "song10"
         return newObject
       })
     }
-    else if(subSettingsFlags == 'star') {
+    else if (subSettingsFlags == 'star') {
       localStorage.setItem('visualiserType', 'star')
       props.setMenuSettings(setting => {
         const newObject = { ...setting }
@@ -64,14 +64,8 @@ export default (props) => {
         return newObject
       })
     }
-
   }, [subSettingsFlags])
 
-
-
-  const handleChange = (event) => {
-    setSubSettingsFlags(event.target.value);
-  };
 
   const showTooltip = bool => {
     if (bool)
@@ -79,14 +73,6 @@ export default (props) => {
     setShow(bool)
   }
 
-  const clickBackground = () => {
-    setShow(show => {
-      if (hover)
-        return true
-
-      return false
-    })
-  }
 
   const closeModal = () => {
     props.setGameOver(false)
@@ -206,6 +192,14 @@ export default (props) => {
     }]
   }
 
+  const clickBackground = () => {
+    setShow(show => {
+      if (hover)
+        return true
+
+      return false
+    })
+  }
 
   return (
     <div onClick={() => clickBackground()} >
@@ -222,50 +216,7 @@ export default (props) => {
           <FancyButton text="vs CPU" buttonClick={startVsCPU} />
           <FancyButton text="Multiplayer" buttonClick={startMultiplayer} />
         </div>
-        <div className="menuSettings"
-          onMouseEnter={() => showTooltip(true)}
-          onMouseLeave={() => setHoverState(false)}>
-          <div style={{ "float": "right" }}>
-            <img src={settingImage} width="60" height="60"></img>
-            <div
-              style={{ position: 'relative'}}>
-              <Tooltip show={show}
-                position="bottom center"
-                animation="bounce"
-                arrowAlign="center"
-                background="#181818"
-                textBoxWidth="250px"   >
-                <span key="header" className="headerText">Settings</span>
-                <span className="settingText" >
-                  <div style={{ 'marginBottom': '10px' }}>
-                    <div style={{ 'display': 'inline-flex', 'top': '50%' }}>
-                      Visualiser
-                    </div>
-                    <div style={{ 'float': 'right' }}>
-                      <Toggle defaultChecked={props.menuSettings.visualiser} onChange={() => {
-                        props.setMenuSettings(setting => {
-                          const newObject = { ...setting }
-                          localStorage.setItem('visualiser', !setting.visualiser)
-                          newObject.visualiser = !setting.visualiser
-                          return newObject
-                        })
-                      }} />
-                    </div>
-                  </div>
-                </span>
-                <span className={props.menuSettings.visualiser ? "subSettingText subSettingShadow" : "settingText disable"}>
-                  <FormControl style={{ 'float': 'right' }} component="fieldset">
-                    <FormLabel   style={{ 'float': 'right', 'marginLeft': '44px',   'marginBottom': '8px' }} component="legend">Type</FormLabel>
-                    <RadioGroup aria-label="type" value={subSettingsFlags ? subSettingsFlags : 'web'} onChange={handleChange}>
-                      <FormControlLabel value="web" control={<Radio  />} label="Web" labelPlacement="start" />
-                      <FormControlLabel value="star" control={<Radio />} label="Star" labelPlacement="start" />
-                    </RadioGroup>
-                  </FormControl>
-                </span>
-              </Tooltip>
-            </div>
-          </div>
-        </div>
+        <SettingsToolTip menuSettings={props.menuSettings} menuSettings={props.menuSettings} setMenuSettings={props.setMenuSettings} showTooltip={showTooltip} setHoverState={setHoverState} show={show} subSettingsFlags={subSettingsFlags} setSubSettingsFlags={setSubSettingsFlags} />
       </Modal>
     </div>
   )
