@@ -24,6 +24,7 @@ const customStyles = {
 export default (props) => {
 
   const restartGame = () => {
+    props.speedRef.current = 5
     props.setGameOver(false)
     if(props.gameMode == "singlePlayer" ) {
       props.playerSnakeArrayRef.current = [{
@@ -60,7 +61,7 @@ export default (props) => {
         style={customStyles}
         shouldCloseOnOverlayClick={false} >
         <div className="game-over">
-          <div style={{ 'font-weight': 'bold', 'margin-bottom': '10px' }}>Game Over</div>
+          <div style={{ 'fontWeight': 'bold', 'margin-bottom': '10px' }}>Game Over</div>
           <div>Score: {props.gameOverScore}</div>
         </div>
         <div className="gameOverContainer">

@@ -8,6 +8,9 @@
     "socket.io": "^2.3.0"
   },
   "scripts": {
-    "start": "node server"
+    "start": "nodemon server"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }

@@ -46,11 +46,13 @@ html {
     zoom: 0.8;
   }
 }
-@media (max-width: 800px), (max-height: 1000px) {
+
+@media (max-width: 700px), (max-height: 1000px) {
   html {
-    zoom: 0.68;
+    zoom: 0.7;
   }
 }
+
 
 @keyframes glow {
   to {
@@ -314,13 +316,35 @@ span#answer {
 
 #wrapper {
   width: 1300px;
+  height: 2000px;
   padding-left: 0;
   padding-right: 0;
   margin-left: auto;
   margin-right: auto;
-  display: block;
   position: relative;
 }
+
+
+#wrapper > canvas {
+  position:absolute;
+  left:0;
+  top:0;
+  border: 5px solid rgba(224, 43, 125, 1);
+  border-radius: 15px;
+}
+
+#wrapper > #gameBackground {
+  left:0;
+  top:0;
+  width: 1300px;
+  height: 1175px;
+  
+  border: 5px solid rgba(224, 43, 125, 1);
+  border-radius: 15px;
+  background-image: linear-gradient(to right top, #0052ce, #004db1, #004593, #003d75, #093357);
+}
+
+
 
 .lds-ring {
   display: inline-block;
@@ -465,3 +489,59 @@ canvas {
     transform: translateY(0%);
   }
 }
+
+#wave {
+  opacity:0.2;
+}
+
+#audio {
+  display:none;
+}
+
+.menuSettings {
+  top:7px;
+  right:5px;
+  width: 100%;
+  position: relative;
+}
+
+.disable  {
+  /* display:none !important; */
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  padding: 0 !important;
+  transition: all .2s ease-in-out;
+
+
+}
+
+.settingText {
+  font-family: Helvetica, cursive;
+
+}
+
+.subSettingText {
+  font-family: Helvetica, cursive;
+  background-color: #e2e2e2 !important;
+  height:125px;
+  transition: all .1s ease-in-out;
+
+}
+
+.subSettingShadow {
+  border-top: 3px solid #d4d4d4;
+  opacity: 1;
+  
+}
+
+
+.headerText {
+  font-family: Helvetica, cursive;
+  font-size: 22px;
+  pointer-events: none;
+  border-bottom: 1px solid #f1eded;
+  text-align: center;
+}
+
+

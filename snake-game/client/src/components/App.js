@@ -8,12 +8,24 @@ import CanvasWrapper from './CanvasWrapper'
 import KeyboardInput from '../lib/KeyboardInput'
 import Sound from '../lib/Sound'
 import { SnakeImage, Powers } from '../assets/images/'
+import Wave from "@foobar404/wave"
 
 let socket = null
 const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
 const acronyms = require('../store/acronyms.js')
 const gamepad = require('../lib/gamepad.js')
 const App = () => {
+
+  const [menuSettings, setMenuSettings] = useState({
+    visualiser: false,
+    song: 'song10',
+    waveSettings: {
+      stroke: 1,
+      type: "web",
+      colors: ["white", "white", "white"]
+    }
+  });
+  const [wave] = useState(new Wave());
   const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
@@ -73,9 +85,16 @@ const App = () => {
   const [shade, setShade] = useState(0)
   const shadeRef = useRef(shade)
 
+  useEffect(() => {
+    const visualiserSetting = localStorage.getItem('visualiser') == 'true'
+    setMenuSettings(s => {
+      s.visualiser = visualiserSetting
+      return s
+    })
+  }, [])
 
   useEffect(() => {
-    gamepad.load( updateSnakeArray, playerSnakeArrayRef, playerRef, socket)
+    gamepad.load(updateSnakeArray, playerSnakeArrayRef, playerRef, socket)
   }, [socket])
 
   useEffect(() => {
@@ -107,7 +126,7 @@ const App = () => {
   useEffect(() => {
 
     if (gameMode == 'multiplayer') {
-      socket = io.connect('http://localhost:3001/', { transports: ['websocket'], upgrade: false })
+      socket = io.connect('http://54.170.171.16:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
       socket.on('playerJoined', (data) => {
@@ -182,11 +201,11 @@ const App = () => {
         updateSnakeArray(data.playerId, 'status', 'none')
         bulletRef.current.status = true
         bulletRef.current.playerId = data.playerId
-      })    
+      })
     }
 
-    // if (gameStart)
-    //   Sound.playSound('background-music.mp3', true, 0.3)
+    wave.fromElement("audio", "wave", menuSettings.waveSettings)
+
   }, [gameStart])
 
   useEffect(() => {
@@ -196,6 +215,7 @@ const App = () => {
     } else if (gameModeRef.current == "singlePlayer") {
       levelUpCheck(score)
     }
+
   }, [score])
 
   const levelUp = (speed) => {
@@ -387,14 +407,6 @@ const App = () => {
     }
   }
 
-  const renderGameBoard = (context, canvas) => {
-    var grd = context.createLinearGradient(0, 0, canvas.width, canvas.height)
-    grd.addColorStop(0, "#2680F9");
-    grd.addColorStop(1, "#00285D");
-    context.fillStyle = grd;
-    context.fillRect(0, 0, 1300, 1175)
-  }
-
   const selectHeadImage = (snake) => {
     if (!snake.closeToFood) {
       switch (snake.colour) {
@@ -476,28 +488,6 @@ const App = () => {
     var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
 
     return "#" + RR + GG + BB;
-  }
-
-  const renderTail = (context, snake, cell, shadeCol) => {
-    console.log(snake.direction)
-    context.beginPath()
-    switch (snake.direction) {
-      case "left":
-        context.arc(cell.x + 15, cell.y + 10, 10, 0, 2 * Math.PI)
-        break
-      case "right":
-        context.arc(cell.x + 5, cell.y + 10, 10, 0, 2 * Math.PI)
-        break
-      case "up":
-        context.arc(cell.x + 10, cell.y + 15, 10, 0, 2 * Math.PI)
-        break
-      case "down":
-        context.arc(cell.x + 10, cell.y, 10, 0, 2 * Math.PI)
-        break
-    }
-
-    context.fillStyle = shadeCol
-    context.fill()
   }
 
   const renderBlood = (context, x, y, size) => {
@@ -784,7 +774,6 @@ const App = () => {
       return;
     const context = canvas.getContext('2d')
     context.clearRect(0, 0, canvas.width, canvas.height)
-    renderGameBoard(context, canvas)
 
     if (acronymStatus) {
       renderFullWorld(context)
@@ -824,7 +813,7 @@ const App = () => {
       foodCheck(snakeHead, updatedCells, snake.closeToFood, snake.playerId, snake.score)
       powerUpCheck(snakeHead, snake.playerId)
       renderBullet(context, snake, snakeHead)
-
+      updateSnakeArray(snake.playerId, 'snakeCells', updatedCells)
       snake.snakeCells.forEach((cell, index) => {
         handleOutOfBounds(canvas, snake, snakeHead, cell)
         renderSnake(context, index, snake, cell)
@@ -834,9 +823,9 @@ const App = () => {
 
   return (
     <div>
-      {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} /> :
+      {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} menuSettings={menuSettings} setMenuSettings={setMenuSettings} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} />
+          <GameOverScreen isGameOver={isGameOver} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} />
           <TopBar score={score}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}
@@ -848,7 +837,7 @@ const App = () => {
             gameMode={gameMode}
             pause={pause}
             setPause={setPause} />
-          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} powerUpText={powerUpText} />
+          <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} powerUpText={powerUpText} menuSettings={menuSettings} song={menuSettings.song} />
         </div>}
     </div>
   )
