@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Tooltip from 'react-power-tooltip'
-import Toggle from "react-toggle";
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import Radio from '@material-ui/core/Radio';
+import Toggle from "react-toggle"
+import RadioGroup from '@material-ui/core/RadioGroup'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormLabel from '@material-ui/core/FormLabel'
+import Radio from '@material-ui/core/Radio'
+import Sound from '../lib/Sound'
+
 const settingImage = require('../assets/images/settings.png')
 
-
 export default (props) => {
-
   const handleChange = (event) => {
-    props.setSubSettingsFlags(event.target.value);
+    props.setSubSettingsFlags(event.target.value)
   };
 
   return (
@@ -30,11 +30,21 @@ export default (props) => {
             background="#181818"
             textBoxWidth="250px"   >
             <span key="header" className="headerText">Settings</span>
+            <span className="settingText">
+              <div style={{ 'display': 'inline-flex', 'top': '50%' }}>
+                Sound
+              </div>
+              <div style={{ 'float': 'right' }}>
+                <Toggle defaultChecked={!Sound.getMuteStatus()} onChange={() => {
+                  Sound.muteSwitch()
+                }} />
+              </div>
+            </span>
             <span className="settingText" >
               <div style={{ 'marginBottom': '10px' }}>
                 <div style={{ 'display': 'inline-flex', 'top': '50%' }}>
                   Visualiser
-                    </div>
+                </div>
                 <div style={{ 'float': 'right' }}>
                   <Toggle defaultChecked={props.menuSettings.visualiser} onChange={() => {
                     props.setMenuSettings(setting => {

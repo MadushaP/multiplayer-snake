@@ -7,10 +7,7 @@ import '../css/playPause.css'
 
 export default (props) => {
   const toggleSound = () => {
-    if (Sound.getVolume() === 0.8)
-      Sound.setVolume(0)
-    else
-      Sound.setVolume(0.8)
+      Sound.muteSwitch()
   };
 
   const togglePause = () => {
@@ -23,18 +20,18 @@ export default (props) => {
   const setAiStatus = () => {
     let currentSnake = props.playerSnakeArray.find(
       (x) => x.playerId == props.playerId
-    );
+    )
     if (currentSnake.aiStatus) {
       props.updateFieldChange(props.playerId, "aiStatus", false);
     } else {
       props.updateFieldChange(props.playerId, "aiStatus", true);
     }
-  };
+  }
 
   const seAcronymStatus = () => {
     if (props.acronymStatus) props.setAcronymStatus(false);
     else props.setAcronymStatus(true);
-  };
+  }
 
   const AIOption =
     <div style={{ width: "37%" }}>
@@ -52,7 +49,7 @@ export default (props) => {
       Sound
       <Toggle
         className="spacing"
-        defaultChecked={true}
+        defaultChecked={!Sound.getMuteStatus()}
         onChange={() => toggleSound()}
       />
     </div>

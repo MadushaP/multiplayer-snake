@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import FancyButton from './FancyButton'
-import Tooltip from 'react-power-tooltip'
-import Toggle from "react-toggle";
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import Radio from '@material-ui/core/Radio';
 import SettingsToolTip from '../components/SettingsTooltip'
 
 const snakeMenuImage = require('../assets/images/snake-menu-picture.png')
-const settingImage = require('../assets/images/settings.png')
 const customStyles = {
   content: {
     top: '50%',
@@ -34,8 +26,7 @@ const customStyles = {
 export default (props) => {
   const [show, setShow] = useState(false)
   const [hover, setHoverState] = useState(false)
-
-  const [subSettingsFlags, setSubSettingsFlags] = useState(localStorage.getItem('visualiserType'));
+  const [subSettingsFlags, setSubSettingsFlags] = useState(localStorage.getItem('visualiserType'))
 
   useEffect(() => {
     if (subSettingsFlags == 'web') {
@@ -120,7 +111,6 @@ export default (props) => {
   }
 
   const startMultiplayer = () => {
-    // console.log("Started multiplayer player")
     props.setGameMode("multiplayer")
     props.gameModeRef.current = "multiplayer"
     props.setGameStart(true)
@@ -216,7 +206,7 @@ export default (props) => {
           <FancyButton text="vs CPU" buttonClick={startVsCPU} />
           <FancyButton text="Multiplayer" buttonClick={startMultiplayer} />
         </div>
-        <SettingsToolTip menuSettings={props.menuSettings} menuSettings={props.menuSettings} setMenuSettings={props.setMenuSettings} showTooltip={showTooltip} setHoverState={setHoverState} show={show} subSettingsFlags={subSettingsFlags} setSubSettingsFlags={setSubSettingsFlags} />
+        <SettingsToolTip menuSettings={props.menuSettings} menuSettings={props.menuSettings} setMenuSettings={props.setMenuSettings} showTooltip={showTooltip} setHoverState={setHoverState} show={show} subSettingsFlags={subSettingsFlags} setSubSettingsFlags={setSubSettingsFlags}/>
       </Modal>
     </div>
   )

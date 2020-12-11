@@ -1,7 +1,10 @@
 
   let volume = 0.8
-  const playSound = (sound, loop, volumeOverride) => {
-    var sound = new Audio(require(`../assets/sounds/${sound}`))
+  let muted = false
+  const playSound = (mp3, loop, volumeOverride) => {
+    if(muted)
+      return
+    var sound = new Audio(require(`../assets/sounds/${mp3}`))
     sound.volume = volumeOverride ? volumeOverride : volume
 
 
@@ -15,7 +18,7 @@
           e.name === 'NotSupportedError') {
           console.log('Audio play not supported')
         }
-      });
+      })
     }
   }
 
@@ -27,8 +30,19 @@ const getVolume = () => {
     return volume
 }
 
+const getMuteStatus = () => {
+  return muted
+}
+
+const muteSwitch = () => {
+  muted = !muted
+  localStorage.setItem('sound', muted)
+}
+
 module.exports = {
     playSound,
     getVolume,
+    getMuteStatus,
     setVolume,
+    muteSwitch,
 }
