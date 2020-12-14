@@ -1,4 +1,4 @@
-const isArrayInArray = (arr, item) => {
+const isObjectInArray = (arr, item) => {
     var item_as_string = JSON.stringify(item)
     var contains = arr.some((ele) => {
         return JSON.stringify(ele) === item_as_string
@@ -33,7 +33,7 @@ const randomLocation = () => {
   }
 
 module.exports = {
-    isArrayInArray: isArrayInArray,
+    isObjectInArray: isObjectInArray,
     arrayEquals: arrayEquals,
     randomItem: randomItem,
     headAtFood: headAtFood,

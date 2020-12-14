@@ -11,7 +11,7 @@ import { SnakeImage, Powers } from '../assets/images/'
 import Wave from "@foobar404/wave"
 
 let socket = null
-const { randomItem, headAtFood, isArrayInArray, randomLocation } = require('../lib/helper.js')
+const { randomItem, headAtFood, isObjectInArray, randomLocation } = require('../lib/helper.js')
 const acronyms = require('../store/acronyms.js')
 const gamepad = require('../lib/gamepad.js')
 const App = () => {
@@ -300,7 +300,7 @@ const App = () => {
 
   const headBodyCollisionCheck = (snakeHead, snakeCells) => {
     let snakeBody = snakeCells.slice(0, -1)
-    if (isArrayInArray(snakeBody, snakeHead)) {
+    if (isObjectInArray(snakeBody, snakeHead)) {
       gameOver()
     }
   }
