@@ -30,8 +30,8 @@ io.on('connection', (socket) => {
 
   const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
   snakeColours = snakeColours.filter(colour => colour != randomColour)
- 
-  if(snakeColours.length == 0) {
+
+  if (snakeColours.length == 0) {
     snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
   }
 
@@ -101,8 +101,6 @@ io.on('connection', (socket) => {
       io.sockets.emit('updateFoodBroadcast', food)
       foodBackOff = true
       setTimeout(() => foodBackOff = false, 200)
-    } else {
-      console.log("back off")
     }
   })
 
@@ -114,15 +112,22 @@ io.on('connection', (socket) => {
     io.sockets.emit('increaseSnakeLength', data);
   })
 
+
+  let powerBackOff = false
+
   socket.on('powerExecute', (data) => {
-    if (data.status == "freeze") {
-      io.sockets.emit('freeze', data)
-      io.sockets.emit("powerUpChange", null)
-    } else if (data.status == "gun") {
-      io.sockets.emit('loadGun', data)
-      io.sockets.emit("powerUpChange", null)
-    } else if (data.status == "fireBullet") {
-      io.sockets.emit('fireBullet', data)
+    if (!powerBackOff) {
+      if (data.status == "freeze") {
+        io.sockets.emit('freeze', data)
+        io.sockets.emit("powerUpChange", null)
+      } else if (data.status == "gun") {
+        io.sockets.emit('loadGun', data)
+        io.sockets.emit("powerUpChange", null)
+      } else if (data.status == "fireBullet") {
+        io.sockets.emit('fireBullet', data)
+      }
+      powerBackOff = true
+      setTimeout(() => powerBackOff = false, 200)
     }
   })
 

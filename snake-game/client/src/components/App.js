@@ -188,13 +188,16 @@ const App = () => {
       socket.on('freeze', (data) => {
         if (playerRef.current != data.playerId) {
           setPowerText("frozen")
-          Sound.playSound('holy-shit.mp3', false, 0.2)
+          Sound.playSound('holy-shit.mp3', false, 0.1)
         }
+
 
         playerSnakeArrayRef.current.forEach(snake => {
           if (snake.playerId != data.playerId) {
             updateSnakeArray(snake.playerId, 'status', 'frozen')
-            setInterval(() => { updateSnakeArray(snake.playerId, 'status', 'none') }, 7000)
+            setTimeout(() => { 
+              updateSnakeArray(snake.playerId, 'status', 'none')    
+            }, 7000)
           }
         })
       })
@@ -363,7 +366,6 @@ const App = () => {
       // console.log(snakeHead, powerUpRef.current, distanceX, distanceY)
 
       if (distanceX <= 39 && distanceY <= 39) {
-        console.log(powerUpRef.current)
         if (powerUpRef.current.power == "freeze") {
           Sound.playSound('freeze-sound.mp3', false, 0.3)
           socket.emit('powerExecute', { playerId: playerId, status: 'freeze' })

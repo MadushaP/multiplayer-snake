@@ -57,34 +57,25 @@ export default (props) => {
     }
   }
 
+  const adjustHeight  = () => {
+    var canvases = [...document.getElementsByTagName('canvas')]
+    canvases.forEach(element => {
+      element.height= window.innerHeight - 100
+    });
+
+  }
+
   useEffect(() => {
     if(props.menuSettings.visualiser) {
       var audio = document.getElementById("audio");
       audio.volume = 0.5;
     }
 
-    var wavesCanvas = document.getElementsByTagName('canvas')[0];
-    if(wavesCanvas) {
-      wavesCanvas.height = window.innerHeight - 100
-    }
-    var gamesCanvas = document.getElementsByTagName('canvas')[1];
-    if(gamesCanvas) {
-      gamesCanvas.height = window.innerHeight - 100
-    }
+    adjustHeight()
 
-
-    window.onresize = function() {
-
-    var wavesCanvas = document.getElementsByTagName('canvas')[0];
-    if(wavesCanvas) {
-      wavesCanvas.height = window.innerHeight - 100
-    }
-    var gamesCanvas = document.getElementsByTagName('canvas')[1];
-    if(gamesCanvas) {
-      gamesCanvas.height = window.innerHeight - 100
-    }
-
-    }
+   window.onresize = function() {
+    adjustHeight()
+   }
   }, [])
 
   return (
