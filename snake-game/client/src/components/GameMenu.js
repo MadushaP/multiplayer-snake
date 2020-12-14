@@ -10,16 +10,14 @@ const customStyles = {
     left: '50%',
     right: 'auto',
     bottom: 'auto',
-    marginRight: '-50%',
     height: '400px',
     width: '800px',
     boxShadow: '0 3px 7px rgba(0, 0, 0, 0.3)',
     transform: 'translate(-50%, -50%)',
     borderRadius: '50px',
     backgroundImage: 'linear-gradient(to top, #007adf 0%, #00ecbc 100%)',
-    'border': '1px black',
-    overflow: 'visible'
-
+    border: '1px black',
+    overflow: 'visible',
   }
 }
 

@@ -14,6 +14,28 @@ html {
   user-select: none;
 }
 
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 1) { 
+    div.ReactModal__Content {
+      zoom: 0.7;
+    }
+}
+
+/* ----------- Retina Screens ----------- */
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) { 
+
+    div.ReactModal__Content {
+      zoom: 0.7;
+    }
+}
+
+
 .game-area {
   position: relative;
   margin: 0 auto;
@@ -25,33 +47,6 @@ html {
   background-image: linear-gradient(180deg, #1f2933 0%, #124e8e 100%);
 }
 
-@media (max-width: 1400px), (max-height: 1250px) {
-  html {
-    zoom: 0.95;
-  }
-}
-@media (max-width: 1300px), (max-height: 1200px) {
-  html {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1200px), (max-height: 1150px) {
-  html {
-    zoom: 0.85;
-  }
-}
-@media (max-width: 1100px), (max-height: 1100px) {
-  html {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 700px), (max-height: 1000px) {
-  html {
-    zoom: 0.7;
-  }
-}
 
 
 @keyframes glow {
@@ -337,8 +332,7 @@ span#answer {
   left:0;
   top:0;
   width: 1300px;
-  height: 1175px;
-  
+  height: calc(100vh - 100px);
   border: 5px solid rgba(224, 43, 125, 1);
   border-radius: 15px;
   background-image: linear-gradient(to right top, #0052ce, #004db1, #004593, #003d75, #093357);
@@ -374,6 +368,7 @@ span#answer {
 .lds-ring div:nth-child(3) {
   animation-delay: -0.15s;
 }
+
 @keyframes lds-ring {
   0% {
     transform: rotate(0deg);
@@ -535,7 +530,6 @@ canvas {
   
 }
 
-
 .headerText {
   font-family: Helvetica, cursive;
   font-size: 22px;
@@ -543,5 +537,3 @@ canvas {
   border-bottom: 1px solid #f1eded;
   text-align: center;
 }
-
-

@@ -61,7 +61,7 @@ export default (props) => {
         style={customStyles}
         shouldCloseOnOverlayClick={false} >
         <div className="game-over">
-          <div style={{ 'fontWeight': 'bold', 'margin-bottom': '10px' }}>Game Over</div>
+          <div style={{ 'fontWeight': 'bold', 'marginBottom': '10px' }}>Game Over</div>
           <div>Score: {props.gameOverScore}</div>
         </div>
         <div className="gameOverContainer">

@@ -164,6 +164,14 @@ const App = () => {
 
       socket.on('updateBodyBroadcast', (data) => { updateSnakeArray(data.playerId, 'snakeCells', data.snakeCells) })
       socket.on('updateFoodBroadcast', (data) => {
+        // console.log(data)
+        // //fix multiplayer relative to food
+        // if(data.y > window.innerHeight) {
+        //   console.log("out of bounds")
+        //   console.log(data.y, window.innerHeight - 150 )
+        //   console.log('difference' , data.y -  (window.innerHeight - 150))
+        //   // data.y =  data.y - (window.innerHeight)
+        // }
         foodRef.current = data
         setFood(data)
       })
@@ -825,7 +833,7 @@ const App = () => {
     <div>
       {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} menuSettings={menuSettings} setMenuSettings={setMenuSettings} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} />
+          <GameOverScreen isGameOver={isGameOver} wave={wave} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} />
           <TopBar score={score}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}

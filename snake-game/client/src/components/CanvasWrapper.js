@@ -62,12 +62,35 @@ export default (props) => {
       var audio = document.getElementById("audio");
       audio.volume = 0.5;
     }
+
+    var wavesCanvas = document.getElementsByTagName('canvas')[0];
+    if(wavesCanvas) {
+      wavesCanvas.height = window.innerHeight - 100
+    }
+    var gamesCanvas = document.getElementsByTagName('canvas')[1];
+    if(gamesCanvas) {
+      gamesCanvas.height = window.innerHeight - 100
+    }
+
+
+    window.onresize = function() {
+
+    var wavesCanvas = document.getElementsByTagName('canvas')[0];
+    if(wavesCanvas) {
+      wavesCanvas.height = window.innerHeight - 100
+    }
+    var gamesCanvas = document.getElementsByTagName('canvas')[1];
+    if(gamesCanvas) {
+      gamesCanvas.height = window.innerHeight - 100
+    }
+
+    }
   }, [])
 
   return (
     <div id='wrapper'>
       <div id="gameBackground"></div>
-      {props.menuSettings.visualiser ? <canvas id="wave" width="1300" height="1175"></canvas> : null}
+      {props.menuSettings.visualiser ? <canvas ref={props.visCanvasRef} id="wave" width="1300" height="1175"></canvas> : null}
       <canvas id="game" ref={props.canvasRef} width="1300" height="1175"></canvas>
       { props.menuSettings.visualiser ? <audio
         id="audio"
