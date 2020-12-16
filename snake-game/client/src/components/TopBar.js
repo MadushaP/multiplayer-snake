@@ -34,7 +34,7 @@ export default (props) => {
   }
 
   const AIOption =
-    <div style={{ width: "37%" }}>
+    <div title="ai" style={{ width: "37%" }}>
       AI
       <Toggle
         className="spacing"
@@ -57,7 +57,7 @@ export default (props) => {
 
 
   const PauseOption =
-    <div style={{ width: "20%", paddingTop: "1px" }}>
+    <div title="pause" style={{ width: "20%", paddingTop: "1px" }}>
       <div className="wrapper" onClick={() => togglePause()}>
         <div className={props.pause ? "play" : "pause"}></div>
       </div>
@@ -68,7 +68,7 @@ export default (props) => {
 
 
   const AcronymOption =
-    <div style={{ width: "71%" }}>
+    <div title="acronym" style={{ width: "71%" }}>
       Acronym
       <Toggle
         className="spacing"

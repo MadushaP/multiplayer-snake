@@ -3,7 +3,7 @@ import {playSound} from '../lib/Sound'
 
 export default (props) => {
   return (
-    <div >
+    <div title={props.text} >
       <nav>
         <ul onMouseEnter={() => playSound('tap.mp3')}>
           <li onClick={props.buttonClick} style={{ 'userSelect': 'none' }}>

@@ -66,10 +66,10 @@ export default (props) => {
         </div>
         <div className="gameOverContainer">
           <div className="iconWrapper"  onClick={() => backToMenu()} >
-            <img className="backIcon" src={backIcon}/>
+            <img title="backIcon" className="backIcon" src={backIcon}/>
           </div>
           <div className="iconWrapper">
-            <img className="restartIcon" src={restartIcon} onClick={() => restartGame()} />
+            <img title="restartIcon" className="restartIcon" src={restartIcon} onClick={() => restartGame()} />
           </div>
           <p className="iconText">Back</p>
           <p className="iconText">Restart</p>
