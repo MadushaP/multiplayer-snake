@@ -98,4 +98,33 @@ describe('snake', () => {
 
     }, 50000)
 
+
+    test('simulate multiplayer player game', async () => {
+        browser2 = await puppeteer.launch({ headless: false, args: ['--window-size=1920,1080'], defaultViewport: null });
+        page2 = await browser2.newPage();
+        await page2.goto('http://localhost:3000/', { waitUntil: 'networkidle2' });
+
+        await page.click('div[title="Multiplayer"]');
+
+        await page.waitForTimeout(1000);
+        await page2.click('div[title="Multiplayer"]');
+        await page.waitForTimeout(1000);
+
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(500);
+
+        await page.keyboard.press('ArrowRight');
+        await page.waitForTimeout(500);
+        await page2.keyboard.press('ArrowUp');
+        await page.waitForTimeout(500);
+        await page2.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(500);
+        await page2.keyboard.press('ArrowDown');
+
+        await page.waitForTimeout(1500);
+        await browser.close();
+        await browser2.close();
+    }, 50000)
+
 })
