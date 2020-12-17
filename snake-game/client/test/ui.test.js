@@ -11,7 +11,7 @@ describe('snake', () => {
     });
 
       
-    test('simulate single player game', async () => {
+    xtest('simulate single player game', async () => {
         console.log("Selecting single player")
         await page.hover('div[title="Single player"]');
         await page.waitForTimeout(1500);
@@ -86,6 +86,10 @@ describe('snake', () => {
         await page.waitForTimeout(500);
         await page.click('body > div.ReactModalPortal > div > div > div.menuSettings > div > div > div > div > div.rpt-textbox-container > div.rpt-textbox > div > span:nth-child(3) > div > div:nth-child(2)')
         await page.waitForTimeout(500);
+        await page.click('body > div.ReactModalPortal > div > div > div.menuSettings > div > div > div > div > div.rpt-textbox-container > div.rpt-textbox > div > span:nth-child(3) > div > div:nth-child(2)')
+        await page.waitForTimeout(500);
+        await page.click('body > div.ReactModalPortal > div > div > div.menuSettings > div > div > div > div > div.rpt-textbox-container > div.rpt-textbox > div > span:nth-child(3) > div > div:nth-child(2)')
+        await page.waitForTimeout(500);
 
         await page.click('body > div.ReactModalPortal > div > div > div.menuSettings > div > div > div > div > div.rpt-textbox-container > div.rpt-textbox > div > span.subSettingText.subSettingShadow > fieldset > div > label:nth-child(2) > span.MuiButtonBase-root.MuiIconButton-root.PrivateSwitchBase-root-1.MuiRadio-root.MuiRadio-colorSecondary.MuiIconButton-colorSecondary > span.MuiIconButton-label > input')
         await page.waitForTimeout(1000);
@@ -99,7 +103,7 @@ describe('snake', () => {
     }, 50000)
 
 
-    test('simulate multiplayer player game', async () => {
+    xtest('simulate multiplayer player game', async () => {
         browser2 = await puppeteer.launch({ headless: false, args: ['--window-size=1920,1080'], defaultViewport: null });
         page2 = await browser2.newPage();
         await page2.goto('http://localhost:3000/', { waitUntil: 'networkidle2' });
