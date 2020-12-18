@@ -11,7 +11,7 @@ describe('snake', () => {
     });
 
       
-    xtest('simulate single player game', async () => {
+    test('simulate single player game', async () => {
         console.log("Selecting single player")
         await page.hover('div[title="Single player"]');
         await page.waitForTimeout(1500);
@@ -103,7 +103,7 @@ describe('snake', () => {
     }, 50000)
 
 
-    xtest('simulate multiplayer player game', async () => {
+    test('simulate multiplayer player game', async () => {
         browser2 = await puppeteer.launch({ headless: false, args: ['--window-size=1920,1080'], defaultViewport: null });
         page2 = await browser2.newPage();
         await page2.goto('http://localhost:3000/', { waitUntil: 'networkidle2' });
