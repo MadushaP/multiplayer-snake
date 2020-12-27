@@ -1,7 +1,7 @@
 const singlePlayerKeyPress = (playerSnakeArrayRef, playerRef, updateFieldChanged, key) => {
-    if (playerSnakeArrayRef.current.length == 0)
+    if (playerSnakeArrayRef.current.length === 0)
         return
-    let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).direction
+    let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId === playerRef.current).direction
     switch (key) {
         case "ArrowRight":
             if (currentDirection !== "left") {
@@ -29,10 +29,10 @@ const singlePlayerKeyPress = (playerSnakeArrayRef, playerRef, updateFieldChanged
 }
 
 const multiplayerKeyPress = (playerSnakeArrayRef, playerRef, socket, updateFieldChanged, key) => {
-    if (playerSnakeArrayRef.current.length == 0)
+    if (playerSnakeArrayRef.current.length === 0)
         return
-    let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).direction
-    let currentPower = playerSnakeArrayRef.current.find(x => x.playerId == playerRef.current).status
+    let currentDirection = playerSnakeArrayRef.current.find(x => x.playerId === playerRef.current).direction
+    let currentPower = playerSnakeArrayRef.current.find(x => x.playerId === playerRef.current).status
     switch (key) {
         case "ArrowRight":
             if (currentDirection !== "left") {
@@ -59,7 +59,7 @@ const multiplayerKeyPress = (playerSnakeArrayRef, playerRef, socket, updateField
             }
             break
         case " ":
-            if(currentPower == "gun") {
+            if(currentPower === "gun") {
                 socket.emit('powerExecute', { 'playerId': playerRef.current, "status": "fireBullet" })
             }
             break

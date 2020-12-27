@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, Fragment } from 'react'
+import React, { useEffect, useState } from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 var AWS = require("aws-sdk");
@@ -17,12 +17,12 @@ export default (props) => {
     fetch('/getHighScore')
       .then(response => response.json())
       .then(dataResponse => {
-        
-        if(!dataResponse.Items)
+
+        if (!dataResponse.Items)
           return
         //TO DO Deal with can't retrieve  highscore in the ui
 
-        
+
         let data = dataResponse.Items.map(item => AWS.DynamoDB.Converter.unmarshall(item))
         data = data.slice(0, 5)
 
@@ -55,37 +55,35 @@ export default (props) => {
 
 
   const formatHighscore = () => {
-    {
-      return highScores.map((highScore, index) => {
-        let ranking
-        if (index == 0)
-          ranking = '🥇'
-        else if (index == 1)
-          ranking = '🥈'
-        else if (index == 2)
-          ranking = '🥉'
+    return highScores.map((highScore, index) => {
+      let ranking
+      if (index === 0)
+        ranking = '🥇'
+      else if (index === 1)
+        ranking = '🥈'
+      else if (index === 2)
+        ranking = '🥉'
 
 
-        const playerHighlight = (cssClass) => {
-          if (highScore.currentPlayer)
-            return cssClass + " highScorePlayerHighlight"
-          else
-            return cssClass
-        }
+      const playerHighlight = (cssClass) => {
+        if (highScore.currentPlayer)
+          return cssClass + " highScorePlayerHighlight"
+        else
+          return cssClass
+      }
 
-        return (
-          <React.Fragment key={index} >
-            <div key={ranking + index} style={{ fontSize: '30px' }}>{ranking}</div>
-            <div key={highScore.name + index} className={playerHighlight("highScorePlayerName")}> {highScore.name}</div>
-            <div key={highScore.score + index} className={playerHighlight("highScorePlayerScore")}>{highScore.score}</div>
-          </React.Fragment>)
-      })
-    }
+      return (
+        <React.Fragment key={index} >
+          <div key={ranking + index} style={{ fontSize: '30px' }}>{ranking}</div>
+          <div key={highScore.name + index} className={playerHighlight("highScorePlayerName")}> {highScore.name}</div>
+          <div key={highScore.score + index} className={playerHighlight("highScorePlayerScore")}>{highScore.score}</div>
+        </React.Fragment>)
+    })
   }
 
   const highScoreSubmit = () => {
     let newHighScore = [...highScores]
-    let currentPlayerObj = newHighScore.find(highScore => highScore.currentPlayer == true)
+    let currentPlayerObj = newHighScore.find(highScore => highScore.currentPlayer === true)
 
     currentPlayerObj.name = highScoreNameText
 
@@ -93,9 +91,9 @@ export default (props) => {
     setShowNameInput(false)
 
     fetch('/putHighScore', {
-           method: 'POST',
-           headers: {'Content-Type': 'application/json'},
-           body: JSON.stringify(currentPlayerObj)
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentPlayerObj)
     }).then(response => response.json())
       .then(data => console.log(data))
   }
@@ -122,7 +120,7 @@ export default (props) => {
     if (props.aiUsedFlag)
       return <div className="highScoreHeader">AI Used  🤖</div>
 
-    if (props.gameOverScore == 0)
+    if (props.gameOverScore === 0)
       return <div className="highScoreHeader">No score 😟</div>
 
     if (showNameInput) {
@@ -151,7 +149,7 @@ export default (props) => {
   }
 
   const renderHighScore = () => {
-    if (props.gameMode == "singlePlayer") {
+    if (props.gameMode === "singlePlayer") {
       return <div>
         <div className="highScoreHeader">High Score</div>
         <div className="highscoreGridContainerHeader">

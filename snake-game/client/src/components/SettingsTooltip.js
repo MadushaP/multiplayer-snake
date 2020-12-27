@@ -20,7 +20,7 @@ export default (props) => {
       onMouseEnter={() => props.showTooltip(true)}
       onMouseLeave={() => props.setHoverState(false)}>
       <div style={{ "float": "right" }}>
-        <img title="menuSettings" src={settingImage} width="60" height="60"></img>
+        <img alt="settings" title="menuSettings" src={settingImage} width="60" height="60"></img>
         <div
           style={{ position: 'relative' }}>
           <Tooltip show={props.show}

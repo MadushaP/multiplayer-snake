@@ -7,7 +7,7 @@ function load(updateFieldChanged, playerSnakeArrayRef, playerRef, socket) {
     var gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
     var gp = gamepads[0];
     let snake = playerSnakeArrayRef.current.find(
-      (x) => x.playerId == playerRef.current
+      (x) => x.playerId === playerRef.current
     );
     if (gp) {
       if (!snake) {
@@ -53,7 +53,7 @@ function load(updateFieldChanged, playerSnakeArrayRef, playerRef, socket) {
       }
 
       if (gp.buttons[7].pressed) {
-        if(socket && snake.status == "gun")
+        if(socket && snake.status === "gun")
         socket.emit("powerExecute", {
           playerId: snake.playerId,
           status: "fireBullet",

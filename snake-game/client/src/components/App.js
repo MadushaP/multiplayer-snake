@@ -87,7 +87,7 @@ const App = () => {
   const [aiUsedFlag, setAiUsedFlag] = useState(false)
 
   useEffect(() => {
-    const visualiserSetting = localStorage.getItem('visualiser') == 'true'
+    const visualiserSetting = localStorage.getItem('visualiser') === 'true'
     setMenuSettings(s => {
       s.visualiser = visualiserSetting
       return s
@@ -106,18 +106,18 @@ const App = () => {
   }, [gameMode])
 
   useEffect(() => {
-    if (gameMode == "multiplayer" && isGameOver) {
+    if (gameMode === "multiplayer" && isGameOver) {
       socket.emit('multiGameOver')
       isGameOverRef.current = true
     }
-    if (playerSnakeArrayRef.current.find(snake => snake.playerId == playerId))
-      setGameOverScore(playerSnakeArrayRef.current.find(snake => snake.playerId == playerId).score)
+    if (playerSnakeArrayRef.current.find(snake => snake.playerId === playerId))
+      setGameOverScore(playerSnakeArrayRef.current.find(snake => snake.playerId === playerId).score)
   }, [isGameOver])
 
   const keypress = ({ key }) => {
     if (isGameOverRef.current)
       return
-    if (gameMode == "singlePlayer" || gameMode == "vsCPU")
+    if (gameMode === "singlePlayer" || gameMode === "vsCPU")
       KeyboardInput.singlePlayerKeyPress(playerSnakeArrayRef, playerRef, updateSnakeArray, key)
     else {
       KeyboardInput.multiplayerKeyPress(playerSnakeArrayRef, playerRef, socket, updateSnakeArray, key)
@@ -126,7 +126,7 @@ const App = () => {
 
   useEffect(() => {
 
-    if (gameMode == 'multiplayer') {
+    if (gameMode === 'multiplayer') {
       socket = io.connect('http://54.170.171.16:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
@@ -140,7 +140,7 @@ const App = () => {
       })
 
       socket.on('clear', (data) => {
-        let x = playerSnakeArrayRef.current.filter(x => x.playerId != data.playerId)
+        let x = playerSnakeArrayRef.current.filter(x => x.playerId !== data.playerId)
         playerSnakeArrayRef.current = x
         setPlayerSnakeArray(x)
       })
@@ -187,14 +187,14 @@ const App = () => {
       })
 
       socket.on('freeze', (data) => {
-        if (playerRef.current != data.playerId) {
+        if (playerRef.current !== data.playerId) {
           setPowerText("frozen")
           Sound.playSound('holy-shit.mp3', false, 0.1)
         }
 
 
         playerSnakeArrayRef.current.forEach(snake => {
-          if (snake.playerId != data.playerId) {
+          if (snake.playerId !== data.playerId) {
             updateSnakeArray(snake.playerId, 'status', 'frozen')
             setTimeout(() => { 
               updateSnakeArray(snake.playerId, 'status', 'none')    
@@ -204,7 +204,7 @@ const App = () => {
       })
 
       socket.on('loadGun', (data) => {
-        if (playerRef.current == data.playerId)
+        if (playerRef.current === data.playerId)
           setPowerText("gun")
         updateSnakeArray(data.playerId, 'status', 'gun')
       })
@@ -221,10 +221,10 @@ const App = () => {
   }, [gameStart])
 
   useEffect(() => {
-    if (gameModeRef.current == "multiplayer") {
+    if (gameModeRef.current === "multiplayer") {
       updateSnakeArray(playerId, 'score', score)
       socket.emit('scoreUpdate', { playerId: playerId, score: score })
-    } else if (gameModeRef.current == "singlePlayer") {
+    } else if (gameModeRef.current === "singlePlayer") {
       levelUpCheck(score)
     }
 
@@ -256,6 +256,8 @@ const App = () => {
       case 40:
         levelUp(20)
         break
+      default:
+          break
     }
   }
 
@@ -264,7 +266,7 @@ const App = () => {
 
   const animate = time => {
     if (isGameOver || pause) { cancelAnimationFrame(requestRef.current); return; }
-    if (previousTimeRef.current != undefined) {
+    if (previousTimeRef.current !== undefined) {
       draw(playerSnakeArrayRef.current)
     }
     previousTimeRef.current = time
@@ -278,9 +280,9 @@ const App = () => {
 
   const updateSnakeArray = (playerId, prop, value) => {
     let newArr = [...playerSnakeArrayRef.current]
-    if (!newArr.find(snake => snake.playerId == playerId))
+    if (!newArr.find(snake => snake.playerId === playerId))
       return;
-    newArr.find(snake => snake.playerId == playerId)[prop] = value
+    newArr.find(snake => snake.playerId === playerId)[prop] = value
     setPlayerSnakeArray(newArr)
   }
 
@@ -335,14 +337,14 @@ const App = () => {
     handleCloseToFood(snakeHead, closeToFood, currentPlayerId)
     if (hasEatenFood(snakeHead)) {
       setConfetti(true)
-      if (gameModeRef.current == "singlePlayer" || gameModeRef.current == "vsCPU") {
+      if (gameModeRef.current === "singlePlayer" || gameModeRef.current === "vsCPU") {
         let foodLocation = randomLocation()
         setFood(foodLocation)
         foodRef.current = foodLocation
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         setScore(score => score + 1)
         increaseSnakeLength(updatedCells)
-      } else if (gameModeRef.current == "multiplayer") {
+      } else if (gameModeRef.current === "multiplayer") {
         socket.emit('randomFood')
         updateSnakeArray(currentPlayerId, 'score', score + 1)
         socket.emit('scoreUpdate', { playerId: currentPlayerId, score: score + 1 })
@@ -361,16 +363,16 @@ const App = () => {
   }
 
   const powerUpCheck = (snakeHead, playerId) => {
-    if (powerUpRef.current && gameModeRef.current == "multiplayer") {
+    if (powerUpRef.current && gameModeRef.current === "multiplayer") {
       let distanceX = Math.abs(snakeHead.x - powerUpRef.current.location.x)
       let distanceY = Math.abs(snakeHead.y - powerUpRef.current.location.y)
       // console.log(snakeHead, powerUpRef.current, distanceX, distanceY)
 
       if (distanceX <= 39 && distanceY <= 39) {
-        if (powerUpRef.current.power == "freeze") {
+        if (powerUpRef.current.power === "freeze") {
           Sound.playSound('freeze-sound.mp3', false, 0.3)
           socket.emit('powerExecute', { playerId: playerId, status: 'freeze' })
-        } else if (powerUpRef.current.power == "gun") {
+        } else if (powerUpRef.current.power === "gun") {
           Sound.playSound('gun.mp3', false, 0.5)
           socket.emit('powerExecute', { playerId: playerId, status: 'gun' })
         }
@@ -404,10 +406,9 @@ const App = () => {
   const renderPowerUp = (context) => {
     if (powerUpRef.current) {
       var powerUpImage = new Image();
-      if (powerUpRef.current.power == "gun") {
+      if (powerUpRef.current.power === "gun") {
         powerUpImage.src = Powers.gun
       } else {
-        var powerUpImage = new Image();
         powerUpImage.src = Powers.freeze
       }
 
@@ -433,6 +434,8 @@ const App = () => {
           return SnakeImage.closedMouthColour.grey
         case "FFC300":
           return SnakeImage.closedMouthColour.yellow
+        default:
+          return SnakeImage.closedMouthColour.green
       }
     } else {
       switch (snake.colour) {
@@ -448,6 +451,8 @@ const App = () => {
           return SnakeImage.openMouthColour.grey
         case "FFC300":
           return SnakeImage.openMouthColour.yellow
+        default:
+          return SnakeImage.openMouthColour.green
       }
     }
   }
@@ -462,14 +467,14 @@ const App = () => {
     grad.addColorStop(1, "#FF4500");
     context.strokeStyle = grad;
     context.lineWidth = 5
-    if (direction == "right" || direction == "left") {
+    if (direction === "right" || direction === "left") {
       context.moveTo(snakeHead.x + 10, snakeHead.y + 10)
       context.lineTo(foodRef.current.x + 10, snakeHead.y + 10)
       context.lineTo(foodRef.current.x + 10, foodRef.current.y + 10)
     } else {
-      if (direction == "down") {
+      if (direction === "down") {
         context.moveTo(snakeHead.x + 10, snakeHead.y + 25)
-      } else if (direction == "up") {
+      } else if (direction === "up") {
         context.moveTo(snakeHead.x + 10, snakeHead.y - 25)
       }
       context.lineTo(snakeHead.x + 10, foodRef.current.y + 10,)
@@ -494,9 +499,9 @@ const App = () => {
     G = (G < 255) ? G : 255;
     B = (B < 255) ? B : 255;
 
-    var RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
-    var GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
-    var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+    var RR = ((R.toString(16).length === 1) ? "0" + R.toString(16) : R.toString(16));
+    var GG = ((G.toString(16).length === 1) ? "0" + G.toString(16) : G.toString(16));
+    var BB = ((B.toString(16).length === 1) ? "0" + B.toString(16) : B.toString(16));
 
     return "#" + RR + GG + BB;
   }
@@ -526,19 +531,19 @@ const App = () => {
   const renderBullet = (context, snake, snakeHead) => {
 
     context.save()
-    if (bulletRef.current.status == true && bulletRef.current.playerId == snake.playerId) {
+    if (bulletRef.current.status === true && bulletRef.current.playerId === snake.playerId) {
 
       //Initialise bullet location
-      if (bulletRef.current.moving == false) {
+      if (bulletRef.current.moving === false) {
         bulletRef.current.location.x = snakeHead.x
         bulletRef.current.location.y = snakeHead.y
         bulletRef.current.direction = snake.direction
 
-        if (bulletRef.current.direction == "left")
+        if (bulletRef.current.direction === "left")
           bulletRef.current.location.x -= 50
-        else if (bulletRef.current.direction == "right")
+        else if (bulletRef.current.direction === "right")
           bulletRef.current.location.x += 50
-        else if (bulletRef.current.direction == "down")
+        else if (bulletRef.current.direction === "down")
           bulletRef.current.location.y += 50
         else
           bulletRef.current.location.y -= 50
@@ -589,17 +594,19 @@ const App = () => {
           context.rotate(Math.PI * 3 / 2)
           context.drawImage(bulletImage, -15, 15, 50, 50)
           break
+        default:
+          break
       }
 
       renderFlash(context)
       //Move bullet
-      if (bulletRef.current.moving == false) {
+      if (bulletRef.current.moving === false) {
         bulletRef.current.moving = true
 
         var timesRun = 0
         let interval = setInterval(() => {
           timesRun += 1
-          if (timesRun == 150)
+          if (timesRun === 150)
             clearInterval(interval)
 
           switch (bulletRef.current.direction) {
@@ -614,6 +621,8 @@ const App = () => {
               break
             case "right":
               bulletRef.current.location.x += 10
+              break
+            default:
               break
           }
 
@@ -633,7 +642,7 @@ const App = () => {
                 }, 350)
 
                 setTimeout(() => {
-                  if (snake.playerId == playerRef.current) {
+                  if (snake.playerId === playerRef.current) {
                     gameOver()
                   }
                 }, 100)
@@ -654,24 +663,24 @@ const App = () => {
     context.strokeStyle = "#FF1919";
     context.lineWidth = 2;
 
-    if (snake.direction == "up") {
+    if (snake.direction === "up") {
       context.beginPath();
       context.moveTo(snakeHead.x - 8, snakeHead.y + 53);
       context.lineTo(snakeHead.x - 8, snakeHead.y + 2000);
       context.stroke();
-    } else if (snake.direction == "down") {
+    } else if (snake.direction === "down") {
       context.beginPath();
       context.moveTo(snakeHead.x + 10, snakeHead.y + 57);
       context.lineTo(snakeHead.x + 10, snakeHead.y + 2000);
       context.stroke();
     }
-    else if (snake.direction == "left") {
+    else if (snake.direction === "left") {
       context.beginPath();
       context.moveTo(snakeHead.x + 10, snakeHead.y + 50);
       context.lineTo(snakeHead.x + 10, snakeHead.y + 2000);
       context.stroke();
     }
-    else if (snake.direction == "right") {
+    else if (snake.direction === "right") {
       context.beginPath();
       context.moveTo(snakeHead.x + 10, snakeHead.y + 65);
       context.lineTo(snakeHead.x + 10, snakeHead.y + 2000);
@@ -681,7 +690,7 @@ const App = () => {
 
   const renderSnake = (context, index, snake, cell) => {
     let shadeCol = shadeColor('#48df08', shadeRef.current)
-    // if (index == 0) {
+    // if (index === 0) {
     //   renderTail(context, snake, cell, shadeCol)
     // }
 
@@ -689,10 +698,10 @@ const App = () => {
       shadeRef.current += 0.8
     }
 
-    context.fillStyle = gameModeRef.current == "singlePlayer" ? shadeCol : `#${snake.colour}`
+    context.fillStyle = gameModeRef.current === "singlePlayer" ? shadeCol : `#${snake.colour}`
     context.fillRect(cell.x, cell.y, 20, 20)
 
-    if (snake.status == "frozen") {
+    if (snake.status === "frozen") {
       context.shadowBlur = 20
       context.shadowColor = "blue"
     }
@@ -704,7 +713,7 @@ const App = () => {
       context.save()
       context.translate(cell.x, cell.y)
 
-      if (snake.status != "gun") {
+      if (snake.status !== "gun") {
         snakeHead.src = selectHeadImage(snake)
         switch (snake.direction) {
           case "right":
@@ -722,6 +731,8 @@ const App = () => {
           case "up":
             context.rotate(Math.PI)
             context.drawImage(snakeHead, -25, -3, 30, 40)
+            break
+          default:
             break
         }
       } else {
@@ -747,6 +758,8 @@ const App = () => {
             context.rotate(Math.PI)
             context.drawImage(snakeHead, -35, -3, 50, 50)
             break
+          default:
+            break
         }
 
         renderLaser(context, snake, snakeHead)
@@ -756,8 +769,8 @@ const App = () => {
   }
 
   const handleOutOfBounds = (canvas, snake, snakeHead, cell) => {
-    if (gameModeRef.current == "singlePlayer") {
-      if (snake.playerId == playerRef.current) {
+    if (gameModeRef.current === "singlePlayer") {
+      if (snake.playerId === playerRef.current) {
         if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
           gameOver()
         } else if (cell.x < 0 || cell.y < 0) {
@@ -795,10 +808,10 @@ const App = () => {
 
       if (snake.aiStatus) {
         AI.moveToFood(foodRef.current, snakeHead, socket, snake.playerId, gameMode, updateSnakeArray)
-        if (gameModeRef.current == "singlePlayer")
+        if (gameModeRef.current === "singlePlayer")
           renderAiGuide(context, snakeHead, snake.direction)
       } else {
-        let speed = snake.status != "frozen" ? speedRef.current : 0.5
+        let speed = snake.status !== "frozen" ? speedRef.current : 0.5
 
         switch (snake.direction) {
           case "right":

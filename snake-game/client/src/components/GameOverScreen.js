@@ -27,7 +27,7 @@ export default (props) => {
   const restartGame = () => {
     props.speedRef.current = 5
     props.setGameOver(false)
-    if(props.gameMode == "singlePlayer" ) {
+    if(props.gameMode === "singlePlayer" ) {
       props.playerSnakeArrayRef.current = [{
         playerId: 0,
         snakeCells: [
@@ -45,7 +45,7 @@ export default (props) => {
       }]
       props.setAiUsedFlag(false)
     } 
-    else if ( props.gameMode == "vsCPU") {
+    else if ( props.gameMode === "vsCPU") {
       props.playerSnakeArrayRef.current = [{
         playerId: 0,
         snakeCells: [
@@ -77,7 +77,7 @@ export default (props) => {
       }]
 
     }
-    else if (props.gameMode == "multiplayer" ) {
+    else if (props.gameMode === "multiplayer" ) {
       props.socket.emit("restart")
       props.isGameOverRef.current = false
     }
@@ -101,10 +101,10 @@ export default (props) => {
         </div>
         <div className="gameOverIconContainer">
           <div className="iconWrapper"  onClick={() => backToMenu()} >
-            <img title="backIcon" className="backIcon" src={backIcon}/>
+            <img title="backIcon" alt="back" className="backIcon" src={backIcon}/>
           </div>
           <div className="iconWrapper">
-            <img title="restartIcon" className="restartIcon" src={restartIcon} onClick={() => restartGame()} />
+            <img title="restartIcon" alt="restart" className="restartIcon" src={restartIcon} onClick={() => restartGame()} />
           </div>
           <p className="iconText">Back</p>
           <p className="restartText">Restart</p>

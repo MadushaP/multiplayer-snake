@@ -19,7 +19,7 @@ export default (props) => {
 
   const setAiStatus = () => {
     let currentSnake = props.playerSnakeArray.find(
-      (x) => x.playerId == props.playerId
+      (x) => x.playerId === props.playerId
     )
 
     if (!currentSnake.aiStatus) {
@@ -169,7 +169,7 @@ export default (props) => {
               transitionEnterTimeout={500}
               transitionLeaveTimeout={1}>
               {(() => {
-                if (snake.playerId == 0) {
+                if (snake.playerId === 0) {
                   return <div
                     key={snake.score}
                     style={{ display: "inline-block" }}>
@@ -206,6 +206,8 @@ export default (props) => {
         return vsCpuOptions
       case "multiplayer":
         return multiplayerOptions
+      default: 
+        return singlePlayerOptions
     }
   }
 

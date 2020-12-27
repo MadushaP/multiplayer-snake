@@ -50,9 +50,9 @@ export default (props) => {
   }
 
   const powerUpText = () => {
-    if (props.powerUpText == "frozen") {
+    if (props.powerUpText === "frozen") {
       return frozenTextImage
-    } else if (props.powerUpText == "gun") {
+    } else if (props.powerUpText === "gun") {
       return gunTextImage
     }
   }
@@ -92,8 +92,8 @@ export default (props) => {
       <div style={confStyle}>
         <Confetti style={confStyle} active={props.showConfetti} config={config} />
       </div>
-      <img key={props.isNewLevel} src={levelUpImage} className={blinkCss()}></img>
-      <img key={props.powerUpText} src={powerUpText()} className={frozenCss()}></img>
+      <img alt="level up" key={props.isNewLevel} src={levelUpImage} className={blinkCss()}></img>
+      <img alt="power up text" key={props.powerUpText} src={powerUpText()} className={frozenCss()}></img>
     </div>
   )
 }

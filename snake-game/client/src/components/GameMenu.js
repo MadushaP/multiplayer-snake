@@ -27,7 +27,7 @@ export default (props) => {
   const [subSettingsFlags, setSubSettingsFlags] = useState(localStorage.getItem('visualiserType'))
 
   useEffect(() => {
-    if (subSettingsFlags == 'web') {
+    if (subSettingsFlags === 'web') {
       localStorage.setItem('visualiserType', 'web')
       props.setMenuSettings(setting => {
         const newObject = { ...setting }
@@ -40,7 +40,7 @@ export default (props) => {
         return newObject
       })
     }
-    else if (subSettingsFlags == 'star') {
+    else if (subSettingsFlags === 'star') {
       localStorage.setItem('visualiserType', 'star')
       props.setMenuSettings(setting => {
         const newObject = { ...setting }
@@ -176,7 +176,7 @@ export default (props) => {
           <FancyButton text="vs CPU" buttonClick={startVsCPU} />
           <FancyButton text="Multiplayer" buttonClick={startMultiplayer} />
         </div>
-        <SettingsToolTip menuSettings={props.menuSettings} menuSettings={props.menuSettings} setMenuSettings={props.setMenuSettings} showTooltip={showTooltip} setHoverState={setHoverState} show={show} subSettingsFlags={subSettingsFlags} setSubSettingsFlags={setSubSettingsFlags}/>
+        <SettingsToolTip menuSettings={props.menuSettings} setMenuSettings={props.setMenuSettings} showTooltip={showTooltip} setHoverState={setHoverState} show={show} subSettingsFlags={subSettingsFlags} setSubSettingsFlags={setSubSettingsFlags}/>
       </Modal>
     </div>
   )
