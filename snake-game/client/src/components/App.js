@@ -84,6 +84,7 @@ const App = () => {
 
   const [shade, setShade] = useState(0)
   const shadeRef = useRef(shade)
+  const [aiUsedFlag, setAiUsedFlag] = useState(false)
 
   useEffect(() => {
     const visualiserSetting = localStorage.getItem('visualiser') == 'true'
@@ -835,7 +836,7 @@ const App = () => {
     <div>
       {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} menuSettings={menuSettings} setMenuSettings={setMenuSettings} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} wave={wave} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} />
+          <GameOverScreen isGameOver={isGameOver} wave={wave} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} aiUsedFlag={aiUsedFlag} setAiUsedFlag={setAiUsedFlag} />
           <TopBar score={score}
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}
@@ -846,7 +847,8 @@ const App = () => {
             updateFieldChange={updateSnakeArray}
             gameMode={gameMode}
             pause={pause}
-            setPause={setPause} />
+            setPause={setPause}
+            setAiUsedFlag={setAiUsedFlag} />
           <CanvasWrapper food={foodRef.current} canvasRef={canvasRef} showConfetti={showConfetti} isNewLevel={isNewLevel} setIsNewLevel={setIsNewLevel} powerUpText={powerUpText} menuSettings={menuSettings} song={menuSettings.song} />
         </div>}
     </div>

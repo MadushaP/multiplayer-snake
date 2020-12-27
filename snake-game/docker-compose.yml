@@ -4,6 +4,8 @@ services:
   
   server: 
     build: ./server
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     expose:
      - 3001  
     ports:  
@@ -12,6 +14,8 @@ services:
 
   client: 
    build: ./client
+   environment:
+      CHOKIDAR_USEPOLLING: "true"
    expose:
      - 3000  
    ports:  

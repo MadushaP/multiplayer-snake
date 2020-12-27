@@ -120,34 +120,6 @@ export default (props) => {
     props.gameModeRef.current = "vsCPU"
     props.setAiSpeed(4)
 
-    props.setPlayerSnakeArray([{
-      playerId: 0,
-      snakeCells: [
-        { 'x': 10, 'y': 10 },
-        { 'x': 12, 'y': 10 },
-        { 'x': 14, 'y': 10 },
-        { 'x': 16, 'y': 10 },
-      ],
-      direction: "right",
-      closeToFood: false,
-      aiStatus: false,
-      colour: '48df08',
-      score: 0
-    },
-    {
-      playerId: 1,
-      snakeCells: [
-        { 'x': 10, 'y': 10 },
-        { 'x': 12, 'y': 10 },
-        { 'x': 14, 'y': 10 },
-        { 'x': 16, 'y': 10 },
-      ],
-      direction: "right",
-      closeToFood: false,
-      aiStatus: true,
-      colour: 'C70039',
-      score: 0
-    }])
 
     props.playerSnakeArrayRef.current = [{
       playerId: 0,

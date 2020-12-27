@@ -14,27 +14,18 @@ html {
   user-select: none;
 }
 
-@media screen 
-  and (min-device-width: 1200px) 
-  and (max-device-width: 1600px) 
-  and (-webkit-min-device-pixel-ratio: 1) { 
-    div.ReactModal__Content {
-      zoom: 0.7;
-    }
+@media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+  div.ReactModal__Content {
+    zoom: 0.7;
+  }
 }
 
 /* ----------- Retina Screens ----------- */
-@media screen 
-  and (min-device-width: 1200px) 
-  and (max-device-width: 1600px) 
-  and (-webkit-min-device-pixel-ratio: 2)
-  and (min-resolution: 192dpi) { 
-
-    div.ReactModal__Content {
-      zoom: 0.7;
-    }
+@media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  div.ReactModal__Content {
+    zoom: 0.7;
+  }
 }
-
 
 .game-area {
   position: relative;
@@ -46,8 +37,6 @@ html {
   border: 3px solid rgba(224, 43, 125, 1);
   background-image: linear-gradient(180deg, #1f2933 0%, #124e8e 100%);
 }
-
-
 
 @keyframes glow {
   to {
@@ -163,9 +152,9 @@ h1 {
 }
 
 .game-over {
-  padding-top: 10%;
   font: 40px arial, sans-serif;
   text-align: center;
+  padding-top: 2%;
 }
 
 .ReactModal__Overlay {
@@ -319,26 +308,30 @@ span#answer {
   position: relative;
 }
 
-
 #wrapper > canvas {
-  position:absolute;
-  left:0;
-  top:0;
+  position: absolute;
+  left: 0;
+  top: 0;
   border: 5px solid rgba(224, 43, 125, 1);
   border-radius: 15px;
 }
 
 #wrapper > #gameBackground {
-  left:0;
-  top:0;
+  left: 0;
+  top: 0;
   width: 1300px;
   height: calc(100vh - 100px);
   border: 5px solid rgba(224, 43, 125, 1);
   border-radius: 15px;
-  background-image: linear-gradient(to right top, #0052ce, #004db1, #004593, #003d75, #093357);
+  background-image: linear-gradient(
+    to right top,
+    #0052ce,
+    #004db1,
+    #004593,
+    #003d75,
+    #093357
+  );
 }
-
-
 
 .lds-ring {
   display: inline-block;
@@ -427,11 +420,12 @@ canvas {
   }
 }
 
-.gameOverContainer {
+.gameOverIconContainer {
   display: grid;
   grid-template-rows: 100px;
   grid-template-columns: 157px 114px;
-  margin: 0 auto;
+  justify-content: center;
+  column-gap: 20px;
 }
 
 .iconWrapper {
@@ -442,21 +436,24 @@ canvas {
 .backIcon {
   width: 100%;
   height: 150%;
-  display:block;
-  margin: auto;
+  display: block;
 }
 
 .restartIcon {
   width: 57%;
-  height:150%;
-  display:block;
+  height: 150%;
+  display: block;
   transform: rotate(180deg);
-  margin: auto;
-  object-fit: contain
+  object-fit: contain;
 }
 
 .iconWrapper:hover {
   opacity: 0.5;
+}
+
+.restartText {
+  font: 20px arial, sans-serif;
+  font-weight: bold;
 }
 
 .iconText {
@@ -486,48 +483,43 @@ canvas {
 }
 
 #wave {
-  opacity:0.2;
+  opacity: 0.2;
 }
 
 #audio {
-  display:none;
+  display: none;
 }
 
 .menuSettings {
-  top:7px;
-  right:5px;
+  top: 7px;
+  right: 5px;
   width: 100%;
   position: relative;
 }
 
-.disable  {
+.disable {
   /* display:none !important; */
   opacity: 0;
   height: 0;
   overflow: hidden;
   padding: 0 !important;
-  transition: all .2s ease-in-out;
-
-
+  transition: all 0.2s ease-in-out;
 }
 
 .settingText {
   font-family: Helvetica, cursive;
-
 }
 
 .subSettingText {
   font-family: Helvetica, cursive;
   background-color: #e2e2e2 !important;
-  height:125px;
-  transition: all .1s ease-in-out;
-
+  height: 125px;
+  transition: all 0.1s ease-in-out;
 }
 
 .subSettingShadow {
   border-top: 3px solid #d4d4d4;
   opacity: 1;
-  
 }
 
 .headerText {
@@ -536,4 +528,49 @@ canvas {
   pointer-events: none;
   border-bottom: 1px solid #f1eded;
   text-align: center;
+}
+
+.highScoreHeader {
+  font-size: 35px;
+}
+
+.highscoreGridContainerHeader {
+  display: grid;
+  grid-template-columns: auto auto;
+  padding: 6% 13% 0% 13%;
+  font-weight: bold;
+}
+
+.highscoreGridContainer {
+  display: grid;
+  padding: 4% 12% 10% 3%;
+  grid-template-columns: 45px auto auto;
+  grid-auto-rows: 40px;
+}
+
+.highScorePlayerName {
+  font-size: 30px;
+  text-align: left;
+  animation: fade 0.75s ease-in-out;
+}
+
+.highScorePlayerScore {
+  font-size: 30px;
+  text-align: right;
+  animation: fade 0.75s ease-in-out;
+}
+
+.highscoreNameInputContainer {
+  display: grid;
+  grid-template-columns: 300px auto;
+  grid-template-rows: 55px 9px;
+  padding: 5%;
+  animation: fade 0.75s ease-in-out;
+  column-gap: 15px;
+}
+
+.highScorePlayerHighlight {
+  background: #00c57b6b;
+  animation: fade 0.75s ease-in-out;
+  box-shadow: 0px 3px 0px #6d6d6d14;
 }

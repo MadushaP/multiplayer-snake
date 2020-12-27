@@ -21,10 +21,12 @@ export default (props) => {
     let currentSnake = props.playerSnakeArray.find(
       (x) => x.playerId == props.playerId
     )
-    if (currentSnake.aiStatus) {
-      props.updateFieldChange(props.playerId, "aiStatus", false);
-    } else {
+
+    if (!currentSnake.aiStatus) {
+      props.setAiUsedFlag(true)
       props.updateFieldChange(props.playerId, "aiStatus", true);
+    } else {
+      props.updateFieldChange(props.playerId, "aiStatus", false);
     }
   }
 
