@@ -99,7 +99,7 @@ export default (props) => {
   }
 
   const textInputHandler = (e) => {
-    if (e.target.value.length == 0)
+    if (e.target.value.length === 0)
       setErrorText("")
 
     if (e.target.value.length > 0) {
