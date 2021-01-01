@@ -183,7 +183,6 @@ nav ul li {
   --c: rgba(224, 43, 125, 1);
   color: var(--c);
   font-size: 16px;
-  border: 0.2em solid var(--c);
   border-radius: 0.5em;
   width: 12em;
   height: 3em;
@@ -281,6 +280,7 @@ span#answer {
 }
 
 .menu-overlay {
+  zoom: 0.85;
   position: fixed;
   top: 0;
   left: 0;
