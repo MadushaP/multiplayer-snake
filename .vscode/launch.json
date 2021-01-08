@@ -6,7 +6,7 @@
             "type": "chrome",
             "request": "launch",
             "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/snake-game/src"
+            "webRoot": "${workspaceFolder}/snake-game/client/src"
         }
     ]
 }

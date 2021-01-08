@@ -1,0 +1,87 @@
+.play {
+  width: 0;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-left: 17px solid white;
+  border-bottom: 6px solid transparent;
+}
+
+.pause {
+  width: 8px;
+  height: 15px;
+  border-right: 4px solid white;
+  border-left: 4px solid white;
+}
+
+.pause:hover {
+  width: 8px;
+  height: 15px;
+  border-right: 4px solid white;
+  border-left: 4px solid white;
+}
+
+.play:hover {
+  width: 0;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-left: 17px solid white;
+  border-bottom: 6px solid transparent;
+}
+
+.wrapper {
+  background-color: #128d15;
+  height: 21px;
+  width: 25px;
+  padding-left: 9px;
+  padding-top: 7px;
+  border-radius: 4px;
+  transition: border 0.3s;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.wrapper:hover {
+  background-color: #19ab27;
+  height: 21px;
+  width: 25px;
+  padding-left: 9px;
+  padding-top: 7px;
+  border-radius: 4px;
+}
+
+.pauseText {
+  z-index: 10;
+  position: fixed;
+  top: 50%;
+  left: 48%;
+  transform: translate(-50%, -50%);
+  font-family: FredokaOne, cursive;
+  font-size: 80px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  opacity: 1;
+  height: 170px;
+  width: 250px;
+  -webkit-text-stroke: 1.5px rgb(255, 255, 255);
+}
+
+.hide {
+  opacity: 0;
+}
+
+.pulsate {
+  animation: pulsate 2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulsate {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}
