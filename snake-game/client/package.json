@@ -32,7 +32,7 @@
     "server": "node src/server.js",
     "start2": "concurrently \"npm start\" \"node ../server/server.js\""
   },
-  "proxy": "http://server:3001/",
+  "proxy": "http://localhost:3001/",
   "eslintConfig": {
     "extends": "react-app"
   },
