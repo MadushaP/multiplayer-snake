@@ -22,6 +22,13 @@ if (process.env.ENVIRONMENT == 'dev') {
 }
 
 
+const getNextColour = () => {
+  if (snakeColours.length == 0) {
+    snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
+  }
+  return snakeColours.shift()
+}
+
 let snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
 let snakeCells = []
 let food = randomLocation()
@@ -30,6 +37,10 @@ let powers = [
   { power: "freeze", location: randomLocation() },
   { power: "gun", location: randomLocation() },
 ]
+
+let syncNewPlayerBackOff = false
+let foodBackOff = false
+
 
 setInterval(() => {
   currentPower = powers[Math.floor(Math.random() * powers.length)]
@@ -41,13 +52,6 @@ io.on('connection', (socket) => {
   console.log(`Player ${io.engine.clientsCount}: ${socket.id}, connected`)
   socket.playerNum = io.engine.clientsCount
 
-  const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
-  snakeColours = snakeColours.filter(colour => colour != randomColour)
-
-  if (snakeColours.length == 0) {
-    snakeColours = ['C70039', 'FFC300', 'DAF7A6', 'DEDEDE', '5CFFE7']
-  }
-
   socket.on('getPlayerId', () => {
     socket.emit('getPlayerId', socket.id)
     socket.emit("getFood", food)
@@ -58,9 +62,10 @@ io.on('connection', (socket) => {
     io.sockets.emit("sendPlayerSnakeArray", data.snakeArray)
   })
 
-  socket.on('syncNewPlayer', (data) => {
+
+  socket.on('syncNewPlayer', (data) =>  {
+  if (!syncNewPlayerBackOff) {
     snakeArray = data.snakeArray
-    const randomColour = snakeColours[Math.floor(Math.random() * snakeColours.length)]
     snakeArray.push({
       playerId: data.newId,
       snakeCells: [
@@ -71,13 +76,16 @@ io.on('connection', (socket) => {
       ],
       direction: "right",
       closeToFood: false,
-      colour: randomColour,
+      colour: getNextColour(),
       aiStatus: false,
       score: 0,
       status: 'none'
     })
     io.sockets.emit("sendPlayerSnakeArray", snakeArray)
-  })
+    syncNewPlayerBackOff = true
+    setTimeout(() => { syncNewPlayerBackOff = false}, 200)
+  }
+})
 
   socket.on('startMultiplayer', () => {
     console.log("start multiplayer")
@@ -92,7 +100,7 @@ io.on('connection', (socket) => {
         ],
         direction: "right",
         closeToFood: false,
-        colour: randomColour,
+        colour: getNextColour(),
         aiStatus: false,
         score: 0,
         status: 'none'
@@ -107,7 +115,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('playerKeyEvent', data);
   })
 
-  let foodBackOff = false
   socket.on('randomFood', () => {
     if (!foodBackOff) {
       food = randomLocation()
@@ -157,7 +164,7 @@ io.on('connection', (socket) => {
         ],
         direction: "right",
         closeToFood: false,
-        colour: randomColour,
+        colour: getNextColour(),
         aiStatus: false,
         score: 0,
         status: 'none'
@@ -170,13 +177,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log("Player", socket.playerNum, "id:", socket.id, "disconnected")
-    snakeColours.push(randomColour)
     snakeCells = snakeCells.filter(x => x.playerId != socket.id)
     io.sockets.emit("clear", { playerId: socket.id })
   })
 
   socket.on('multiGameOver', () => {
-    snakeColours.push(randomColour)
     snakeCells = snakeCells.filter(x => x.playerId != socket.id)
     io.sockets.emit("clear", { playerId: socket.id })
   })
