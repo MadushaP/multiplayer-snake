@@ -60,11 +60,11 @@ export default (props) => {
   const adjustHeight  = () => {
     var canvases = [...document.getElementsByTagName('canvas')]
     canvases.forEach(element => {
-      element.height = window.innerHeight + (window.innerHeight * 0.1)
+      element.height = window.innerHeight 
     });
 
     let gameBackground = document.getElementById('gameBackground')
-    gameBackground.style.height = window.innerHeight + (window.innerHeight * 0.1) + "px"
+    gameBackground.style.height = window.innerHeight + "px"
     
   }
 
