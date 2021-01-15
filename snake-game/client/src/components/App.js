@@ -769,15 +769,6 @@ const App = () => {
   }
 
   const handleOutOfBounds = (canvas, snake, snakeHead, cell) => {
-    if (gameModeRef.current === "singlePlayer") {
-      if (snake.playerId === playerRef.current) {
-        if (cell.x >= (canvas.width - 15) || cell.y >= (canvas.height)) {
-          gameOver()
-        } else if (cell.x < 0 || cell.y < 0) {
-          gameOver()
-        }
-      }
-    } else
       if (cell.x >= (canvas.width - 15)) {
         snakeHead.x = 0
       } else if (cell.y >= canvas.height - 15) {
