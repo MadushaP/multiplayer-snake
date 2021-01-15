@@ -127,7 +127,7 @@ const App = () => {
   useEffect(() => {
 
     if (gameMode === 'multiplayer') {
-      socket = io.connect('http://54.170.171.16:3001/', { transports: ['websocket'], upgrade: false })
+      socket = io.connect('localhost:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
       socket.on('playerJoined', (data) => {
@@ -165,14 +165,6 @@ const App = () => {
 
       socket.on('updateBodyBroadcast', (data) => { updateSnakeArray(data.playerId, 'snakeCells', data.snakeCells) })
       socket.on('updateFoodBroadcast', (data) => {
-        // console.log(data)
-        // //fix multiplayer relative to food
-        // if(data.y > window.innerHeight) {
-        //   console.log("out of bounds")
-        //   console.log(data.y, window.innerHeight - 150 )
-        //   console.log('difference' , data.y -  (window.innerHeight - 150))
-        //   // data.y =  data.y - (window.innerHeight)
-        // }
         foodRef.current = data
         setFood(data)
       })
@@ -301,9 +293,9 @@ const App = () => {
     Sound.playSound('game-over.mp3', false, 0.2)
   }
 
-  const headBodyCollisionCheck = (snakeHead, snakeCells) => {
+  const headBodyCollisionCheck = (snakeHead, snakeCells, snakePlayerId) => {
     let snakeBody = snakeCells.slice(0, -1)
-    if (isObjectInArray(snakeBody, snakeHead)) {
+    if (isObjectInArray(snakeBody, snakeHead) && snakePlayerId == playerRef.current) {
       gameOver()
     }
   }
@@ -821,7 +813,7 @@ const App = () => {
             break
         }
 
-        headBodyCollisionCheck(snakeHead, snake.snakeCells)
+        headBodyCollisionCheck(snakeHead, snake.snakeCells, snake.playerId)
       }
       renderFood(context)
       renderPowerUp(context)

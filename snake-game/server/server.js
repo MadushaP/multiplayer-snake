@@ -9,7 +9,7 @@ var AWS = require("aws-sdk");
 const dotenv = require('dotenv');
 dotenv.config();
 
-if(process.env.ENVIRONMENT == 'dev') {
+if (process.env.ENVIRONMENT == 'dev') {
   AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -146,7 +146,26 @@ io.on('connection', (socket) => {
 
 
   socket.on('restart', () => {
-    socket.broadcast.emit("playerJoined", { 'newId': socket.id, 'playerCount': io.engine.clientsCount })
+    if (io.engine.clientsCount == 1) {
+      snakeCells.push({
+        playerId: socket.id,
+        snakeCells: [
+          { 'x': 10, 'y': 10 },
+          { 'x': 12, 'y': 10 },
+          { 'x': 14, 'y': 10 },
+          { 'x': 16, 'y': 10 },
+        ],
+        direction: "right",
+        closeToFood: false,
+        colour: randomColour,
+        aiStatus: false,
+        score: 0,
+        status: 'none'
+      })
+      socket.emit("sendPlayerSnakeArray", snakeCells)
+    } else {
+      socket.broadcast.emit("playerJoined", { 'newId': socket.id, 'playerCount': io.engine.clientsCount })
+    }
   })
 
   socket.on('disconnect', () => {
@@ -171,7 +190,7 @@ http.listen(3001, () => {
 })
 
 app.get('/getHighScore', (req, res) => {
-  const ddb = new AWS.DynamoDB({apiVersion: '2011-12-05'});
+  const ddb = new AWS.DynamoDB({ apiVersion: '2011-12-05' });
 
   var params = {
     TableName: "snake-highscore",
@@ -190,17 +209,17 @@ app.get('/getHighScore', (req, res) => {
 
 app.post('/putHighScore', (req, res) => {
   //To ensure the currentPlayer flag it not placed in DB
-  delete req.body['currentPlayer']  
+  delete req.body['currentPlayer']
 
   var params = {
     TableName: 'snake-highscore',
     Item: req.body
   };
 
-  var documentClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2011-12-05'});
+  var documentClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2011-12-05' });
 
   documentClient.put(params, function (err, data) {
-    if (err)  
+    if (err)
       res.send(err)
     else
       res.send(data)
