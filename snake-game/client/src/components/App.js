@@ -26,7 +26,6 @@ const App = () => {
     }
   });
   const [wave] = useState(new Wave());
-  const [score, setScore] = useState(0)
   const [food, setFood] = useState(randomLocation())
   const foodRef = useRef(food)
 
@@ -188,8 +187,8 @@ const App = () => {
         playerSnakeArrayRef.current.forEach(snake => {
           if (snake.playerId !== data.playerId) {
             updateSnakeArray(snake.playerId, 'status', 'frozen')
-            setTimeout(() => { 
-              updateSnakeArray(snake.playerId, 'status', 'none')    
+            setTimeout(() => {
+              updateSnakeArray(snake.playerId, 'status', 'none')
             }, 7000)
           }
         })
@@ -213,14 +212,10 @@ const App = () => {
   }, [gameStart])
 
   useEffect(() => {
-    if (gameModeRef.current === "multiplayer") {
-      updateSnakeArray(playerId, 'score', score)
-      socket.emit('scoreUpdate', { playerId: playerId, score: score })
-    } else if (gameModeRef.current === "singlePlayer") {
-      levelUpCheck(score)
+    if (gameModeRef.current === "singlePlayer") {
+      levelUpCheck(playerSnakeArrayRef.current[0].score)
     }
-
-  }, [score])
+  }, [playerSnakeArrayRef.current[0].score])
 
   const levelUp = (speed) => {
     speedRef.current = speed
@@ -230,26 +225,29 @@ const App = () => {
 
   const levelUpCheck = (score) => {
     switch (score) {
-      case 5:
+      case 10:
         levelUp(7)
         break
-      case 10:
-        levelUp(10)
-        break
       case 15:
-        levelUp(12)
+        levelUp(8)
+        break
+      case 20:
+        levelUp(9)
         break
       case 25:
-        levelUp(14)
+        levelUp(10)
         break
       case 30:
-        levelUp(16)
+        levelUp(12)
         break
       case 40:
+        levelUp(14)
+        break
+      case 50:
         levelUp(20)
         break
       default:
-          break
+        break
     }
   }
 
@@ -334,7 +332,7 @@ const App = () => {
         setFood(foodLocation)
         foodRef.current = foodLocation
         updateSnakeArray(currentPlayerId, 'score', score + 1)
-        setScore(score => score + 1)
+        // setScore(score => score + 1)
         increaseSnakeLength(updatedCells)
       } else if (gameModeRef.current === "multiplayer") {
         socket.emit('randomFood')
@@ -761,16 +759,16 @@ const App = () => {
   }
 
   const handleOutOfBounds = (canvas, snake, snakeHead, cell) => {
-      if (cell.x >= (canvas.width - 15)) {
-        snakeHead.x = 0
-      } else if (cell.y >= canvas.height - 15) {
-        snakeHead.y = 0
-      }
-      else if (cell.x < 0) {
-        snakeHead.x = canvas.width - 16
-      } else if (cell.y < 0) {
-        snakeHead.y = canvas.height - 16
-      }
+    if (cell.x >= (canvas.width - 15)) {
+      snakeHead.x = 0
+    } else if (cell.y >= canvas.height - 15) {
+      snakeHead.y = 0
+    }
+    else if (cell.x < 0) {
+      snakeHead.x = canvas.width - 16
+    } else if (cell.y < 0) {
+      snakeHead.y = canvas.height - 16
+    }
   }
 
   const canvasRef = useRef(null)
@@ -832,8 +830,8 @@ const App = () => {
     <div>
       {!gameStart ? <GameMenu gameStart={gameStart} setAiSpeed={AI.setSpeed} setGameStart={setGameStart} socket={socket} setGameMode={setGameMode} setPlayerSnakeArray={setPlayerSnakeArray} gameModeRef={gameModeRef} playerSnakeArrayRef={playerSnakeArrayRef} menuSettings={menuSettings} setMenuSettings={setMenuSettings} /> :
         <div>
-          <GameOverScreen isGameOver={isGameOver} wave={wave} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} score={score} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} aiUsedFlag={aiUsedFlag} setAiUsedFlag={setAiUsedFlag} />
-          <TopBar score={score}
+          <GameOverScreen isGameOver={isGameOver} wave={wave} isGameOverRef={isGameOverRef} playerSnakeArrayRef={playerSnakeArrayRef} playerId={playerId} setGameOver={setGameOver} gameMode={gameMode} gameOverScore={gameOverScore} socket={socket} speedRef={speedRef} aiUsedFlag={aiUsedFlag} setAiUsedFlag={setAiUsedFlag} />
+          <TopBar
             setAcronymStatus={setAcronymStatus}
             acronymStatus={acronymStatus}
             setVolume={setVolume} volume={volume}
