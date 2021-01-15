@@ -41,7 +41,6 @@ let powers = [
 let syncNewPlayerBackOff = false
 let foodBackOff = false
 
-
 setInterval(() => {
   currentPower = powers[Math.floor(Math.random() * powers.length)]
   currentPower.location = randomLocation()
@@ -131,7 +130,6 @@ io.on('connection', (socket) => {
   socket.on('increaseSnakeLength', (data) => {
     io.sockets.emit('increaseSnakeLength', data);
   })
-
 
   let powerBackOff = false
 
@@ -231,7 +229,6 @@ app.post('/putHighScore', (req, res) => {
   });
 
 })
-
 
 process.on('uncaughtException', (exception) => {
   console.log(snakeCells)

@@ -94,7 +94,8 @@ export default (props) => {
       <Modal
         isOpen={props.isGameOver}
         style={customStyles}
-        shouldCloseOnOverlayClick={false} >
+        shouldCloseOnOverlayClick={false}
+        ariaHideApp={false} >
         <div className="game-over">
           <div style={{ 'fontWeight': 'bold', 'marginBottom': '10px' }}>Game Over</div>
           <HighScore gameOverScore={props.gameOverScore} gameMode={props.gameMode} aiUsedFlag={props.aiUsedFlag} />
