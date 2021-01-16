@@ -126,7 +126,7 @@ const App = () => {
   useEffect(() => {
 
     if (gameMode === 'multiplayer') {
-      socket = io.connect('localhost:3001/', { transports: ['websocket'], upgrade: false })
+      socket = io.connect('http://54.170.171.16:3001/', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
       socket.on('playerJoined', (data) => {
@@ -680,9 +680,6 @@ const App = () => {
 
   const renderSnake = (context, index, snake, cell) => {
     let shadeCol = shadeColor('#48df08', shadeRef.current)
-    // if (index === 0) {
-    //   renderTail(context, snake, cell, shadeCol)
-    // }
 
     if (shadeRef.current < 0 && index > (snake.snakeCells.length * 0.2)) {
       shadeRef.current += 0.8
