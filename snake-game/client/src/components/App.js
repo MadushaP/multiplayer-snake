@@ -126,7 +126,7 @@ const App = () => {
   useEffect(() => {
 
     if (gameMode === 'multiplayer') {
-      socket = io.connect('http://54.170.171.16:3001/', { transports: ['websocket'], upgrade: false })
+      socket = io.connect('https://snake.madusha.co.uk:3001', { transports: ['websocket'], upgrade: false })
       socket.emit("startMultiplayer")
       socket.emit("getPlayerId")
       socket.on('playerJoined', (data) => {
