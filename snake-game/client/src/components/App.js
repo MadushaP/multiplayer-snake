@@ -62,16 +62,11 @@ const App = () => {
   const playerRef = useRef(playerId)
   const [playerSnakeArray, setPlayerSnakeArray] = useState([{
     playerId: 0,
-    snakeCells: [
-      { 'x': 10, 'y': 10 },
-      { 'x': 12, 'y': 10 },
-      { 'x': 14, 'y': 10 },
-      { 'x': 16, 'y': 10 },
-    ],
+    snakeCells: [],
     direction: "right",
     closeToFood: false,
     aiStatus: false,
-    colour: '48df08',
+    colour: '808080',
     score: 0,
     status: 'none'
   }])
@@ -139,9 +134,11 @@ const App = () => {
       })
 
       socket.on('clear', (data) => {
-        let x = playerSnakeArrayRef.current.filter(x => x.playerId !== data.playerId)
-        playerSnakeArrayRef.current = x
-        setPlayerSnakeArray(x)
+        let filteredArray = playerSnakeArrayRef.current.filter(x => x.playerId !== data.playerId)
+        if (filteredArray.length == 0)
+          return
+        playerSnakeArrayRef.current = filteredArray
+        setPlayerSnakeArray(filteredArray)
       })
 
       socket.on('playerKeyEvent', (data) => {
@@ -771,6 +768,8 @@ const App = () => {
   const canvasRef = useRef(null)
 
   const draw = (playerSnakeArray) => {
+    if (playerSnakeArray[0].snakeCells.length == 0)
+      return
     const canvas = canvasRef.current
     if (!canvas || !playerSnakeArray)
       return;

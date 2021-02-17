@@ -47,7 +47,7 @@ export default (props) => {
         newObject.waveSettings = {
           stroke: 1,
           type: "star",
-          colors: ["yellow", "yellow", "red"]
+          colors: ["white", "white", "purple"]
         }
         newObject.song = "song9"
         return newObject
